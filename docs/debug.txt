@@ -1,0 +1,247 @@
+$ ./jbdtool -t serial:/dev/ttyUSB0,9600 -d 5 -a
+main.c(829) main: transport: 0x7fffa7e781f3, target: 0x7fffa7e781fa
+main.c(855) main: transport: serial
+module.c(51) mybmm_load_module: NOT found.
+module.c(72) mybmm_load_module: init: 0x55e91ff4fbfe
+module.c(79) mybmm_load_module: adding module: serial
+main.c(858) main: tp: 0x55e91ff5dc00
+module.c(45) mybmm_load_module: mp->name: serial, mp->type: 2
+module.c(51) mybmm_load_module: NOT found.
+module.c(72) mybmm_load_module: init: 0x55e91ff45dbd
+module.c(79) mybmm_load_module: adding module: jbd
+main.c(861) main: cp: 0x55e91ff5da80
+jbd.c(416) jbd_new: transport: serial
+jbd.c(425) jbd_new: pp->target: /dev/ttyUSB0, pp->opts: 9600
+serial.c(99) serial_new: target: /dev/ttyUSB0
+serial.c(160) serial_new: target: /dev/ttyUSB0, speed: 9600, data: 8, parity: N, stop: 1, vmin: 0, vtime: 5
+main.c(878) main: p: 0x7fffa7e781fe, target: 0x7fffa7e781fa
+main.c(880) main: lockfile: /tmp/ttyUSB0.lock
+main.c(882) main: lockfd: 3
+main.c(889) main: charge: -1, discharge: -1
+main.c(912) main: reset: 0
+main.c(928) main: mqtt: (nil)
+main.c(978) main: outfp: 0x55e9207a6910
+jbd.c(436) jbd_open: opening...
+serial.c(256) serial_open: target: /dev/ttyUSB0
+serial.c(264) serial_open: path: /dev/ttyUSB0
+serial.c(171) set_interface_attribs: fd: 4, speed: 9600, data: 8, parity: 0, stop: 1, vmin: 0, vtime: 5
+jbd_info.c(289) jbd_get_info: transport: serial
+jbd.c(296) jbd_rw: action: a5, reg: 3, data: 0x7fffa7e76e30, datasz: 256
+jbd.c(95) jbd_cmd: action: a5, reg: 3, data: 0x7fffa7e76e30, len: 0
+jbd.c(37) jbd_crc: len: 2
+jbd.c(38) jbd_crc: crc: 0
+jbd.c(40) jbd_crc: crc: fffd
+jbd.c(110) jbd_cmd: returning: 7
+cmd(7):
+0000: DD A5 03 00 FF FD 77                               ......w         
+jbd.c(303) jbd_rw: retries: 5
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 7
+jbd.c(49) jbd_verify: len: 7
+verify(7):
+0000: DD 03 00 1D 06 18 00                               .......         
+jbd.c(55) jbd_verify: start bit: dd
+jbd.c(58) jbd_verify: register: 3, wanted: 3
+jbd.c(61) jbd_verify: status: 0
+jbd.c(66) jbd_verify: data_length: 29, len - 7: 0
+jbd.c(303) jbd_rw: retries: 4
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 29
+jbd.c(49) jbd_verify: len: 29
+verify(29):
+0000: 00 01 F2 01 F4 00 00 2C 7C 00 00 00 00 00 00 80    .......,|.......
+0010: 64 03 04 03 0B 8C 0B 8A 0B 84 FA 8C 77             d...........w   
+jbd.c(55) jbd_verify: start bit: 0
+jbd.c(303) jbd_rw: retries: 3
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 36
+jbd.c(49) jbd_verify: len: 36
+verify(36):
+0000: DD 03 00 1D 06 18 00 00 01 F2 01 F4 00 00 2C 7C    ..............,|
+0010: 00 00 00 00 00 00 80 64 03 04 03 0B 8C 0B 8A 0B    .......d........
+0020: 84 FA 8C 77                                        ...w            
+jbd.c(55) jbd_verify: start bit: dd
+jbd.c(58) jbd_verify: register: 3, wanted: 3
+jbd.c(61) jbd_verify: status: 0
+jbd.c(66) jbd_verify: data_length: 29, len - 7: 29
+jbd.c(37) jbd_crc: len: 31
+jbd.c(38) jbd_crc: crc: 0
+jbd.c(40) jbd_crc: crc: fa8c
+jbd.c(73) jbd_verify: my_crc: fa8c, pkt_crc: fa8c
+jbd.c(81) jbd_verify: stop bit: 77
+jbd.c(84) jbd_verify: good data!
+jbd.c(319) jbd_rw: returning: 29
+jbd_info.c(198) jbd_std_get_info: voltage: 15.60
+jbd_info.c(199) jbd_std_get_info: current: 0.00
+jbd_info.c(200) jbd_std_get_info: capacity: 4.98
+jbd_info.c(205) jbd_std_get_info: fullcap: 5.00
+jbd_info.c(206) jbd_std_get_info: cycles: 0
+jbd_info.c(207) jbd_std_get_info: pctcap: 64
+jbd_info.c(222) jbd_std_get_info: balance: 0000000000000000
+jbd_info.c(238) jbd_std_get_info: protect: 0000000000000000
+jbd_info.c(247) jbd_std_get_info: year: 2022, mon: 3, day: 28
+jbd_info.c(250) jbd_std_get_info: fetstate: 3
+jbd_info.c(251) jbd_std_get_info: mfgdate: 20220328
+jbd_info.c(252) jbd_std_get_info: version: 12.8
+jbd_info.c(256) jbd_std_get_info: strings: 4
+jbd_info.c(257) jbd_std_get_info: probes: 3
+jbd_info.c(262) jbd_std_get_info: temp[0]: 2956
+jbd_info.c(262) jbd_std_get_info: temp[1]: 2954
+jbd_info.c(262) jbd_std_get_info: temp[2]: 2948
+jbd_info.c(268) jbd_std_get_info: temp 0: 32.405
+jbd_info.c(268) jbd_std_get_info: temp 1: 32.401
+jbd_info.c(268) jbd_std_get_info: temp 2: 32.391
+jbd.c(296) jbd_rw: action: a5, reg: 4, data: 0x7fffa7e76e30, datasz: 256
+jbd.c(95) jbd_cmd: action: a5, reg: 4, data: 0x7fffa7e76e30, len: 0
+jbd.c(37) jbd_crc: len: 2
+jbd.c(38) jbd_crc: crc: 0
+jbd.c(40) jbd_crc: crc: fffc
+jbd.c(110) jbd_cmd: returning: 7
+cmd(7):
+0000: DD A5 04 00 FF FC 77                               ......w         
+jbd.c(303) jbd_rw: retries: 5
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 6
+jbd.c(49) jbd_verify: len: 6
+jbd.c(303) jbd_rw: retries: 4
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 17
+jbd.c(49) jbd_verify: len: 17
+verify(17):
+0000: 00 00 DD 04 00 08 0F 46 0F 3E 0F 37 0F 3D FE C4    .......F.>.7.=..
+0010: 77                                                 w               
+jbd.c(55) jbd_verify: start bit: 0
+jbd.c(303) jbd_rw: retries: 3
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 15
+jbd.c(49) jbd_verify: len: 15
+verify(15):
+0000: DD 04 00 08 0F 46 0F 3E 0F 38 0F 3E FE C2 77       .....F.>.8.>..w 
+jbd.c(55) jbd_verify: start bit: dd
+jbd.c(58) jbd_verify: register: 4, wanted: 4
+jbd.c(61) jbd_verify: status: 0
+jbd.c(66) jbd_verify: data_length: 8, len - 7: 8
+jbd.c(37) jbd_crc: len: 10
+jbd.c(38) jbd_crc: crc: 0
+jbd.c(40) jbd_crc: crc: fec2
+jbd.c(73) jbd_verify: my_crc: fec2, pkt_crc: fec2
+jbd.c(81) jbd_verify: stop bit: 77
+jbd.c(84) jbd_verify: good data!
+jbd.c(319) jbd_rw: returning: 8
+jbd.c(296) jbd_rw: action: a5, reg: 5, data: 0x7fffa7e773fc, datasz: 32
+jbd.c(95) jbd_cmd: action: a5, reg: 5, data: 0x7fffa7e773fc, len: 0
+jbd.c(37) jbd_crc: len: 2
+jbd.c(38) jbd_crc: crc: 0
+jbd.c(40) jbd_crc: crc: fffb
+jbd.c(110) jbd_cmd: returning: 7
+cmd(7):
+0000: DD A5 05 00 FF FB 77                               ......w         
+jbd.c(303) jbd_rw: retries: 5
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 6
+jbd.c(49) jbd_verify: len: 6
+jbd.c(303) jbd_rw: retries: 4
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 34
+jbd.c(49) jbd_verify: len: 34
+verify(34):
+0000: 0F 3E DD 05 00 19 4A 42 44 2D 53 50 30 34 53 30    .>....JBD-SP04S0
+0010: 33 34 2D 4C 34 53 2D 32 30 30 41 2D 42 2D 55 FA    34-L4S-200A-B-U.
+0020: 08 77                                              .w              
+jbd.c(55) jbd_verify: start bit: f
+jbd.c(303) jbd_rw: retries: 3
+jbd.c(308) jbd_rw: writing...
+jbd.c(310) jbd_rw: bytes: 7
+jbd.c(313) jbd_rw: bytes: 32
+jbd.c(49) jbd_verify: len: 32
+verify(32):
+0000: DD 05 00 19 4A 42 44 2D 53 50 30 34 53 30 33 34    ....JBD-SP04S034
+0010: 2D 4C 34 53 2D 32 30 30 41 2D 42 2D 55 FA 08 77    -L4S-200A-B-U..w
+jbd.c(55) jbd_verify: start bit: dd
+jbd.c(58) jbd_verify: register: 5, wanted: 5
+jbd.c(61) jbd_verify: status: 0
+jbd.c(66) jbd_verify: data_length: 25, len - 7: 25
+jbd.c(37) jbd_crc: len: 27
+jbd.c(38) jbd_crc: crc: 0
+jbd.c(40) jbd_crc: crc: fa08
+jbd.c(73) jbd_verify: my_crc: fa08, pkt_crc: fa08
+jbd.c(81) jbd_verify: stop bit: 77
+jbd.c(84) jbd_verify: good data!
+jbd.c(319) jbd_rw: returning: 25
+jbd_info.c(297) jbd_get_info: r: 0
+jbd.c(127) jbd_get_protect: protect: 0000000000000000
+jbd_info.c(306) jbd_get_info: cell 0: 3.910
+jbd_info.c(306) jbd_get_info: cell 1: 3.902
+jbd_info.c(306) jbd_get_info: cell 2: 3.896
+jbd_info.c(306) jbd_get_info: cell 3: 3.902
+jbd_info.c(313) jbd_get_info: cells: total: 15.610, min: 3.896, max: 3.910, diff: 0.014, avg: 3.903
+main.c(234) dfloat: dint: label: Voltage, val: 15.600000
+main.c(246) dfloat: temp: %-25s %.3f
+Voltage                   15.600
+main.c(234) dfloat: dint: label: Current, val: 0.000000
+main.c(246) dfloat: temp: %-25s %.3f
+Current                   0.000
+main.c(234) dfloat: dint: label: DesignCapacity, val: 5.000000
+main.c(246) dfloat: temp: %-25s %.3f
+DesignCapacity            5.000
+main.c(234) dfloat: dint: label: RemainingCapacity, val: 4.980000
+main.c(246) dfloat: temp: %-25s %.3f
+RemainingCapacity         4.980
+main.c(191) dint: label: PercentCapacity, val: 100
+main.c(203) dint: temp: %-25s %d
+PercentCapacity           100
+main.c(191) dint: label: CycleCount, val: 0
+main.c(203) dint: temp: %-25s %d
+CycleCount                0
+main.c(191) dint: label: Probes, val: 3
+main.c(203) dint: temp: %-25s %d
+Probes                    3
+main.c(191) dint: label: Strings, val: 4
+main.c(203) dint: temp: %-25s %d
+Strings                   4
+main.c(256) dstr: dint: label: Temps, val: 22.5,22.3,21.7
+main.c(268) dstr: temp: %-25s %s
+Temps                     22.5,22.3,21.7
+main.c(256) dstr: dint: label: Cells, val: 3.910,3.902,3.896,3.902
+main.c(268) dstr: temp: %-25s %s
+Cells                     3.910,3.902,3.896,3.902
+main.c(256) dstr: dint: label: Balance, val: 0000
+main.c(268) dstr: temp: %-25s %s
+Balance                   0000
+main.c(234) dfloat: dint: label: CellTotal, val: 15.610001
+main.c(246) dfloat: temp: %-25s %.3f
+CellTotal                 15.610
+main.c(234) dfloat: dint: label: CellMin, val: 3.896000
+main.c(246) dfloat: temp: %-25s %.3f
+CellMin                   3.896
+main.c(234) dfloat: dint: label: CellMax, val: 3.910000
+main.c(246) dfloat: temp: %-25s %.3f
+CellMax                   3.910
+main.c(234) dfloat: dint: label: CellDiff, val: 0.014000
+main.c(246) dfloat: temp: %-25s %.3f
+CellDiff                  0.014
+main.c(234) dfloat: dint: label: CellAvg, val: 3.902500
+main.c(246) dfloat: temp: %-25s %.3f
+CellAvg                   3.903
+main.c(256) dstr: dint: label: DeviceName, val: JBD-SP04S034-L4S-200A-B-U
+main.c(268) dstr: temp: %-25s %s
+DeviceName                JBD-SP04S034-L4S-200A-B-U
+main.c(256) dstr: dint: label: ManufactureDate, val: 20220328
+main.c(268) dstr: temp: %-25s %s
+ManufactureDate           20220328
+main.c(234) dfloat: dint: label: Version, val: 12.800000
+main.c(246) dfloat: temp: %-25s %.1f
+Version                   12.8
+main.c(256) dstr: dint: label: FET, val: Charge,Discharge
+main.c(268) dstr: temp: %-25s %s
+FET                       Charge,Discharge
+serial.c(485) serial_close: fd: 4
+main.c(1272) main: unlocking target

@@ -1,0 +1,21 @@
+$ ./jbdtool -t serial:/dev/ttyUSB0,9600
+Voltage                   15.610
+Current                   0.000
+DesignCapacity            5.000
+RemainingCapacity         4.980
+PercentCapacity           100
+CycleCount                0
+Probes                    3
+Strings                   4
+Temps                     22.3,22.3,21.7
+Cells                     3.911,3.902,3.896,3.902
+Balance                   0000
+CellTotal                 15.611
+CellMin                   3.896
+CellMax                   3.911
+CellDiff                  0.015
+CellAvg                   3.903
+DeviceName                JBD-SP04S034-L4S-200A-B-U
+ManufactureDate           20220328
+Version                   12.8
+FET                       Charge,Discharge
