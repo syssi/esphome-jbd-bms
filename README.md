@@ -20,6 +20,8 @@ Untested but probably supported devices:
 * JBD-SP15S020 30/40/60A 15S
 * JBD-SP04S020 4S
 * JBD-SP04S005 4S 150A
+* JBD-SP05S002 4S 80A
+* JBD-SP15S001 14S 60A
 
 ## Requirements
 
