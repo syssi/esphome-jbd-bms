@@ -1,13 +1,17 @@
 substitutions:
   name: jbd-bms-uart
   external_components_source: github://syssi/esphome-jbd-bms@main
-  tx_pin: GPIO1
-  rx_pin: GPIO3
+  tx_pin: GPIO16
+  rx_pin: GPIO17
 
 esphome:
   name: ${name}
-  platform: ESP32
-  board: esp-wrover-kit
+
+esp32:
+  board: wemos_d1_mini32
+  framework:
+    type: esp-idf
+    version: latest
 
 external_components:
   - source: ${external_components_source}
@@ -20,7 +24,6 @@ wifi:
 ota:
 api:
 logger:
-  baud_rate: 0
 
 uart:
   baud_rate: 9600
