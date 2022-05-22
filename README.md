@@ -11,6 +11,7 @@ ESPHome component to monitor a JBD-BMS via UART
 ## Supported devices
 
 * JBD-SP04S034 200A 4S V1.3 (JBD-SP04S034-L4S-200A-B-U)
+* JBD-SP04S020 120A 4S (JBD-SP04S020-L4S-120A-B-U-K, reported by [@Bretthansenpc](https://github.com/syssi/esphome-jbd-bms/issues/1#issuecomment-1133964580))
 
 ## Untested devices
 
