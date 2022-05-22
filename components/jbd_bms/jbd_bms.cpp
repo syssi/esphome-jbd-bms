@@ -232,7 +232,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   float total_voltage = jbd_get_16bit(0) * 0.01f;
   this->publish_state_(this->total_voltage_sensor_, total_voltage);
 
-  float current = jbd_get_16bit(2) * 0.01f;
+  float current = (float) ((int) jbd_get_16bit(2)) * 0.01f;
   this->publish_state_(this->current_sensor_, current);
   this->publish_state_(this->power_sensor_, total_voltage * current);
   this->publish_state_(this->capacity_remaining_sensor_, (float) jbd_get_16bit(4) * 0.01f);
