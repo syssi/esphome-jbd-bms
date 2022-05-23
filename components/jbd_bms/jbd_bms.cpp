@@ -233,8 +233,11 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->total_voltage_sensor_, total_voltage);
 
   float current = (float) ((int16_t) jbd_get_16bit(2)) * 0.01f;
+  float power = total_voltage * current;
   this->publish_state_(this->current_sensor_, current);
-  this->publish_state_(this->power_sensor_, total_voltage * current);
+  this->publish_state_(this->power_sensor_, power);
+  this->publish_state_(this->charging_power_sensor_, std::max(0.0f, power));               // 500W vs 0W -> 500W
+  this->publish_state_(this->discharging_power_sensor_, std::abs(std::min(0.0f, power)));  // -500W vs 0W -> 500W
   this->publish_state_(this->capacity_remaining_sensor_, (float) jbd_get_16bit(4) * 0.01f);
   this->publish_state_(this->nominal_capacity_sensor_, (float) jbd_get_16bit(6) * 0.01f);
   this->publish_state_(this->charging_cycles_sensor_, (float) jbd_get_16bit(8));
@@ -292,6 +295,8 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   LOG_SENSOR("", "Software version", this->software_version_sensor_);
   LOG_SENSOR("", "Current", this->current_sensor_);
   LOG_SENSOR("", "Power", this->power_sensor_);
+  LOG_SENSOR("", "Charging Power", this->charging_power_sensor_);
+  LOG_SENSOR("", "Discharging Power", this->discharging_power_sensor_);
   LOG_SENSOR("", "State of charge", this->state_of_charge_sensor_);
   LOG_SENSOR("", "Nominal capacity", this->nominal_capacity_sensor_);
   LOG_SENSOR("", "Charging cycles", this->charging_cycles_sensor_);

@@ -47,6 +47,10 @@ sensor:
       name: "${name} current"
     power:
       name: "${name} power"
+    charging_power:
+      name: "${name} charging power"
+    discharging_power:
+      name: "${name} discharging power"
     state_of_charge:
       name: "${name} state of charge"
     nominal_capacity:

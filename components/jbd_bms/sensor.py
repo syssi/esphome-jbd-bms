@@ -1,6 +1,6 @@
 import esphome.codegen as cg
-import esphome.config_validation as cv
 from esphome.components import sensor
+import esphome.config_validation as cv
 from esphome.const import (
     CONF_CURRENT,
     CONF_POWER,
@@ -31,6 +31,8 @@ CONF_CHARGING_CYCLES = "charging_cycles"
 CONF_CAPACITY_REMAINING = "capacity_remaining"
 CONF_BATTERY_CYCLE_CAPACITY = "battery_cycle_capacity"
 CONF_TOTAL_VOLTAGE = "total_voltage"
+CONF_CHARGING_POWER = "charging_power"
+CONF_DISCHARGING_POWER = "discharging_power"
 
 CONF_MIN_CELL_VOLTAGE = "min_cell_voltage"
 CONF_MAX_CELL_VOLTAGE = "max_cell_voltage"
@@ -150,6 +152,8 @@ SENSORS = [
     CONF_TOTAL_VOLTAGE,
     CONF_CURRENT,
     CONF_POWER,
+    CONF_CHARGING_POWER,
+    CONF_DISCHARGING_POWER,
     CONF_NOMINAL_CAPACITY,
     CONF_CHARGING_CYCLES,
     CONF_CAPACITY_REMAINING,
@@ -258,6 +262,20 @@ CONFIG_SCHEMA = cv.Schema(
             unit_of_measurement=UNIT_WATT,
             icon=ICON_EMPTY,
             accuracy_decimals=1,
+            device_class=DEVICE_CLASS_POWER,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_CHARGING_POWER): sensor.sensor_schema(
+            unit_of_measurement=UNIT_WATT,
+            icon=ICON_EMPTY,
+            accuracy_decimals=2,
+            device_class=DEVICE_CLASS_POWER,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_DISCHARGING_POWER): sensor.sensor_schema(
+            unit_of_measurement=UNIT_WATT,
+            icon=ICON_EMPTY,
+            accuracy_decimals=2,
             device_class=DEVICE_CLASS_POWER,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
