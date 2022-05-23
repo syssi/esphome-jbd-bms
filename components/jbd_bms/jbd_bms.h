@@ -33,6 +33,12 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void set_total_voltage_sensor(sensor::Sensor *total_voltage_sensor) { total_voltage_sensor_ = total_voltage_sensor; }
   void set_current_sensor(sensor::Sensor *current_sensor) { current_sensor_ = current_sensor; }
   void set_power_sensor(sensor::Sensor *power_sensor) { power_sensor_ = power_sensor; }
+  void set_charging_power_sensor(sensor::Sensor *charging_power_sensor) {
+    charging_power_sensor_ = charging_power_sensor;
+  }
+  void set_discharging_power_sensor(sensor::Sensor *discharging_power_sensor) {
+    discharging_power_sensor_ = discharging_power_sensor;
+  }
   void set_nominal_capacity_sensor(sensor::Sensor *nominal_capacity_sensor) {
     nominal_capacity_sensor_ = nominal_capacity_sensor;
   }
@@ -108,6 +114,8 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   sensor::Sensor *total_voltage_sensor_;
   sensor::Sensor *current_sensor_;
   sensor::Sensor *power_sensor_;
+  sensor::Sensor *charging_power_sensor_;
+  sensor::Sensor *discharging_power_sensor_;
   sensor::Sensor *nominal_capacity_sensor_;
   sensor::Sensor *charging_cycles_sensor_;
   sensor::Sensor *capacity_remaining_sensor_;
