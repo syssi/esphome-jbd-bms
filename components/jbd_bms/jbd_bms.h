@@ -103,7 +103,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
     device_model_text_sensor_ = device_model_text_sensor;
   }
   void set_enable_fake_traffic(bool enable_fake_traffic) { enable_fake_traffic_ = enable_fake_traffic; }
-  void set_rx_timeout(uint16_t rx_timeout) { rx_timeout = rx_timeout; }
+  void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
   void write_register(uint8_t address, uint16_t value);
 
  protected:
