@@ -24,6 +24,9 @@ uart:
   debug:
     direction: BOTH
     dummy_receiver: true
+    after:
+      # 100ms ... 750ms
+      timeout: 100ms
 
 interval:
   - interval: 2s
