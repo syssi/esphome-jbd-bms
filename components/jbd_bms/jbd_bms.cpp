@@ -226,8 +226,8 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   // 25    2   0x0B 0x8C              Temperature 2
   // 27    2   0x0B 0x88              Temperature 3
 
-  ESP_LOGVV(TAG, "Hardware info:");
-  ESP_LOGVV(TAG, "  Device model: %s", this->device_model_.c_str());
+  ESP_LOGD(TAG, "Hardware info:");
+  ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
 
   float total_voltage = jbd_get_16bit(0) * 0.01f;
   this->publish_state_(this->total_voltage_sensor_, total_voltage);
@@ -243,7 +243,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->charging_cycles_sensor_, (float) jbd_get_16bit(8));
 
   uint16_t production_date = jbd_get_16bit(10);
-  ESP_LOGI(TAG, "  Date of manufacture: %d.%d.%d", 2000 + (production_date >> 9), (production_date >> 5) & 0x0f,
+  ESP_LOGD(TAG, "  Date of manufacture: %d.%d.%d", 2000 + (production_date >> 9), (production_date >> 5) & 0x0f,
            production_date & 0x1f);
 
   uint32_t balance_status_bitmask = jbd_get_32bit(12);
