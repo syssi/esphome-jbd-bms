@@ -145,10 +145,9 @@ logger:
 
 uart:
   id: uart0
-  baud_rate: 19200
-  rx_buffer_size: 384
-  tx_pin: GPIO14
-  rx_pin: GPIO4
+  baud_rate: 9600
+  tx_pin: GPIO4
+  rx_pin: GPIO5
   debug:
     direction: BOTH
 ```
