@@ -48,7 +48,7 @@ void JbdBms::setup() { this->send_command_(JBD_CMD_READ, JBD_CMD_HWVER); }
 void JbdBms::loop() {
   const uint32_t now = millis();
 
-  if (now - this->last_byte_ > 750) {
+  if (now - this->last_byte_ > this->rx_timeout_) {
     this->rx_buffer_.clear();
     this->last_byte_ = now;
   }
