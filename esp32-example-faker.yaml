@@ -1,0 +1,4 @@
+<<: !include esp32-example-debug.yaml
+
+jbd_bms:
+  enable_fake_traffic: true

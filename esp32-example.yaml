@@ -34,8 +34,6 @@ uart:
   baud_rate: 9600
   tx_pin: ${tx_pin}
   rx_pin: ${rx_pin}
-  debug:
-    direction: BOTH
 
 jbd_bms:
   rx_timeout: 150ms

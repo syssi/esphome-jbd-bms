@@ -1,0 +1,4 @@
+<<: !include esp8266-example-debug.yaml
+
+jbd_bms:
+  enable_fake_traffic: true
