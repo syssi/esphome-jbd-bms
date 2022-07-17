@@ -1,12 +1,18 @@
 substitutions:
   name: jbd-bms-uart
+  device_description: "Monitor and control a Xiaoxiang Battery Management System (JBD-BMS) via UART"
   external_components_source: github://syssi/esphome-jbd-bms@main
   tx_pin: GPIO4
   rx_pin: GPIO5
 
 esphome:
   name: ${name}
-  platform: ESP8266
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jbd-bms"
+    version: 1.1.0
+
+esp8266:
   board: d1_mini
 
 external_components:
