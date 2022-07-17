@@ -19,7 +19,9 @@ CONFIG_SCHEMA = (
         {
             cv.GenerateID(): cv.declare_id(JbdBms),
             cv.Optional(CONF_ENABLE_FAKE_TRAFFIC, default=False): cv.boolean,
-            cv.Optional(CONF_RX_TIMEOUT, default="200ms"): cv.positive_time_period_milliseconds,
+            cv.Optional(
+                CONF_RX_TIMEOUT, default="200ms"
+            ): cv.positive_time_period_milliseconds,
         }
     )
     .extend(cv.polling_component_schema("2s"))
