@@ -4,6 +4,7 @@ substitutions:
   external_components_source: github://syssi/esphome-jbd-bms@main
   tx_pin: GPIO4
   rx_pin: GPIO5
+  rx_timeout: 150ms
 
 esphome:
   name: ${name}
@@ -33,7 +34,7 @@ uart:
   rx_pin: ${rx_pin}
 
 jbd_bms:
-  rx_timeout: 150ms
+  rx_timeout: ${rx_timeout}
 
 binary_sensor:
   - platform: jbd_bms
