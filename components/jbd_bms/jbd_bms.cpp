@@ -64,7 +64,26 @@ void JbdBms::loop() {
   }
 }
 
-void JbdBms::update() { this->send_command_(JBD_CMD_READ, JBD_CMD_HWINFO); }
+void JbdBms::update() {
+  this->send_command_(JBD_CMD_READ, JBD_CMD_HWINFO);
+
+  if (this->enable_fake_traffic_) {
+    // Start: 0xDD 0x03 0x00 0x1D
+    this->on_jbd_bms_data_(JBD_CMD_HWINFO, {0x06, 0x18, 0x00, 0x00, 0x01, 0xF2, 0x01, 0xF4, 0x00, 0x00, 0x2C,
+                                            0x7C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x64, 0x03, 0x04,
+                                            0x03, 0x0B, 0x8B, 0x0B, 0x8A, 0x0B, 0x84, 0xFA, 0x8D, 0x77});
+    // End: 0xFA 0x8D 0x77
+
+    // Start: 0xDD 0x04 0x00 0x08
+    this->on_jbd_bms_data_(JBD_CMD_CELLINFO, {0x0F, 0x45, 0x0F, 0x3D, 0x0F, 0x37, 0x0F, 0x3D, 0xFE, 0xC6, 0x77});
+    // End: 0xFE 0xC6 0x77
+
+    // Start: 0xDD 0x05 0x00 0x19
+    this->on_jbd_bms_data_(JBD_CMD_HWVER, {0x4A, 0x42, 0x44, 0x2D, 0x53, 0x50, 0x30, 0x34, 0x53, 0x30, 0x33, 0x34, 0x2D,
+                                           0x4C, 0x34, 0x53, 0x2D, 0x32, 0x30, 0x30, 0x41, 0x2D, 0x42, 0x2D, 0x55});
+    // End: 0xFA, 0x08, 0x77
+  }
+}
 
 bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
   size_t at = this->rx_buffer_.size();
@@ -289,6 +308,8 @@ void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
 
 void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   ESP_LOGCONFIG(TAG, "JbdBms:");
+  ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
+  ESP_LOGCONFIG(TAG, "  Fake traffic enabled: %s", YESNO(this->enable_fake_traffic_));
 
   LOG_SENSOR("", "Total voltage", this->total_voltage_sensor_);
   LOG_SENSOR("", "Battery strings", this->battery_strings_sensor_);
@@ -344,7 +365,6 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   LOG_SENSOR("", "Cell Voltage 30", this->cells_[29].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 31", this->cells_[30].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 32", this->cells_[31].cell_voltage_sensor_);
-  ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
 }
 float JbdBms::get_setup_priority() const {
   // After UART bus
