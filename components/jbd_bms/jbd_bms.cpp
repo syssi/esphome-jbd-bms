@@ -48,7 +48,7 @@ void JbdBms::setup() { this->send_command_(JBD_CMD_READ, JBD_CMD_HWVER); }
 void JbdBms::loop() {
   const uint32_t now = millis();
 
-  if (now - this->last_byte_ > 50) {
+  if (now - this->last_byte_ > this->rx_timeout_) {
     this->rx_buffer_.clear();
     this->last_byte_ = now;
   }
@@ -344,6 +344,7 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   LOG_SENSOR("", "Cell Voltage 30", this->cells_[29].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 31", this->cells_[30].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 32", this->cells_[31].cell_voltage_sensor_);
+  ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
 }
 float JbdBms::get_setup_priority() const {
   // After UART bus
