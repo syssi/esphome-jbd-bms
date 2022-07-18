@@ -308,6 +308,8 @@ void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
 
 void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   ESP_LOGCONFIG(TAG, "JbdBms:");
+  ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
+  ESP_LOGCONFIG(TAG, "  Fake traffic enabled: %s", YESNO(this->enable_fake_traffic_));
 
   LOG_SENSOR("", "Total voltage", this->total_voltage_sensor_);
   LOG_SENSOR("", "Battery strings", this->battery_strings_sensor_);
@@ -363,7 +365,6 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   LOG_SENSOR("", "Cell Voltage 30", this->cells_[29].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 31", this->cells_[30].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 32", this->cells_[31].cell_voltage_sensor_);
-  ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
 }
 float JbdBms::get_setup_priority() const {
   // After UART bus
