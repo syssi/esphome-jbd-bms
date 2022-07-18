@@ -35,7 +35,7 @@ uart:
     direction: BOTH
 
 jbd_bms:
-  rx_timeout: 200ms
+  rx_timeout: 150ms
 
 binary_sensor:
   - platform: jbd_bms
