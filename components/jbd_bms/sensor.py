@@ -86,6 +86,7 @@ CONF_TEMPERATURE_4 = "temperature_4"
 CONF_TEMPERATURE_5 = "temperature_5"
 CONF_TEMPERATURE_6 = "temperature_6"
 
+ICON_CURRENT_DC = "mdi:current-dc"
 ICON_STATE_OF_CHARGE = "mdi:battery-50"
 ICON_BATTERY_STRINGS = "mdi:car-battery"
 ICON_CAPACITY_REMAINING = "mdi:battery-50"
@@ -190,7 +191,7 @@ CONFIG_SCHEMA = cv.Schema(
         ),
         cv.Optional(CONF_CURRENT): sensor.sensor_schema(
             unit_of_measurement=UNIT_AMPERE,
-            icon=ICON_EMPTY,
+            icon=ICON_CURRENT_DC,
             accuracy_decimals=1,
             device_class=DEVICE_CLASS_CURRENT,
             state_class=STATE_CLASS_MEASUREMENT,
