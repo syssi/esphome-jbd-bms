@@ -190,7 +190,10 @@ ble_client:
 #     device_model:
 #       name: "${name} device model"
 
-# switch:
+switch:
+  - platform: ble_client
+    ble_client_id: client0
+    name: "${name} enable bluetooth connection"
 #   - platform: jbd_bms_ble
 #     charging:
 #       name: "${name} charging"
