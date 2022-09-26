@@ -1,0 +1,7 @@
+<<: !include esp32-ble-example-debug.yaml
+
+jbd_bms_ble:
+  - ble_client_id: client0
+    update_interval: 1s
+    id: bms0
+    enable_fake_traffic: true

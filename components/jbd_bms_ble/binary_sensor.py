@@ -3,10 +3,10 @@ from esphome.components import binary_sensor
 import esphome.config_validation as cv
 from esphome.const import CONF_ICON, CONF_ID
 
-from . import CONF_JBD_BMS_ID, JbdBms
+from . import CONF_JBD_BMS_BLE_ID, JbdBmsBle
 from .const import CONF_CHARGING, CONF_DISCHARGING
 
-DEPENDENCIES = ["jbd_bms"]
+DEPENDENCIES = ["jbd_bms_ble"]
 
 CODEOWNERS = ["@syssi"]
 
@@ -24,7 +24,7 @@ BINARY_SENSORS = [
 
 CONFIG_SCHEMA = cv.Schema(
     {
-        cv.GenerateID(CONF_JBD_BMS_ID): cv.use_id(JbdBms),
+        cv.GenerateID(CONF_JBD_BMS_BLE_ID): cv.use_id(JbdBmsBle),
         cv.Optional(CONF_CHARGING): binary_sensor.BINARY_SENSOR_SCHEMA.extend(
             {
                 cv.GenerateID(): cv.declare_id(binary_sensor.BinarySensor),
@@ -48,7 +48,7 @@ CONFIG_SCHEMA = cv.Schema(
 
 
 async def to_code(config):
-    hub = await cg.get_variable(config[CONF_JBD_BMS_ID])
+    hub = await cg.get_variable(config[CONF_JBD_BMS_BLE_ID])
     for key in BINARY_SENSORS:
         if key in config:
             conf = config[key]
