@@ -11,7 +11,7 @@ esphome:
   comment: ${device_description}
   project:
     name: "syssi.esphome-jbd-bms"
-    version: 1.1.0
+    version: 1.2.0
 
 esp32:
   board: wemos_d1_mini32
@@ -28,8 +28,19 @@ wifi:
   password: !secret wifi_password
 
 ota:
-api:
 logger:
+
+# If you don't use Home Assistant please remove this `api` section and uncomment the `mqtt` component!
+api:
+
+# The MQTT component is ESP-IDF compatible since ESPHome version 2022.4.0. If
+# ESPHome suggests to use the arduino framework instead because of missing ESP-IDF
+# framework support you should update your setup.
+# mqtt:
+#   broker: !secret mqtt_host
+#   username: !secret mqtt_username
+#   password: !secret mqtt_password
+#   id: mqtt_client
 
 uart:
   baud_rate: 9600
