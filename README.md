@@ -134,7 +134,7 @@ See [Jiabaida.communication.protocol.pdf](docs/Jiabaida.communication.protocol.p
 
 ## Known issues
 
-* If the BMS doesn't respond to an ESP8266 using hardware serial (`GPIO1`/`GPIO3`) please try to use software serial (f.e. `GPIO4`/`GPIO5`). There are no problems known if you use one of the three hardware supported serial interfaces of an ESP32.
+None.
 
 ## Debugging
 
