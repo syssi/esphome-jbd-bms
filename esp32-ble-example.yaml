@@ -1,0 +1,203 @@
+substitutions:
+  name: jbd-bms-ble
+  device_description: "Monitor and control a Xiaoxiang Battery Management System (JBD-BMS) via BLE"
+  external_components_source: github://syssi/esphome-jbd-bms@add-ble-support
+  mac_address: 70:3e:97:07:c0:3e
+
+esphome:
+  name: ${name}
+  comment: ${device_description}
+  project:
+    name: "syssi.esphome-jbd-bms"
+    version: 1.1.0
+
+esp32:
+  board: wemos_d1_mini32
+  framework:
+    type: esp-idf
+    version: latest
+
+external_components:
+  - source: ${external_components_source}
+    refresh: 0s
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+ota:
+logger:
+
+# If you don't use Home Assistant please remove this `api` section and uncomment the `mqtt` component!
+api:
+
+# The MQTT component is ESP-IDF compatible since ESPHome version 2022.4.0. If
+# ESPHome suggests to use the arduino framework instead because of missing ESP-IDF
+# framework support you should update your setup.
+# mqtt:
+#   broker: !secret mqtt_host
+#   username: !secret mqtt_username
+#   password: !secret mqtt_password
+#   id: mqtt_client
+
+esp32_ble_tracker:
+
+ble_client:
+  - mac_address: ${mac_address}
+    id: client0
+
+jbd_bms_ble:
+  - ble_client_id: client0
+    id: bms0
+
+binary_sensor:
+  - platform: jbd_bms_ble
+    balancing:
+      name: "${name} balancing"
+    charging:
+      name: "${name} charging"
+    discharging:
+      name: "${name} discharging"
+
+sensor:
+  - platform: jbd_bms_ble
+    battery_strings:
+      name: "${name} battery strings"
+    current:
+      name: "${name} current"
+    power:
+      name: "${name} power"
+    charging_power:
+      name: "${name} charging power"
+    discharging_power:
+      name: "${name} discharging power"
+    state_of_charge:
+      name: "${name} state of charge"
+    nominal_capacity:
+      name: "${name} nominal capacity"
+    charging_cycles:
+      name: "${name} charging cycles"
+    capacity_remaining:
+      name: "${name} capacity remaining"
+    battery_cycle_capacity:
+      name: "${name} battery cycle capacity"
+    total_voltage:
+      name: "${name} total voltage"
+    average_cell_voltage:
+      name: "${name} average cell voltage"
+    delta_cell_voltage:
+      name: "${name} delta cell voltage"
+    min_cell_voltage:
+      name: "${name} min cell voltage"
+    max_cell_voltage:
+      name: "${name} max cell voltage"
+    min_voltage_cell:
+      name: "${name} min voltage cell"
+    max_voltage_cell:
+      name: "${name} max voltage cell"
+    temperature_1:
+      name: "${name} temperature 1"
+    temperature_2:
+      name: "${name} temperature 2"
+    temperature_3:
+      name: "${name} temperature 3"
+    temperature_4:
+      name: "${name} temperature 4"
+    temperature_5:
+      name: "${name} temperature 5"
+    temperature_6:
+      name: "${name} temperature 6"
+    cell_voltage_1:
+      name: "${name} cell voltage 1"
+    cell_voltage_2:
+      name: "${name} cell voltage 2"
+    cell_voltage_3:
+      name: "${name} cell voltage 3"
+    cell_voltage_4:
+      name: "${name} cell voltage 4"
+    cell_voltage_5:
+      name: "${name} cell voltage 5"
+    cell_voltage_6:
+      name: "${name} cell voltage 6"
+    cell_voltage_7:
+      name: "${name} cell voltage 7"
+    cell_voltage_8:
+      name: "${name} cell voltage 8"
+    cell_voltage_9:
+      name: "${name} cell voltage 9"
+    cell_voltage_10:
+      name: "${name} cell voltage 10"
+    cell_voltage_11:
+      name: "${name} cell voltage 11"
+    cell_voltage_12:
+      name: "${name} cell voltage 12"
+    cell_voltage_13:
+      name: "${name} cell voltage 13"
+    cell_voltage_14:
+      name: "${name} cell voltage 14"
+    cell_voltage_15:
+      name: "${name} cell voltage 15"
+    cell_voltage_16:
+      name: "${name} cell voltage 16"
+    cell_voltage_17:
+      name: "${name} cell voltage 17"
+    cell_voltage_18:
+      name: "${name} cell voltage 18"
+    cell_voltage_19:
+      name: "${name} cell voltage 19"
+    cell_voltage_20:
+      name: "${name} cell voltage 20"
+    cell_voltage_21:
+      name: "${name} cell voltage 21"
+    cell_voltage_22:
+      name: "${name} cell voltage 22"
+    cell_voltage_23:
+      name: "${name} cell voltage 23"
+    cell_voltage_24:
+      name: "${name} cell voltage 24"
+    cell_voltage_25:
+      name: "${name} cell voltage 25"
+    cell_voltage_26:
+      name: "${name} cell voltage 26"
+    cell_voltage_27:
+      name: "${name} cell voltage 27"
+    cell_voltage_28:
+      name: "${name} cell voltage 28"
+    cell_voltage_29:
+      name: "${name} cell voltage 29"
+    cell_voltage_30:
+      name: "${name} cell voltage 30"
+    cell_voltage_31:
+      name: "${name} cell voltage 31"
+    cell_voltage_32:
+      name: "${name} cell voltage 32"
+    operation_status_bitmask:
+      name: "${name} operation status bitmask"
+    errors_bitmask:
+      name: "${name} errors bitmask"
+    balancer_status_bitmask:
+      name: "${name} balancer status bitmask"
+    software_version:
+      name: "${name} software version"
+
+text_sensor:
+  - platform: jbd_bms_ble
+    errors:
+      name: "${name} errors"
+    operation_status:
+      name: "${name} operation status"
+    device_model:
+      name: "${name} device model"
+
+switch:
+  - platform: ble_client
+    ble_client_id: client0
+    name: "${name} enable bluetooth connection"
+
+  - platform: jbd_bms_ble
+    charging:
+      name: "${name} charging"
+    discharging:
+      name: "${name} discharging"
+    balancer:
+      name: "${name} balancer"
