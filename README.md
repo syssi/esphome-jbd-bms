@@ -12,6 +12,7 @@ ESPHome component to monitor and control a JBD-BMS via UART
 
 * JBD-SP04S034 200A 4S V1.3 (JBD-SP04S034-L4S-200A-B-U)
 * JBD-SP04S020 120A 4S (JBD-SP04S020-L4S-120A-B-U-K, reported by [@Bretthansenpc](https://github.com/syssi/esphome-jbd-bms/issues/1#issuecomment-1133964580))
+* JBD-AP20S006 200A 20S (JBD-AP20S006-L20S-200A-B, reported by [@rk125](https://github.com/syssi/esphome-jbd-bms/discussions/16))
 * CLRD LFP-82460-COMM, 8S 24V 60A (15710026-SP10S020-L8S-50A-50AH, reported by [@andrewww173](https://github.com/syssi/esphome-jbd-bms/issues/4#issuecomment-1188292512))
 
 ## Untested devices
