@@ -197,8 +197,8 @@ void JbdBmsBle::on_cell_info_data_(const std::vector<uint8_t> &data) {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
 
-  ESP_LOGD(TAG, "Cell info frame (%d bytes):", data.size());
-  ESP_LOGD(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+  ESP_LOGVV(TAG, "Cell info frame (%d bytes):", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
 
   uint8_t data_len = data.size();
   if (data_len < 2 || data_len > 64 || (data_len % 2) != 0) {
@@ -248,8 +248,8 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
     return (uint32_t(jbd_get_16bit(i + 0)) << 16) | (uint32_t(jbd_get_16bit(i + 2)) << 0);
   };
 
-  ESP_LOGD(TAG, "Hardware info frame (%d bytes):", data.size());
-  ESP_LOGD(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+  ESP_LOGVV(TAG, "Hardware info frame (%d bytes):", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
 
   // Byte Len  Payload                Content              Coeff.      Unit        Example value
   // 0     2   0x06 0x17              Total voltage                                1559
@@ -269,8 +269,8 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   // 25    2   0x0B 0x8C              Temperature 2
   // 27    2   0x0B 0x88              Temperature 3
 
-  ESP_LOGD(TAG, "Hardware info:");
-  ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
+  ESP_LOGVV(TAG, "Hardware info:");
+  ESP_LOGVV(TAG, "  Device model: %s", this->device_model_.c_str());
 
   float total_voltage = jbd_get_16bit(0) * 0.01f;
   this->publish_state_(this->total_voltage_sensor_, total_voltage);
