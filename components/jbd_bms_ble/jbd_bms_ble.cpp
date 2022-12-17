@@ -11,7 +11,7 @@ static const uint16_t JBD_BMS_SERVICE_UUID = 0xFF00;
 static const uint16_t JBD_BMS_NOTIFY_CHARACTERISTIC_UUID = 0xFF01;
 static const uint16_t JBD_BMS_CONTROL_CHARACTERISTIC_UUID = 0xFF02;
 
-static const uint16_t MAX_RESPONSE_SIZE = 36;
+static const uint16_t MAX_RESPONSE_SIZE = 41;
 
 static const uint8_t JBD_PKT_START = 0xDD;
 static const uint8_t JBD_PKT_END = 0x77;
