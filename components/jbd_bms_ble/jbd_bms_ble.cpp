@@ -269,8 +269,8 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   // 25    2   0x0B 0x8C              Temperature 2
   // 27    2   0x0B 0x88              Temperature 3
 
-  ESP_LOGVV(TAG, "Hardware info:");
-  ESP_LOGVV(TAG, "  Device model: %s", this->device_model_.c_str());
+  ESP_LOGD(TAG, "Hardware info:");
+  ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
 
   float total_voltage = jbd_get_16bit(0) * 0.01f;
   this->publish_state_(this->total_voltage_sensor_, total_voltage);
@@ -319,8 +319,8 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
 }
 
 void JbdBmsBle::on_hardware_version_data_(const std::vector<uint8_t> &data) {
-  ESP_LOGD(TAG, "Hardware version frame (%d bytes):", data.size());
-  ESP_LOGD(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+  ESP_LOGVV(TAG, "Hardware version frame (%d bytes):", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
 
   // Byte Len  Payload                                              Content
   // 0    25   0x4A 0x42 0x44 0x2D 0x53 0x50 0x30 0x34 0x53 0x30
