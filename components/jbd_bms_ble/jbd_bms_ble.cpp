@@ -197,6 +197,9 @@ void JbdBmsBle::on_cell_info_data_(const std::vector<uint8_t> &data) {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
 
+  ESP_LOGVV(TAG, "Cell info frame (%d bytes):", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+
   uint8_t data_len = data.size();
   if (data_len < 2 || data_len > 64 || (data_len % 2) != 0) {
     ESP_LOGW(TAG, "Skipping cell info frame because of invalid length: %d", data_len);
@@ -244,6 +247,9 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   auto jbd_get_32bit = [&](size_t i) -> uint32_t {
     return (uint32_t(jbd_get_16bit(i + 0)) << 16) | (uint32_t(jbd_get_16bit(i + 2)) << 0);
   };
+
+  ESP_LOGVV(TAG, "Hardware info frame (%d bytes):", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
 
   // Byte Len  Payload                Content              Coeff.      Unit        Example value
   // 0     2   0x06 0x17              Total voltage                                1559
@@ -313,6 +319,9 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
 }
 
 void JbdBmsBle::on_hardware_version_data_(const std::vector<uint8_t> &data) {
+  ESP_LOGVV(TAG, "Hardware version frame (%d bytes):", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+
   // Byte Len  Payload                                              Content
   // 0    25   0x4A 0x42 0x44 0x2D 0x53 0x50 0x30 0x34 0x53 0x30
   //           0x33 0x34 0x2D 0x4C 0x34 0x53 0x2D 0x32 0x30 0x30
