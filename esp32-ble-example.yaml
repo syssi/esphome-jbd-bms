@@ -49,6 +49,7 @@ ble_client:
 jbd_bms_ble:
   - ble_client_id: client0
     id: bms0
+    update_interval: 2s
 
 binary_sensor:
   - platform: jbd_bms_ble

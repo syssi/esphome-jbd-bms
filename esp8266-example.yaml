@@ -45,6 +45,7 @@ uart:
   rx_pin: ${rx_pin}
 
 jbd_bms:
+  update_interval: 2s
   rx_timeout: ${rx_timeout}
 
 binary_sensor:
