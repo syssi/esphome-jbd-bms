@@ -142,6 +142,10 @@ See [Jiabaida.communication.protocol.pdf](docs/Jiabaida.communication.protocol.p
 
 None.
 
+## Goodies
+
+A user of this project ([@the-butterfry](https://github.com/the-butterfry) shared some YAML code for [a beautiful status display using a 1.54 e-paper display here](https://github.com/syssi/esphome-jbd-bms/discussions/19)).
+
 ## Debugging
 
 If this component doesn't work out of the box for your device please update your configuration to enable the debug output of the UART component and increase the log level to the see outgoing and incoming serial traffic:
