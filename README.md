@@ -143,7 +143,7 @@ None.
 
 ## Goodies
 
-A user of this project ([@the-butterfry](https://github.com/the-butterfry)) shared some YAML code for [a beautiful status display using a 1.54 e-paper display here](https://github.com/syssi/esphome-jbd-bms/discussions/19)).
+A user of this project ([@the-butterfry](https://github.com/the-butterfry)) shared some YAML code for [a beautiful status display using a 1.54 e-paper display here](https://github.com/syssi/esphome-jbd-bms/discussions/19).
 
 ![1.54 e-paper status display](images/eink-status-display.jpg "1.54 e-paper status display")
 
