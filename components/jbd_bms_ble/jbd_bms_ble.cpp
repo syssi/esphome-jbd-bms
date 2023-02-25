@@ -337,6 +337,10 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   ESP_LOGCONFIG(TAG, "JbdBmsBle:");
   ESP_LOGCONFIG(TAG, "  Fake traffic enabled: %s", YESNO(this->enable_fake_traffic_));
 
+  LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Discharging", this->discharging_binary_sensor_);
+
   LOG_SENSOR("", "Total voltage", this->total_voltage_sensor_);
   LOG_SENSOR("", "Battery strings", this->battery_strings_sensor_);
   LOG_SENSOR("", "Software version", this->software_version_sensor_);
@@ -391,6 +395,10 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   LOG_SENSOR("", "Cell Voltage 30", this->cells_[29].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 31", this->cells_[30].cell_voltage_sensor_);
   LOG_SENSOR("", "Cell Voltage 32", this->cells_[31].cell_voltage_sensor_);
+
+  LOG_TEXT_SENSOR("", "Operation status", this->operation_status_text_sensor_);
+  LOG_TEXT_SENSOR("", "Errors", this->errors_text_sensor_);
+  LOG_TEXT_SENSOR("", "Device model", this->device_model_text_sensor_);
 }
 
 void JbdBmsBle::publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state) {
