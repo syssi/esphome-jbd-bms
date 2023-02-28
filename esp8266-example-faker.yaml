@@ -2,6 +2,7 @@
 
 jbd_bms:
   - id: bms0
+    uart_id: uart0
     update_interval: 2s
     rx_timeout: ${rx_timeout}
     enable_fake_traffic: true
