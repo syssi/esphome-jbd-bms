@@ -11,7 +11,7 @@ esphome:
   comment: ${device_description}
   project:
     name: "syssi.esphome-jbd-bms"
-    version: 1.3.0
+    version: 1.4.0
 
 esp8266:
   board: d1_mini
@@ -27,29 +27,29 @@ wifi:
 ota:
 logger:
 
-# If you don't use Home Assistant please remove this `api` section and uncomment the `mqtt` component!
-api:
+# If you use Home Assistant please remove this `mqtt` section and uncomment the native `api` component!
+# api:
 
-# The MQTT component is ESP-IDF compatible since ESPHome version 2022.4.0. If
-# ESPHome suggests to use the arduino framework instead because of missing ESP-IDF
-# framework support you should update your setup.
-# mqtt:
-#   broker: !secret mqtt_host
-#   username: !secret mqtt_username
-#   password: !secret mqtt_password
-#   id: mqtt_client
+mqtt:
+  broker: !secret mqtt_host
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  id: mqtt_client
 
 uart:
-  baud_rate: 9600
-  tx_pin: ${tx_pin}
-  rx_pin: ${rx_pin}
+  - id: uart0
+    baud_rate: 9600
+    tx_pin: ${tx_pin}
+    rx_pin: ${rx_pin}
 
 jbd_bms:
-  update_interval: 2s
-  rx_timeout: ${rx_timeout}
+  - id: bms0
+    update_interval: 2s
+    rx_timeout: ${rx_timeout}
 
 binary_sensor:
   - platform: jbd_bms
+    jbd_bms_id: bms0
     balancing:
       name: "${name} balancing"
     charging:
@@ -59,6 +59,7 @@ binary_sensor:
 
 sensor:
   - platform: jbd_bms
+    jbd_bms_id: bms0
     battery_strings:
       name: "${name} battery strings"
     current:
@@ -180,6 +181,7 @@ sensor:
 
 text_sensor:
   - platform: jbd_bms
+    jbd_bms_id: bms0
     errors:
       name: "${name} errors"
     operation_status:
@@ -189,6 +191,7 @@ text_sensor:
 
 switch:
   - platform: jbd_bms
+    jbd_bms_id: bms0
     charging:
       name: "${name} charging"
     discharging:
