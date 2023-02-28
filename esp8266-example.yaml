@@ -180,8 +180,8 @@ sensor:
       name: "${name} software version"
 
 text_sensor:
-  jbd_bms_id: bms0
   - platform: jbd_bms
+    jbd_bms_id: bms0
     errors:
       name: "${name} errors"
     operation_status:
