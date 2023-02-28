@@ -4,9 +4,9 @@ logger:
   level: DEBUG
 
 uart:
-  id: uart0
-  baud_rate: 9600
-  tx_pin: ${tx_pin}
-  rx_pin: ${rx_pin}
-  debug:
-    direction: BOTH
+  - id: uart0
+    baud_rate: 9600
+    tx_pin: ${tx_pin}
+    rx_pin: ${rx_pin}
+    debug:
+      direction: BOTH

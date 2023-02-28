@@ -1,6 +1,7 @@
 <<: !include esp32-example-debug.yaml
 
 jbd_bms:
-  update_interval: 2s
-  rx_timeout: ${rx_timeout}
-  enable_fake_traffic: true
+  - id: uart0
+    update_interval: 2s
+    rx_timeout: ${rx_timeout}
+    enable_fake_traffic: true
