@@ -50,7 +50,7 @@ jbd_bms_ble:
 
 binary_sensor:
   - platform: jbd_bms_ble
-    jbd_bms_id: bms0
+    jbd_bms_ble_id: bms0
     balancing:
       name: "${name} balancing"
     charging:
@@ -60,7 +60,7 @@ binary_sensor:
 
 sensor:
   - platform: jbd_bms_ble
-    jbd_bms_id: bms0
+    jbd_bms_ble_id: bms0
     battery_strings:
       name: "${name} battery strings"
     current:
@@ -182,7 +182,7 @@ sensor:
 
 text_sensor:
   - platform: jbd_bms_ble
-    jbd_bms_id: bms0
+    jbd_bms_ble_id: bms0
     errors:
       name: "${name} errors"
     operation_status:
@@ -196,7 +196,7 @@ switch:
     name: "${name} enable bluetooth connection"
 
   - platform: jbd_bms_ble
-    jbd_bms_id: bms0
+    jbd_bms_ble_id: bms0
     charging:
       name: "${name} charging"
     discharging:
