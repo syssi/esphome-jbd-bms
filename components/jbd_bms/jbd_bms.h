@@ -160,7 +160,6 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   std::string device_model_{""};
   std::vector<uint8_t> rx_buffer_;
   uint32_t last_byte_{0};
-  uint32_t last_send_{0};
   uint16_t rx_timeout_{150};
   bool enable_fake_traffic_;
 
