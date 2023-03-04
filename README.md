@@ -63,24 +63,24 @@ Untested but probably supported devices:
 
 Connector 4 Pin, JST PA 2.0mm pitch
 
-## Beginners Installation for ESP32 using Bluetooth low energy
+## Beginners Installation for ESP32 using Bluetooth Low Energy
 
-This Step by step installation shows an example implementation using an ESP32 with Homeassistant.
+This step by step installation shows an example implementation using an ESP32 with Home Assistant.
 
-1) Install ESPHome Assistant add-on, which you can find in the add-on store in the Supervisor panel.
-2) I found the easiest way to firstly install ESPHome to my ESP32 by using https://web.esphome.io/
-   This installation method also allows entering credentials for your Homeassistant instance as well as your wireless setup.
-4) Add your ESP home device in homeassistant by adding new device.
+1) Install ESPHome Dashboard as a Home Assistant add-on, which you can find in the add-on store in the Supervisor panel.
+2) I found the easiest way to firstly install ESPHome to my ESP32 by using https://web.esphome.io
+   This installation method also allows entering credentials for your Home Assistant instance as well as your Wi-Fi.
+4) Add your ESPHome device in Home Assistant by adding new device.
 5) Once it is shown here, you can edit the configuration.
-6) Copy this configuration to your esphome: https://github.com/syssi/esphome-jbd-bms/blob/main/esp32-ble-example.yaml
-7) Edit the necessary settings within the configuration. Most important: Update the mac-adress of your battery within the substitutions. This mac address can be found within the XiaoXiangElectric App. It has only hex numbers (and letters) and is in the format [xx:xx:xx:xx:xx:xx]. Also adjust the name if necessary to match that of your esphome instance. Wi-Fi Settings can be adjusted via Secrets file.
+6) Copy this configuration to your ESPHome device: https://github.com/syssi/esphome-jbd-bms/blob/main/esp32-ble-example.yaml
+7) Edit the necessary settings within the configuration. Most important: Update the MAC address of your BMS within the substitutions. This MAC address can be found within the XiaoXiangElectric App. It has only hex numbers (and letters) and is in the format [xx:xx:xx:xx:xx:xx]. Also adjust the name if necessary to match that of your ESPHome node. Wi-Fi Settings can be adjusted via Secrets file.
 8) Add your Encryption Key AND / OR add credentials for your MQTT server.
 9) Now install this configuration on your board. There are different options for the installation which are well described. This will take a while.
-10) Once your board is installed and rebooted, place the device next to your battery (Bluetooth range), so It can pair with it.
+10) Once your board is installed and rebooted, place the device next to your BMS (Bluetooth range), so It can pair with it.
+11) Now you can check if everything went fine by hitting the LOG Button for your ESPHome node and hopefully see lines scrolling containing detailed information about your battery.
 
-11) Now you can check if everything went fine by hitting the LOG Button for your ESPHome instance and hopefully see lines scrolling containing detailed information about your battery.
+## Add battery into your Energy Dashboard
 
-## Add battery into your energy dashboard
 Adding the battery into your energy dashboard won't work out of stock, it needs a little trick to do the magic.
 
 1) Go to settings > Devices / Services > Helpers
@@ -90,7 +90,7 @@ Adding the battery into your energy dashboard won't work out of stock, it needs 
 5) As Input sensor, choose sensor.your-instance-name_discharging_power_2
 6) Select left Rieman Sum and select k (kilo) as prefix, the rest stays as default.
 7) Repeat the same for "Battery Charge Power" for sensor.your-instance-name_charging_power_2
-8) Restart your home assistant
+8) Restart Home Assistant
 9) Now open the settings of energy dashboard by going to settings > Dashboards > Energy
 10) You should now be able to select the above created sensors for your battery storage input and output.
 11) It will only display those settings after a completed hour as all the other sensors within this dashboard.
