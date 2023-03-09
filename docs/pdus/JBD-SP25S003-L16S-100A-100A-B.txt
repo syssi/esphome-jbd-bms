@@ -1,0 +1,48 @@
+[uart_debug:114]: >>> DD:A5:03:00:FF:FD:77
+[uart_debug:114]: <<< DD:03:00:17:00:00:00:00:00:00:27:10:00:00:2C:50:00:00:00:00:00:00:20:00:01:10:00:FF:05:77
+
+[jbd_bms:248]: Hardware info:
+[jbd_bms:249]:   Device model: JBD-SP25S003-L16S-100A-100A-B
+[sensor:127]: 'jbd-bms-uart total voltage': Sending state 0.00000 V with 2 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart current': Sending state 0.00000 A with 1 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart power': Sending state 0.00000 W with 1 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart charging power': Sending state 0.00000 W with 2 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart discharging power': Sending state 0.00000 W with 2 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart capacity remaining': Sending state 0.00000 Ah with 2 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart nominal capacity': Sending state 100.00000 Ah with 2 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart charging cycles': Sending state 0.00000  with 0 decimals of accuracy
+[jbd_bms:266]:   Date of manufacture: 2022.2.16
+[sensor:127]: 'jbd-bms-uart balancer status bitmask': Sending state 0.00000  with 0 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart errors bitmask': Sending state 0.00000  with 0 decimals of accuracy
+[text_sensor:067]: 'jbd-bms-uart errors': Sending state ''
+[sensor:127]: 'jbd-bms-uart software version': Sending state 2.00000  with 1 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart state of charge': Sending state 0.00000 % with 0 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart operation status bitmask': Sending state 1.00000  with 0 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart battery strings': Sending state 16.00000  with 0 decimals of accuracy
+
+
+[uart_debug:114]: >>> DD:A5:04:00:FF:FC:77
+[uart_debug:114]: <<< DD:04:00:20:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:0E:10:00:00:FE:1E:77
+
+[sensor:127]: 'jbd-bms-uart cell voltage 1': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 2': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 3': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 4': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 5': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 6': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 7': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 8': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 9': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 10': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 11': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 12': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 13': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 14': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 15': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart cell voltage 16': Sending state 0.00000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart min cell voltage': Sending state 0.00000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart max cell voltage': Sending state 3.60000 V with 3 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart max voltage cell': Sending state 1.00000  with 0 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart min voltage cell': Sending state 16.00000  with 0 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart delta cell voltage': Sending state 3.60000 V with 4 decimals of accuracy
+[sensor:127]: 'jbd-bms-uart average cell voltage': Sending state 3.37500 V with 4 decimals of accuracy
