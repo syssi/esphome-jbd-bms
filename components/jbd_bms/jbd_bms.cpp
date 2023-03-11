@@ -144,7 +144,7 @@ bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
   uint16_t computed_crc = chksum_(raw + 2, data_len + 2);
   uint16_t remote_crc = uint16_t(raw[frame_len - 3]) << 8 | (uint16_t(raw[frame_len - 2]) << 0);
   if (computed_crc != remote_crc) {
-    ESP_LOGW(TAG, "JbdBms CRC Check failed! %04X != %04X", computed_crc, remote_crc);
+    ESP_LOGW(TAG, "CRC Check failed! 0x%04X != 0x%04X", computed_crc, remote_crc);
     return false;
   }
 
@@ -178,6 +178,9 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
   auto jbd_get_16bit = [&](size_t i) -> uint16_t {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
+
+  ESP_LOGI(TAG, "Cell info frame (%d bytes) received", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
 
   uint8_t data_len = data.size();
   if (data_len < 2 || data_len > 64 || (data_len % 2) != 0) {
@@ -227,6 +230,9 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
     return (uint32_t(jbd_get_16bit(i + 0)) << 16) | (uint32_t(jbd_get_16bit(i + 2)) << 0);
   };
 
+  ESP_LOGI(TAG, "Hardware info frame (%d bytes) received", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+
   // Byte Len  Payload                Content              Coeff.      Unit        Example value
   // 0     2   0x06 0x17              Total voltage                                1559
   // 2     2   0x00 0x00              Current
@@ -245,7 +251,6 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   // 25    2   0x0B 0x8C              Temperature 2
   // 27    2   0x0B 0x88              Temperature 3
 
-  ESP_LOGD(TAG, "Hardware info:");
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
 
   float total_voltage = jbd_get_16bit(0) * 0.01f;
@@ -295,13 +300,15 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
 }
 
 void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
+  ESP_LOGI(TAG, "Hardware version frame (%d bytes) received", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+
   // Byte Len  Payload                                              Content
   // 0    25   0x4A 0x42 0x44 0x2D 0x53 0x50 0x30 0x34 0x53 0x30
   //           0x33 0x34 0x2D 0x4C 0x34 0x53 0x2D 0x32 0x30 0x30
   //           0x41 0x2D 0x42 0x2D 0x55
   this->device_model_ = std::string(data.begin(), data.end());
 
-  ESP_LOGI(TAG, "Hardware version:");
   ESP_LOGI(TAG, "  Model name: %s", this->device_model_.c_str());
   this->publish_state_(this->device_model_text_sensor_, this->device_model_);
 }
