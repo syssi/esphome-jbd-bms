@@ -137,7 +137,7 @@ void JbdBmsBle::assemble_(const uint8_t *data, uint16_t length) {
     uint16_t computed_crc = chksum_(raw + 2, data_len + 2);
     uint16_t remote_crc = uint16_t(raw[frame_len - 3]) << 8 | (uint16_t(raw[frame_len - 2]) << 0);
     if (computed_crc != remote_crc) {
-      ESP_LOGW(TAG, "JbdBms CRC Check failed! %04X != %04X", computed_crc, remote_crc);
+      ESP_LOGW(TAG, "CRC check failed! 0x%04X != 0x%04X", computed_crc, remote_crc);
       this->frame_buffer_.clear();
       return;
     }
