@@ -233,62 +233,64 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   ESP_LOGI(TAG, "Hardware info frame (%d bytes) received", data.size());
   ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
 
-  // Byte Len  Payload                Content              Coeff.      Unit        Example value
-  // 0     2   0x06 0x17              Total voltage                                1559
-  // 2     2   0x00 0x00              Current
-  // 4     2   0x01 0xF3              Residual Capacity                            499
-  // 6     2   0x01 0xF4              Nominal Capacity                             500
-  // 8     2   0x00 0x00              Cycle Life
-  // 10    2   0x2C 0x7C              Production date
-  // 12    4   0x00 0x00 0x00 0x00    Balancer Status
-  // 16    2   0x00 0x00              Protection Status
-  // 18    1   0x80                   Version                                      0x10 = 1.0, 0x80 = 8.0
-  // 19    1   0x64                   Stage of charge
-  // 20    1   0x03                   Mosfet bitmask
-  // 21    2   0x04                   Cell count
-  // 22    3   0x03                   Temperature sensors
-  // 23    2   0x0B 0x8D              Temperature 1
-  // 25    2   0x0B 0x8C              Temperature 2
-  // 27    2   0x0B 0x88              Temperature 3
-
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
 
+  // Byte Len  Payload                Content              Coeff.      Unit        Example value
+  //  0    2   0x06 0x17              Total voltage                                1559
   float total_voltage = jbd_get_16bit(0) * 0.01f;
   this->publish_state_(this->total_voltage_sensor_, total_voltage);
 
+  //  2    2   0x00 0x00              Current
   float current = (float) ((int16_t) jbd_get_16bit(2)) * 0.01f;
   float power = total_voltage * current;
   this->publish_state_(this->current_sensor_, current);
   this->publish_state_(this->power_sensor_, power);
   this->publish_state_(this->charging_power_sensor_, std::max(0.0f, power));               // 500W vs 0W -> 500W
   this->publish_state_(this->discharging_power_sensor_, std::abs(std::min(0.0f, power)));  // -500W vs 0W -> 500W
+
+  //  4    2   0x01 0xF3              Residual Capacity                            499
   this->publish_state_(this->capacity_remaining_sensor_, (float) jbd_get_16bit(4) * 0.01f);
+
+  //  6    2   0x01 0xF4              Nominal Capacity                             500
   this->publish_state_(this->nominal_capacity_sensor_, (float) jbd_get_16bit(6) * 0.01f);
+
+  //  8    2   0x00 0x00              Cycle Life
   this->publish_state_(this->charging_cycles_sensor_, (float) jbd_get_16bit(8));
 
+  // 10    2   0x2C 0x7C              Production date
   uint16_t production_date = jbd_get_16bit(10);
   ESP_LOGD(TAG, "  Date of manufacture: %d.%d.%d", 2000 + (production_date >> 9), (production_date >> 5) & 0x0f,
            production_date & 0x1f);
 
+  // 12    4   0x00 0x00 0x00 0x00    Balancer Status
   uint32_t balance_status_bitmask = jbd_get_32bit(12);
   this->publish_state_(this->balancer_status_bitmask_sensor_, (float) balance_status_bitmask);
   this->publish_state_(this->balancing_binary_sensor_, balance_status_bitmask > 0);
 
+  // 16    2   0x00 0x00              Protection Status
   uint16_t errors_bitmask = jbd_get_16bit(16);
   this->publish_state_(this->errors_bitmask_sensor_, (float) errors_bitmask);
   this->publish_state_(this->errors_text_sensor_, this->error_bits_to_string_(errors_bitmask));
 
+  // 18    1   0x80                   Version                                      0x10 = 1.0, 0x80 = 8.0
   this->publish_state_(this->software_version_sensor_, (data[18] >> 4) + ((data[18] & 0x0f) * 0.1f));
 
+  // 19    1   0x64                   Stage of charge
   this->publish_state_(this->state_of_charge_sensor_, data[19]);
 
+  // 20    1   0x03                   Mosfet bitmask
   uint8_t operation_status = data[20];
   this->publish_state_(this->operation_status_bitmask_sensor_, operation_status);
   this->publish_state_(this->charging_binary_sensor_, operation_status & JBD_MOS_CHARGE);
   this->publish_state_(this->discharging_binary_sensor_, operation_status & JBD_MOS_DISCHARGE);
 
+  // 21    2   0x04                   Cell count
   this->publish_state_(this->battery_strings_sensor_, data[21]);
 
+  // 22    3   0x03                   Temperature sensors
+  // 23    2   0x0B 0x8D              Temperature 1
+  // 25    2   0x0B 0x8C              Temperature 2
+  // 27    2   0x0B 0x88              Temperature 3
   uint8_t temperature_sensors = std::min(data[22], (uint8_t) 6);
   this->publish_state_(this->temperature_sensors_sensor_, temperature_sensors);
   for (uint8_t i = 0; i < temperature_sensors; i++) {
