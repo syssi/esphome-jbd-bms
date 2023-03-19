@@ -449,23 +449,19 @@ bool JbdBmsBle::send_command_(uint8_t action, uint8_t function) {
 }
 
 std::string JbdBmsBle::error_bits_to_string_(const uint16_t mask) {
-  bool first = true;
-  std::string errors_list = "";
-
+  std::string values = "";
   if (mask) {
     for (int i = 0; i < ERRORS_SIZE; i++) {
       if (mask & (1 << i)) {
-        if (first) {
-          first = false;
-        } else {
-          errors_list.append(";");
-        }
-        errors_list.append(ERRORS[i]);
+        values.append(ERRORS[i]);
+        values.append(";");
       }
     }
+    if (!values.empty()) {
+      values.pop_back();
+    }
   }
-
-  return errors_list;
+  return values;
 }
 
 }  // namespace jbd_bms_ble
