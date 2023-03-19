@@ -45,7 +45,7 @@ static const char *const ERRORS[ERRORS_SIZE] = {
     "Discharging overcurrent",        // 0x09
     "Short circuit",                  // 0x0A
     "IC front-end error",             // 0x0B
-    "Mosfet Software Lock",           // 0x0C
+    "Mosfet Software Lock",           // 0x0C (See register 0xE1 "MOSFET control")
     "Charge timeout Close",           // 0x0D
     "Unknown (0x0E)",                 // 0x0E
     "Unknown (0x0F)",                 // 0x0F
@@ -152,13 +152,13 @@ void JbdBmsBle::assemble_(const uint8_t *data, uint16_t length) {
 void JbdBmsBle::update() {
   if (this->enable_fake_traffic_) {
     // Start: 0xDD 0x03 0x00 0x1D
-    this->on_jbd_bms_ble_data_(JBD_CMD_HWINFO, {0x06, 0x18, 0x00, 0x00, 0x01, 0xF2, 0x01, 0xF4, 0x00, 0x00, 0x2C,
-                                                0x7C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x64, 0x03, 0x04,
-                                                0x03, 0x0B, 0x8B, 0x0B, 0x8A, 0x0B, 0x84, 0xFA, 0x8D, 0x77});
+    this->on_jbd_bms_ble_data_(
+        JBD_CMD_HWINFO, {0x06, 0x18, 0x00, 0x00, 0x01, 0xF2, 0x01, 0xF4, 0x00, 0x00, 0x2C, 0x7C, 0x00, 0x00, 0x00,
+                         0x00, 0x00, 0x00, 0x80, 0x64, 0x03, 0x04, 0x03, 0x0B, 0x8B, 0x0B, 0x8A, 0x0B, 0x84});
     // End: 0xFA 0x8D 0x77
 
     // Start: 0xDD 0x04 0x00 0x08
-    this->on_jbd_bms_ble_data_(JBD_CMD_CELLINFO, {0x0F, 0x45, 0x0F, 0x3D, 0x0F, 0x37, 0x0F, 0x3D, 0xFE, 0xC6, 0x77});
+    this->on_jbd_bms_ble_data_(JBD_CMD_CELLINFO, {0x0F, 0x45, 0x0F, 0x3D, 0x0F, 0x37, 0x0F, 0x3D});
     // End: 0xFE 0xC6 0x77
 
     // Start: 0xDD 0x05 0x00 0x19
@@ -191,7 +191,8 @@ void JbdBmsBle::on_jbd_bms_ble_data_(const uint8_t &function, const std::vector<
       this->on_hardware_version_data_(data);
       break;
     default:
-      ESP_LOGW(TAG, "Unhandled response received: %s", format_hex_pretty(&data.front(), data.size()).c_str());
+      ESP_LOGW(TAG, "Unhandled response (function %d) received: %s", function,
+               format_hex_pretty(&data.front(), data.size()).c_str());
   }
 }
 
@@ -296,14 +297,17 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   // 18    1   0x80                   Version                                      0x10 = 1.0, 0x80 = 8.0
   this->publish_state_(this->software_version_sensor_, (data[18] >> 4) + ((data[18] & 0x0f) * 0.1f));
 
-  // 19    1   0x64                   Stage of charge
+  // 19    1   0x64                   State of charge
   this->publish_state_(this->state_of_charge_sensor_, data[19]);
 
   // 20    1   0x03                   Mosfet bitmask
   uint8_t operation_status = data[20];
+  this->mosfet_status_ = operation_status;
   this->publish_state_(this->operation_status_bitmask_sensor_, operation_status);
   this->publish_state_(this->charging_binary_sensor_, operation_status & JBD_MOS_CHARGE);
+  this->publish_state_(this->charging_switch_, operation_status & JBD_MOS_CHARGE);
   this->publish_state_(this->discharging_binary_sensor_, operation_status & JBD_MOS_DISCHARGE);
+  this->publish_state_(this->discharging_switch_, operation_status & JBD_MOS_DISCHARGE);
 
   // 21    2   0x04                   Cell count
   this->publish_state_(this->battery_strings_sensor_, data[21]);
@@ -473,6 +477,13 @@ void JbdBmsBle::publish_state_(sensor::Sensor *sensor, float value) {
   sensor->publish_state(value);
 }
 
+void JbdBmsBle::publish_state_(switch_::Switch *obj, const bool &state) {
+  if (obj == nullptr)
+    return;
+
+  obj->publish_state(state);
+}
+
 void JbdBmsBle::publish_state_(text_sensor::TextSensor *text_sensor, const std::string &state) {
   if (text_sensor == nullptr)
     return;
@@ -480,8 +491,44 @@ void JbdBmsBle::publish_state_(text_sensor::TextSensor *text_sensor, const std::
   text_sensor->publish_state(state);
 }
 
-void JbdBmsBle::write_register(uint8_t address, uint16_t value) {
-  this->send_command_(JBD_CMD_WRITE, JBD_CMD_MOS);  // @TODO: Pass value
+void JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
+  if (this->mosfet_status_ == 255) {
+    ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown.");
+    return;
+  }
+
+  uint16_t value = (this->mosfet_status_ & (~(1 << bitmask))) | ((uint8_t) state << bitmask);
+  value ^= (1 << 0);
+  value ^= (1 << 1);
+
+  this->write_register(address, value);
+}
+
+bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
+  uint8_t frame[9];
+  uint8_t data_len = 2;
+
+  frame[0] = JBD_PKT_START;
+  frame[1] = JBD_CMD_WRITE;
+  frame[2] = address;
+  frame[3] = data_len;
+  frame[4] = value >> 8;
+  frame[5] = value >> 0;
+  auto crc = chksum_(frame + 2, data_len + 2);
+  frame[6] = crc >> 8;
+  frame[7] = crc >> 0;
+  frame[8] = JBD_PKT_END;
+
+  ESP_LOGE(TAG, "Send command: %s", format_hex_pretty(frame, sizeof(frame)).c_str());
+  auto status =
+      esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
+                               sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
+
+  if (status) {
+    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str().c_str(), status);
+  }
+
+  return (status == 0);
 }
 
 bool JbdBmsBle::send_command_(uint8_t action, uint8_t function) {
@@ -502,8 +549,9 @@ bool JbdBmsBle::send_command_(uint8_t action, uint8_t function) {
       esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
                                sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
 
-  if (status)
+  if (status) {
     ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str().c_str(), status);
+  }
 
   return (status == 0);
 }

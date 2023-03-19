@@ -292,7 +292,9 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   uint8_t operation_status = data[20];
   this->publish_state_(this->operation_status_bitmask_sensor_, operation_status);
   this->publish_state_(this->charging_binary_sensor_, operation_status & JBD_MOS_CHARGE);
+  this->publish_state_(this->charging_switch_, operation_status & JBD_MOS_CHARGE);
   this->publish_state_(this->discharging_binary_sensor_, operation_status & JBD_MOS_DISCHARGE);
+  this->publish_state_(this->discharging_switch_, operation_status & JBD_MOS_DISCHARGE);
 
   // 21    2   0x04                   Cell count
   this->publish_state_(this->battery_strings_sensor_, data[21]);
@@ -468,6 +470,13 @@ void JbdBms::publish_state_(sensor::Sensor *sensor, float value) {
     return;
 
   sensor->publish_state(value);
+}
+
+void JbdBms::publish_state_(switch_::Switch *obj, const bool &state) {
+  if (obj == nullptr)
+    return;
+
+  obj->publish_state(state);
 }
 
 void JbdBms::publish_state_(text_sensor::TextSensor *text_sensor, const std::string &state) {
