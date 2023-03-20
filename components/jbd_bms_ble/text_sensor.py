@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import text_sensor
 import esphome.config_validation as cv
-from esphome.const import CONF_ICON, CONF_ID, ICON_EMPTY
+from esphome.const import CONF_ICON, CONF_ID
 
 from . import CONF_JBD_BMS_BLE_ID, JbdBmsBle
 
@@ -15,6 +15,7 @@ CONF_DEVICE_MODEL = "device_model"
 
 ICON_ERRORS = "mdi:alert-circle-outline"
 ICON_OPERATION_STATUS = "mdi:heart-pulse"
+ICON_DEVICE_MODEL = "mdi:chip"
 
 TEXT_SENSORS = [
     CONF_ERRORS,
@@ -40,7 +41,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_DEVICE_MODEL): text_sensor.TEXT_SENSOR_SCHEMA.extend(
             {
                 cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
-                cv.Optional(CONF_ICON, default=ICON_EMPTY): cv.icon,
+                cv.Optional(CONF_ICON, default=ICON_DEVICE_MODEL): cv.icon,
             }
         ),
     }

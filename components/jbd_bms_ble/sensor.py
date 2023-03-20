@@ -99,6 +99,8 @@ ICON_MIN_VOLTAGE_CELL = "mdi:battery-minus-outline"
 ICON_MAX_VOLTAGE_CELL = "mdi:battery-plus-outline"
 ICON_OPERATION_STATUS_BITMASK = "mdi:heart-pulse"
 ICON_ERRORS_BITMASK = "mdi:alert-circle-outline"
+ICON_BALANCER_STATUS_BITMASK = "mdi:seesaw"
+ICON_SOFTWARE_VERSION = "mdi:numeric"
 
 UNIT_SECONDS = "s"
 UNIT_HOURS = "h"
@@ -254,7 +256,7 @@ CONFIG_SCHEMA = cv.Schema(
         ),
         cv.Optional(CONF_BALANCER_STATUS_BITMASK): sensor.sensor_schema(
             unit_of_measurement=UNIT_EMPTY,
-            icon=ICON_EMPTY,
+            icon=ICON_BALANCER_STATUS_BITMASK,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_EMPTY,
             state_class=STATE_CLASS_MEASUREMENT,
@@ -583,7 +585,7 @@ CONFIG_SCHEMA = cv.Schema(
         ),
         cv.Optional(CONF_SOFTWARE_VERSION): sensor.sensor_schema(
             unit_of_measurement=UNIT_EMPTY,
-            icon=ICON_EMPTY,
+            icon=ICON_SOFTWARE_VERSION,
             accuracy_decimals=1,
             device_class=DEVICE_CLASS_EMPTY,
             state_class=STATE_CLASS_MEASUREMENT,
