@@ -7,6 +7,8 @@ namespace jbd_bms_ble {
 
 static const char *const TAG = "jbd_bms_ble";
 
+static const uint8_t MAX_NO_RESPONSE_COUNT = 10;
+
 static const uint16_t JBD_BMS_SERVICE_UUID = 0xFF00;
 static const uint16_t JBD_BMS_NOTIFY_CHARACTERISTIC_UUID = 0xFF01;
 static const uint16_t JBD_BMS_CONTROL_CHARACTERISTIC_UUID = 0xFF02;
@@ -57,8 +59,6 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
     }
     case ESP_GATTC_DISCONNECT_EVT: {
       this->node_state = espbt::ClientState::IDLE;
-
-      // this->publish_state_(this->voltage_sensor_, NAN);
       break;
     }
     case ESP_GATTC_SEARCH_CMPL_EVT: {
@@ -168,6 +168,7 @@ void JbdBmsBle::update() {
     // End: 0xFA, 0x08, 0x77
   }
 
+  this->track_online_status_();
   if (this->node_state != espbt::ClientState::ESTABLISHED) {
     ESP_LOGW(TAG, "[%s] Not connected", this->parent_->address_str().c_str());
     return;
@@ -177,6 +178,8 @@ void JbdBmsBle::update() {
 }
 
 void JbdBmsBle::on_jbd_bms_ble_data_(const uint8_t &function, const std::vector<uint8_t> &data) {
+  this->reset_online_status_tracker_();
+
   switch (function) {
     case JBD_CMD_HWINFO:
       this->on_hardware_info_data_(data);
@@ -333,6 +336,56 @@ void JbdBmsBle::on_hardware_version_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->device_model_text_sensor_, this->device_model_);
 }
 
+void JbdBmsBle::track_online_status_() {
+  if (this->no_response_count_ < MAX_NO_RESPONSE_COUNT) {
+    this->no_response_count_++;
+  }
+  if (this->no_response_count_ == MAX_NO_RESPONSE_COUNT) {
+    this->publish_device_unavailable_();
+    this->no_response_count_++;
+  }
+}
+
+void JbdBmsBle::reset_online_status_tracker_() {
+  this->no_response_count_ = 0;
+  this->publish_state_(this->online_status_binary_sensor_, true);
+}
+
+void JbdBmsBle::publish_device_unavailable_() {
+  this->publish_state_(this->online_status_binary_sensor_, false);
+  this->publish_state_(this->errors_text_sensor_, "Offline");
+
+  this->publish_state_(state_of_charge_sensor_, NAN);
+  this->publish_state_(total_voltage_sensor_, NAN);
+  this->publish_state_(current_sensor_, NAN);
+  this->publish_state_(power_sensor_, NAN);
+  this->publish_state_(charging_power_sensor_, NAN);
+  this->publish_state_(discharging_power_sensor_, NAN);
+  this->publish_state_(nominal_capacity_sensor_, NAN);
+  this->publish_state_(charging_cycles_sensor_, NAN);
+  this->publish_state_(capacity_remaining_sensor_, NAN);
+  this->publish_state_(min_cell_voltage_sensor_, NAN);
+  this->publish_state_(max_cell_voltage_sensor_, NAN);
+  this->publish_state_(min_voltage_cell_sensor_, NAN);
+  this->publish_state_(max_voltage_cell_sensor_, NAN);
+  this->publish_state_(delta_cell_voltage_sensor_, NAN);
+  this->publish_state_(average_cell_voltage_sensor_, NAN);
+  this->publish_state_(operation_status_bitmask_sensor_, NAN);
+  this->publish_state_(errors_bitmask_sensor_, NAN);
+  this->publish_state_(balancer_status_bitmask_sensor_, NAN);
+  this->publish_state_(battery_strings_sensor_, NAN);
+  this->publish_state_(temperature_sensors_sensor_, NAN);
+  this->publish_state_(software_version_sensor_, NAN);
+
+  for (auto &temperature : this->temperatures_) {
+    this->publish_state_(temperature.temperature_sensor_, NAN);
+  }
+
+  for (auto &cell : this->cells_) {
+    this->publish_state_(cell.cell_voltage_sensor_, NAN);
+  }
+}
+
 void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   ESP_LOGCONFIG(TAG, "JbdBmsBle:");
   ESP_LOGCONFIG(TAG, "  Fake traffic enabled: %s", YESNO(this->enable_fake_traffic_));
@@ -349,14 +402,19 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   LOG_SENSOR("", "Charging Power", this->charging_power_sensor_);
   LOG_SENSOR("", "Discharging Power", this->discharging_power_sensor_);
   LOG_SENSOR("", "State of charge", this->state_of_charge_sensor_);
+  LOG_SENSOR("", "Operation status bitmask", operation_status_bitmask_sensor_);
+  LOG_SENSOR("", "Errors bitmask", errors_bitmask_sensor_);
   LOG_SENSOR("", "Nominal capacity", this->nominal_capacity_sensor_);
   LOG_SENSOR("", "Charging cycles", this->charging_cycles_sensor_);
+  LOG_SENSOR("", "Balancer status bitmask", balancer_status_bitmask_sensor_);
   LOG_SENSOR("", "Capacity remaining", this->capacity_remaining_sensor_);
   LOG_SENSOR("", "Average cell voltage sensor", this->average_cell_voltage_sensor_);
+  LOG_SENSOR("", "Delta cell voltage sensor", delta_cell_voltage_sensor_);
   LOG_SENSOR("", "Maximum cell voltage", this->max_cell_voltage_sensor_);
   LOG_SENSOR("", "Min voltage cell", this->min_voltage_cell_sensor_);
   LOG_SENSOR("", "Max voltage cell", this->max_voltage_cell_sensor_);
   LOG_SENSOR("", "Minimum cell voltage", this->min_cell_voltage_sensor_);
+  LOG_SENSOR("", "Temperature sensors", temperature_sensors_sensor_);
   LOG_SENSOR("", "Temperature 1", this->temperatures_[0].temperature_sensor_);
   LOG_SENSOR("", "Temperature 2", this->temperatures_[1].temperature_sensor_);
   LOG_SENSOR("", "Temperature 3", this->temperatures_[2].temperature_sensor_);

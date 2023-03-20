@@ -27,6 +27,9 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void set_discharging_binary_sensor(binary_sensor::BinarySensor *discharging_binary_sensor) {
     discharging_binary_sensor_ = discharging_binary_sensor;
   }
+  void set_online_status_binary_sensor(binary_sensor::BinarySensor *online_status_binary_sensor) {
+    online_status_binary_sensor_ = online_status_binary_sensor;
+  }
   void set_state_of_charge_sensor(sensor::Sensor *state_of_charge_sensor) {
     state_of_charge_sensor_ = state_of_charge_sensor;
   }
@@ -110,6 +113,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   binary_sensor::BinarySensor *balancing_binary_sensor_;
   binary_sensor::BinarySensor *charging_binary_sensor_;
   binary_sensor::BinarySensor *discharging_binary_sensor_;
+  binary_sensor::BinarySensor *online_status_binary_sensor_;
 
   sensor::Sensor *state_of_charge_sensor_;
   sensor::Sensor *total_voltage_sensor_;
@@ -161,6 +165,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   std::vector<uint8_t> rx_buffer_;
   uint32_t last_byte_{0};
   uint16_t rx_timeout_{150};
+  uint8_t no_response_count_{0};
   bool enable_fake_traffic_;
 
   void on_jbd_bms_data_(const uint8_t &function, const std::vector<uint8_t> &data);
@@ -171,6 +176,9 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);
   void publish_state_(sensor::Sensor *sensor, float value);
   void publish_state_(text_sensor::TextSensor *text_sensor, const std::string &state);
+  void publish_device_unavailable_();
+  void reset_online_status_tracker_();
+  void track_online_status_();
   void send_command_(uint8_t action, uint8_t function);
   std::string error_bits_to_string_(uint16_t bitmask);
 
