@@ -3,8 +3,9 @@ from esphome.components import ble_client
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
-DEPENDENCIES = ["binary_sensor", "sensor", "switch", "text_sensor"]
 CODEOWNERS = ["@syssi"]
+
+AUTO_LOAD = ["binary_sensor", "sensor", "switch", "text_sensor"]
 MULTI_CONF = True
 
 CONF_JBD_BMS_BLE_ID = "jbd_bms_ble_id"
