@@ -442,6 +442,8 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   LOG_TEXT_SENSOR("", "Operation status", this->operation_status_text_sensor_);
   LOG_TEXT_SENSOR("", "Errors", this->errors_text_sensor_);
   LOG_TEXT_SENSOR("", "Device model", this->device_model_text_sensor_);
+
+  this->check_uart_settings(9600);
 }
 
 float JbdBms::get_setup_priority() const {
