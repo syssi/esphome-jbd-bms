@@ -3,7 +3,7 @@
 logger:
   level: VERY_VERBOSE
   logs:
-    ant_bms_ble: VERY_VERBOSE
+    jbd_bms_ble: VERY_VERBOSE
     ble_client: DEBUG
     esp32_ble: DEBUG
     esp32_ble_tracker: DEBUG
