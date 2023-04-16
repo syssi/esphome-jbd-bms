@@ -21,9 +21,9 @@ ICON_BLUETOOTH = "mdi:bluetooth"
 ICON_BUZZER = "mdi:volume-high"
 
 SWITCHES = {
-    CONF_DISCHARGING: 0xF9,
-    CONF_CHARGING: 0xFA,
-    CONF_BALANCER: 0x00,
+    CONF_DISCHARGING: [0xE1, 1],
+    CONF_CHARGING: [0xE1, 0],
+    CONF_BALANCER: [0x2D, 3],
 }
 
 JbdSwitch = jbd_bms_ns.class_("JbdSwitch", switch.Switch, cg.Component)
@@ -63,4 +63,5 @@ async def to_code(config):
             await switch.register_switch(var, conf)
             cg.add(getattr(hub, f"set_{key}_switch")(var))
             cg.add(var.set_parent(hub))
-            cg.add(var.set_holding_register(address))
+            cg.add(var.set_holding_register(address[0]))
+            cg.add(var.set_bitmask(address[1]))

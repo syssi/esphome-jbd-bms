@@ -193,7 +193,7 @@ void JbdBmsBle::on_jbd_bms_ble_data_(const uint8_t &function, const std::vector<
     case JBD_CMD_MOS:
       break;
     default:
-      ESP_LOGW(TAG, "Unhandled response (function %d) received: %s", function,
+      ESP_LOGW(TAG, "Unhandled response (function 0x%02X) received: %s", function,
                format_hex_pretty(&data.front(), data.size()).c_str());
   }
 }
