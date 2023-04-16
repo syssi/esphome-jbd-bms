@@ -500,6 +500,9 @@ void JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool stat
   }
 
   uint16_t value = (this->mosfet_status_ & (~(1 << bitmask))) | ((uint8_t) state << bitmask);
+
+  this->mosfet_status_ = value;
+
   value ^= (1 << 0);
   value ^= (1 << 1);
 
