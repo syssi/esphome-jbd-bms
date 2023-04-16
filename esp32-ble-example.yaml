@@ -2,7 +2,7 @@ substitutions:
   name: jbd-bms-ble
   device_description: "Monitor and control a Xiaoxiang Battery Management System (JBD-BMS) via BLE"
   external_components_source: github://syssi/esphome-jbd-bms@main
-  mac_address: 80:3e:97:07:c0:3e
+  mac_address: 70:3e:97:07:c0:3e
 
 esphome:
   name: ${name}
