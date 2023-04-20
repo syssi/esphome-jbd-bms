@@ -42,7 +42,7 @@ mqtt:
 # api:
 
 uart:
-  - id: uart0
+  - id: uart_0
     baud_rate: 9600
     tx_pin: ${tx_pin}
     rx_pin: ${rx_pin}

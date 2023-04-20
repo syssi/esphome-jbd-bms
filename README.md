@@ -157,7 +157,7 @@ logger:
   level: DEBUG
 
 uart:
-  id: uart0
+  id: uart_0
   baud_rate: 9600
   tx_pin: GPIO4
   rx_pin: GPIO5
