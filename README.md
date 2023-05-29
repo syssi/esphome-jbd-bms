@@ -18,6 +18,7 @@ ESPHome component to monitor and control a JBD-BMS via UART-TTL or BLE
 * JBD-SP22S003A 50A 22S (JBD-SP22S003A-L22S, reported by [@johkn](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-5942928))
 * JBD-AP20S006 200A 20S (JBD-AP20S006-L20S-200A-B, reported by [@rk125](https://github.com/syssi/esphome-jbd-bms/discussions/16))
 * JBD-AP21S001 150A 20S (JBD-AP21S001-L20S-150A-B, reported by [@yarosman](https://github.com/syssi/esphome-jbd-bms/issues/25))
+* JBD-AP21S001 200A 21S (JBD-AP21S001-L21S-200A-B, reported by [@cctweaker](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-6026019))
 * JBD-DP04S007 100A 4S (JBD-DP04S007-L4S-100A, reported by [@reflexsa](https://github.com/syssi/esphome-jbd-bms/discussions/20))
 * JBD-SP18S 100A 18S (JBD-SP18S-100A-086, reported by [@mobilex-Godelmann](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-5061954))
 * Basen BG-24100, 8S 24V 100A battery pack (JDB-SP16S020-100A, reported by [@teunito](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-5836709))
