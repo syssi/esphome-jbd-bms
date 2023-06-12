@@ -51,6 +51,8 @@ void JbdBms::loop() {
   const uint32_t now = millis();
 
   if (now - this->last_byte_ > this->rx_timeout_) {
+    ESP_LOGVV(TAG, "Buffer cleared due to timeout: %s",
+              format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());
     this->rx_buffer_.clear();
     this->last_byte_ = now;
   }
@@ -61,6 +63,8 @@ void JbdBms::loop() {
     if (this->parse_jbd_bms_byte_(byte)) {
       this->last_byte_ = now;
     } else {
+      ESP_LOGVV(TAG, "Buffer cleared due to reset: %s",
+                format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());
       this->rx_buffer_.clear();
     }
   }
@@ -120,14 +124,15 @@ bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
   // 4+n    2   0xFA 0x85               Checksum
   // 4+n+2  1   0x77                    End of frame
 
-  if (at == 0)
+  if (at == 0) {
+    if (raw[0] != 0xDD) {
+      ESP_LOGW(TAG, "Invalid header: 0x%02X", raw[0]);
+
+      // return false to reset buffer
+      return false;
+    }
+
     return true;
-
-  if (raw[0] != 0xDD) {
-    ESP_LOGW(TAG, "Invalid header");
-
-    // return false to reset buffer
-    return false;
   }
 
   // Byte 1 (Function)
