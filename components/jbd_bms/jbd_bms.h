@@ -107,7 +107,8 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   }
   void set_enable_fake_traffic(bool enable_fake_traffic) { enable_fake_traffic_ = enable_fake_traffic; }
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
-  void write_register(uint8_t address, uint16_t value);
+  bool write_register(uint8_t address, uint16_t value);
+  bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;
@@ -166,6 +167,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   uint32_t last_byte_{0};
   uint16_t rx_timeout_{150};
   uint8_t no_response_count_{0};
+  uint8_t mosfet_status_{255};
   bool enable_fake_traffic_;
 
   void on_jbd_bms_data_(const uint8_t &function, const std::vector<uint8_t> &data);
@@ -175,6 +177,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   bool parse_jbd_bms_byte_(uint8_t byte);
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);
   void publish_state_(sensor::Sensor *sensor, float value);
+  void publish_state_(switch_::Switch *obj, const bool &state);
   void publish_state_(text_sensor::TextSensor *text_sensor, const std::string &state);
   void publish_device_unavailable_();
   void reset_online_status_tracker_();

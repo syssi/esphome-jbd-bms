@@ -12,6 +12,7 @@ class JbdSwitch : public switch_::Switch, public Component {
  public:
   void set_parent(JbdBmsBle *parent) { this->parent_ = parent; };
   void set_holding_register(uint8_t holding_register) { this->holding_register_ = holding_register; };
+  void set_bitmask(uint8_t bitmask) { this->bitmask_ = bitmask; };
   void dump_config() override;
   void loop() override {}
   float get_setup_priority() const override { return setup_priority::DATA; }
@@ -20,6 +21,7 @@ class JbdSwitch : public switch_::Switch, public Component {
   void write_state(bool state) override;
   JbdBmsBle *parent_;
   uint8_t holding_register_;
+  uint8_t bitmask_;
 };
 
 }  // namespace jbd_bms_ble

@@ -175,5 +175,6 @@ uart:
 * https://github.com/ioBroker/AdapterRequests/issues/512
 * https://github.com/sshoecraft/jbdtool/blob/main/jbd.c
 * https://gitlab.com/bms-tools/bms-tools
+* https://gitlab.com/bms-tools/bms-tools/-/blob/master/JBD_REGISTER_MAP.md
 * https://github.com/kolins-cz/Smart-BMS-Bluetooth-ESP32
 * https://github.com/ForrestFire0/GenericBMSArduino
