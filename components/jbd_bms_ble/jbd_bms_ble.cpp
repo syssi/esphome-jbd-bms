@@ -24,6 +24,8 @@ static const uint8_t JBD_CMD_HWINFO = 0x03;
 static const uint8_t JBD_CMD_CELLINFO = 0x04;
 static const uint8_t JBD_CMD_HWVER = 0x05;
 
+static const uint8_t JBD_CMD_ENTER_FACTORY = 0x00;
+static const uint8_t JBD_CMD_EXIT_FACTORY = 0x01;
 static const uint8_t JBD_CMD_CAP_REM = 0xE0;   // Set remaining capacity
 static const uint8_t JBD_CMD_MOS = 0xE1;       // Set charging/discharging bitmask
 static const uint8_t JBD_CMD_BALANCER = 0xE2;  // Enable/disable balancer
@@ -191,6 +193,7 @@ void JbdBmsBle::on_jbd_bms_ble_data_(const uint8_t &function, const std::vector<
       this->on_hardware_version_data_(data);
       break;
     case JBD_CMD_MOS:
+    case JBD_CMD_EXIT_FACTORY:
       break;
     default:
       ESP_LOGW(TAG, "Unhandled response (function 0x%02X) received: %s", function,
