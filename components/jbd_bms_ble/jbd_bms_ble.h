@@ -114,7 +114,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   }
   void set_enable_fake_traffic(bool enable_fake_traffic) { enable_fake_traffic_ = enable_fake_traffic; }
   bool write_register(uint8_t address, uint16_t value);
-  void change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
+  bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;

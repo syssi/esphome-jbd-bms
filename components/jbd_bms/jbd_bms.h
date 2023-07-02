@@ -107,8 +107,8 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   }
   void set_enable_fake_traffic(bool enable_fake_traffic) { enable_fake_traffic_ = enable_fake_traffic; }
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
-  void write_register(uint8_t address, uint16_t value);
-  void change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
+  bool write_register(uint8_t address, uint16_t value);
+  bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;

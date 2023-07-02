@@ -490,7 +490,7 @@ void JbdBms::publish_state_(text_sensor::TextSensor *text_sensor, const std::str
   text_sensor->publish_state(state);
 }
 
-void JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
+bool JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
   if (this->mosfet_status_ == 255) {
     ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown.");
     return;
@@ -503,10 +503,10 @@ void JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) 
   value ^= (1 << 0);
   value ^= (1 << 1);
 
-  this->write_register(address, value);
+  return this->write_register(address, value);
 }
 
-void JbdBms::write_register(uint8_t address, uint16_t value) {
+bool JbdBms::write_register(uint8_t address, uint16_t value) {
   uint8_t frame[9];
   uint8_t data_len = 2;
 
@@ -523,6 +523,8 @@ void JbdBms::write_register(uint8_t address, uint16_t value) {
 
   this->write_array(frame, 9);
   this->flush();
+
+  return true;
 }
 
 void JbdBms::send_command_(uint8_t action, uint8_t function) {
