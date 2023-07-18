@@ -88,7 +88,6 @@ CONF_TEMPERATURE_5 = "temperature_5"
 CONF_TEMPERATURE_6 = "temperature_6"
 
 ICON_CURRENT_DC = "mdi:current-dc"
-ICON_STATE_OF_CHARGE = "mdi:battery-50"
 ICON_BATTERY_STRINGS = "mdi:car-battery"
 ICON_CAPACITY_REMAINING = "mdi:battery-50"
 ICON_NOMINAL_CAPACITY = "mdi:battery-50"
@@ -180,7 +179,6 @@ CONFIG_SCHEMA = cv.Schema(
         cv.GenerateID(CONF_JBD_BMS_ID): cv.use_id(JbdBms),
         cv.Optional(CONF_STATE_OF_CHARGE): sensor.sensor_schema(
             unit_of_measurement=UNIT_PERCENT,
-            icon=ICON_STATE_OF_CHARGE,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_BATTERY,
             state_class=STATE_CLASS_MEASUREMENT,
