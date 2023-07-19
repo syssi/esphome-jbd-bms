@@ -201,7 +201,7 @@ sensor:
       name: "${name} charging power"
     state_of_charge:
       name: "${name} state of charge"
-      id: battery_percentage
+      id: soc
       on_value:
         then:
           # Manage charge
