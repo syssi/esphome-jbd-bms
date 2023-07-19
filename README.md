@@ -172,7 +172,7 @@ uart:
 
 ## Preserving your batteries
 
-If you wish to limit the charge of your battery without an external system like a home assistant, take inspiration from this yml :
+If you wish to limit the charge of your battery without an external system like a home assistant, take inspiration from this YAML snippet:
 ```yaml
 deep_sleep:
   id: sleep_manager
