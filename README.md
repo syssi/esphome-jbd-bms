@@ -153,24 +153,7 @@ A user of this project ([@the-butterfry](https://github.com/the-butterfry)) shar
 
 ![1.54 e-paper status display](images/eink-status-display.jpg "1.54 e-paper status display")
 
-## Debugging
-
-If this component doesn't work out of the box for your device please update your configuration to enable the debug output of the UART component and increase the log level to the see outgoing and incoming serial traffic:
-
-```
-logger:
-  level: DEBUG
-
-uart:
-  id: uart_0
-  baud_rate: 9600
-  tx_pin: GPIO4
-  rx_pin: GPIO5
-  debug:
-    direction: BOTH
-```
-
-## Preserving your batteries
+### Preserving your batteries
 
 If you wish to limit the charge of your battery without an external system like a home assistant, take inspiration from this YAML snippet:
 ```yaml
@@ -207,20 +190,37 @@ sensor:
           # Manage charge
           - if:
               condition:
-                lambda: 'return id(battery_percentage).state < 80 && id(charging).state == false;'
+                lambda: 'return id(soc).state < 80 && id(charging).state == false;'
               then:
                 - switch.turn_on: charging
           - if:
               condition:
-                lambda: 'return id(battery_percentage).state > 80 && id(charging).state == true;'
+                lambda: 'return id(soc).state > 80 && id(charging).state == true;'
               then:
                 - switch.turn_off: charging
           # Disable deep_sleep to stop charge at perfect timming (81% goes down to 80% after charge stop)
           - if:
               condition:
-                lambda: 'return id(battery_percentage).state >= 75 && id(battery_percentage).state <= 81 && id(charging).state == true;'
+                lambda: 'return id(soc).state >= 75 && id(soc).state <= 81 && id(charging).state == true;'
               then:
                 - deep_sleep.prevent: sleep_manager
+```
+
+## Debugging
+
+If this component doesn't work out of the box for your device please update your configuration to enable the debug output of the UART component and increase the log level to the see outgoing and incoming serial traffic:
+
+```
+logger:
+  level: DEBUG
+
+uart:
+  id: uart_0
+  baud_rate: 9600
+  tx_pin: GPIO4
+  rx_pin: GPIO5
+  debug:
+    direction: BOTH
 ```
 
 ## References
