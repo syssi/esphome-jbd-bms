@@ -200,7 +200,7 @@ sensor:
     charging_power:
       name: "${name} charging power"
     state_of_charge:
-      name: "${name} battery pourcentage"
+      name: "${name} state of charge"
       id: battery_percentage
       on_value:
         then:
