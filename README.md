@@ -149,9 +149,15 @@ None.
 
 ## Goodies
 
+### E-paper status display
+
 A user of this project ([@the-butterfry](https://github.com/the-butterfry)) shared some YAML code for [a beautiful status display using a 1.54 e-paper display here](https://github.com/syssi/esphome-jbd-bms/discussions/19).
 
 ![1.54 e-paper status display](images/eink-status-display.jpg "1.54 e-paper status display")
+
+### Preserving your battery pack
+
+[@TheNexter](https://github.com/TheNexter) contributed a [YAML snippet to stop charging of his e-scooter at an early stage](yaml-snippets/esp32-ble-deepsleep-limit-charging-automation.yaml) to preserve the battery pack. The automation doesn't require a network connection and is executed on the ESP itself. To save some capacity the `deep_sleep` component is used.
 
 ## Debugging
 
