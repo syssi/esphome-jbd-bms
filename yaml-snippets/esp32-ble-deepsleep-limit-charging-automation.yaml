@@ -43,7 +43,7 @@ mqtt:
 #   reboot_timeout: 0s
 
 deep_sleep:
-  id: sleep_manager
+  id: deep_sleep0
   run_duration: 2min
   sleep_duration: 10min
 
@@ -66,24 +66,24 @@ sensor:
     total_voltage:
       name: "${name} total voltage"
     state_of_charge:
-      id: state_of_charge
+      id: state_of_charge_sensor
       name: "${name} state of charge"
       on_value:
         - if:
             condition:
               and:
-                - switch.is_off: charging
+                - switch.is_off: charging_switch
                 - sensor.in_range:
-                    id: state_of_charge
+                    id: state_of_charge_sensor
                     below: 80.0
             then:
               - switch.turn_on: charging
         - if:
             condition:
               and:
-                - switch.is_on: charging
+                - switch.is_on: charging_switch
                 - sensor.in_range:
-                    id: state_of_charge
+                    id: state_of_charge_sensor
                     above: 80.0
             then:
               - switch.turn_off: charging
@@ -91,13 +91,13 @@ sensor:
         - if:
             condition:
               and:
-                - switch.is_on: charging
+                - switch.is_on: charging_switch
                 - sensor.in_range:
-                    id: state_of_charge
+                    id: state_of_charge_sensor
                     above: 75.0
                     below: 81.0
             then:
-              - deep_sleep.prevent: sleep_manager
+              - deep_sleep.prevent: deep_sleep0
 
 switch:
   - platform: ble_client
