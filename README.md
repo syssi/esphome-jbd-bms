@@ -103,6 +103,8 @@ esphome run esp32-example.yaml
 
 ```
 
+If you are a Home Assistant user without any ESPHome experience yet please take a look at the [beginners guide](docs/beginners-guide.md).
+
 ## Example response all sensors enabled
 
 ```
