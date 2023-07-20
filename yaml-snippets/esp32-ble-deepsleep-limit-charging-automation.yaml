@@ -69,6 +69,7 @@ sensor:
       id: state_of_charge_sensor
       name: "${name} state of charge"
       on_value:
+        # Enable charging if the state of charge is below 80%
         - if:
             condition:
               and:
@@ -78,6 +79,8 @@ sensor:
                     below: 80.0
             then:
               - switch.turn_on: charging
+
+        # Stop charging if the state of charge is above 80%
         - if:
             condition:
               and:
@@ -87,7 +90,8 @@ sensor:
                     above: 80.0
             then:
               - switch.turn_off: charging
-        # Suspend deep sleep at the end of a charge cycle to stop on point
+
+        # Suspend deep sleep at the end of a charge cycle to stop on point (optional!)
         - if:
             condition:
               and:
@@ -95,7 +99,6 @@ sensor:
                 - sensor.in_range:
                     id: state_of_charge_sensor
                     above: 75.0
-                    below: 81.0
             then:
               - deep_sleep.prevent: deep_sleep0
 
