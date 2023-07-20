@@ -149,62 +149,15 @@ None.
 
 ## Goodies
 
+### E-paper status display
+
 A user of this project ([@the-butterfry](https://github.com/the-butterfry)) shared some YAML code for [a beautiful status display using a 1.54 e-paper display here](https://github.com/syssi/esphome-jbd-bms/discussions/19).
 
 ![1.54 e-paper status display](images/eink-status-display.jpg "1.54 e-paper status display")
 
-### Preserving your batteries
+### Preserving your battery pack
 
-If you wish to limit the charge of your battery without an external system like a home assistant, take inspiration from this YAML snippet:
-```yaml
-deep_sleep:
-  id: sleep_manager
-  run_duration: 2min
-  sleep_duration: 10min
-
-switch:
-  - platform: ble_client
-    ble_client_id: client0
-    name: "${name} bluetooth connection"
-
-  - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms0
-    charging:
-      name: "${name} charging"
-      id: charging
-    discharging:
-      name: "${name} discharging"
-
-sensor:
-  - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms0
-    battery_strings:
-      name: "${name} battery cells"
-    charging_power:
-      name: "${name} charging power"
-    state_of_charge:
-      name: "${name} state of charge"
-      id: soc
-      on_value:
-        then:
-          # Manage charge
-          - if:
-              condition:
-                lambda: 'return id(soc).state < 80 && id(charging).state == false;'
-              then:
-                - switch.turn_on: charging
-          - if:
-              condition:
-                lambda: 'return id(soc).state > 80 && id(charging).state == true;'
-              then:
-                - switch.turn_off: charging
-          # Disable deep_sleep to stop charge at perfect timming (81% goes down to 80% after charge stop)
-          - if:
-              condition:
-                lambda: 'return id(soc).state >= 75 && id(soc).state <= 81 && id(charging).state == true;'
-              then:
-                - deep_sleep.prevent: sleep_manager
-```
+[@TheNexter](https://github.com/TheNexter) contributed a [YAML snippet to stop charging of his e-scooter at an early stage](yaml-snippets/esp32-ble-deepsleep-limit-charging-automation.yaml) to preserve the battery pack. The automation doesn't require a network connection and is executed on the ESP itself. To save some capacity the `deep_sleep` component is used.
 
 ## Debugging
 

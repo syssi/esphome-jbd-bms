@@ -175,6 +175,13 @@ jobs:
           esphome -s external_components_source components config esp8266-example-debug.yaml
           esphome -s external_components_source components config esp8266-example-faker.yaml
 
+      - name: Write yaml-snippets/secrets.yaml
+        shell: bash
+        run: 'echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password" > yaml-snippets/secrets.yaml'
+      - name: Validate YAML snippets
+        run: |
+          esphome -s external_components_source ../components config yaml-snippets/esp32-ble-deepsleep-limit-charging-automation.yaml
+
   esphome-compile:
     runs-on: ubuntu-latest
     needs: [esphome-config]
