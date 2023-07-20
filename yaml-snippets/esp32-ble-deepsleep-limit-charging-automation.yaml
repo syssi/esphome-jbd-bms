@@ -111,6 +111,6 @@ switch:
     jbd_bms_ble_id: bms0
     charging:
       name: "${name} charging"
-      id: charging_switch
+      id: charging
     discharging:
       name: "${name} discharging"
