@@ -66,16 +66,16 @@ sensor:
     total_voltage:
       name: "${name} total voltage"
     state_of_charge:
-      id: state_of_charge_sensor
+      id: state_of_charge
       name: "${name} state of charge"
       on_value:
         # Enable charging if the state of charge is below 80%
         - if:
             condition:
               and:
-                - switch.is_off: charging_switch
+                - switch.is_off: charging
                 - sensor.in_range:
-                    id: state_of_charge_sensor
+                    id: state_of_charge
                     below: 80.0
             then:
               - switch.turn_on: charging
@@ -84,9 +84,9 @@ sensor:
         - if:
             condition:
               and:
-                - switch.is_on: charging_switch
+                - switch.is_on: charging
                 - sensor.in_range:
-                    id: state_of_charge_sensor
+                    id: state_of_charge
                     above: 80.0
             then:
               - switch.turn_off: charging
@@ -95,9 +95,9 @@ sensor:
         - if:
             condition:
               and:
-                - switch.is_on: charging_switch
+                - switch.is_on: charging
                 - sensor.in_range:
-                    id: state_of_charge_sensor
+                    id: state_of_charge
                     above: 75.0
             then:
               - deep_sleep.prevent: deep_sleep0
