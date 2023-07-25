@@ -76,7 +76,7 @@ sensor:
                 - switch.is_off: charging
                 - sensor.in_range:
                     id: state_of_charge
-                    below: 80.0
+                    below: 79.0
             then:
               - switch.turn_on: charging
 
