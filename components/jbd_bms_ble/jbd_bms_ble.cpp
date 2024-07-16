@@ -90,20 +90,16 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
     case ESP_GATTC_REG_FOR_NOTIFY_EVT: {
       this->node_state = espbt::ClientState::ESTABLISHED;
 
-      ESP_LOGI(TAG, "Request device info");
-      this->send_command_(JBD_CMD_READ, JBD_CMD_HWVER);
+      // ESP_LOGI(TAG, "Request device info");
+      // this->send_command_(JBD_CMD_READ, JBD_CMD_HWVER);
 
       break;
     }
     case ESP_GATTC_NOTIFY_EVT: {
-      if (param->notify.handle != this->char_notify_handle_)
-        break;
-
-      ESP_LOGVV(TAG, "Notification received: %s",
-                format_hex_pretty(param->notify.value, param->notify.value_len).c_str());
+      ESP_LOGV(TAG, "Notification received (handle 0x%02X): %s", param->notify.handle,
+               format_hex_pretty(param->notify.value, param->notify.value_len).c_str());
 
       this->assemble_(param->notify.value, param->notify.value_len);
-
       break;
     }
     default:
@@ -527,7 +523,8 @@ bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
   frame[7] = crc >> 0;
   frame[8] = JBD_PKT_END;
 
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame, sizeof(frame)).c_str());
+  ESP_LOGD(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
+           format_hex_pretty(frame, sizeof(frame)).c_str());
   auto status =
       esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
                                sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
