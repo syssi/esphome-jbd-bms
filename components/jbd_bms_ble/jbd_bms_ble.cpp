@@ -90,8 +90,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
     case ESP_GATTC_REG_FOR_NOTIFY_EVT: {
       this->node_state = espbt::ClientState::ESTABLISHED;
 
-      ESP_LOGI(TAG, "Request device info");
-      this->send_command(JBD_CMD_READ, JBD_CMD_HWVER);
+      this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
 
       break;
     }
@@ -99,8 +98,8 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       if (param->notify.handle != this->char_notify_handle_)
         break;
 
-      ESP_LOGVV(TAG, "Notification received: %s",
-                format_hex_pretty(param->notify.value, param->notify.value_len).c_str());
+      ESP_LOGV(TAG, "Notification received (handle 0x%02X): %s", param->notify.handle,
+               format_hex_pretty(param->notify.value, param->notify.value_len).c_str());
 
       this->assemble_(param->notify.value, param->notify.value_len);
 
@@ -167,6 +166,7 @@ void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8
   switch (function) {
     case JBD_CMD_HWINFO:
       this->on_hardware_info_data_(data);
+      this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
       break;
     case JBD_CMD_CELLINFO:
       this->on_cell_info_data_(data);
@@ -309,8 +309,6 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
     this->publish_state_(this->temperatures_[i].temperature_sensor_,
                          (float) (jbd_get_16bit(23 + (i * 2)) - 2731) * 0.1f);
   }
-
-  this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
 }
 
 void JbdBmsBle::on_hardware_version_data_(const std::vector<uint8_t> &data) {
@@ -508,7 +506,8 @@ bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
   frame[7] = crc >> 0;
   frame[8] = JBD_PKT_END;
 
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame, sizeof(frame)).c_str());
+  ESP_LOGV(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
+           format_hex_pretty(frame, sizeof(frame)).c_str());
   auto status =
       esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
                                sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
@@ -533,7 +532,8 @@ bool JbdBmsBle::send_command(uint8_t action, uint8_t function) {
   frame[5] = crc >> 0;
   frame[6] = JBD_PKT_END;
 
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame, sizeof(frame)).c_str());
+  ESP_LOGV(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
+           format_hex_pretty(frame, sizeof(frame)).c_str());
   auto status =
       esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
                                sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);

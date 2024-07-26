@@ -47,7 +47,7 @@ static const char *const ERRORS[ERRORS_SIZE] = {
     "Unknown (0x0F)",                 // 0x0F
 };
 
-void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWVER); }
+void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO); }
 
 void JbdBms::loop() {
   const uint32_t now = millis();
@@ -157,6 +157,7 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
   switch (function) {
     case JBD_CMD_HWINFO:
       this->on_hardware_info_data_(data);
+      this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
       break;
     case JBD_CMD_CELLINFO:
       this->on_cell_info_data_(data);
@@ -299,8 +300,6 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
     this->publish_state_(this->temperatures_[i].temperature_sensor_,
                          (float) (jbd_get_16bit(23 + (i * 2)) - 2731) * 0.1f);
   }
-
-  this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
 }
 
 void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
