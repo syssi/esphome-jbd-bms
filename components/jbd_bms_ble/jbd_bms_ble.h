@@ -114,7 +114,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   }
   bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
-  void on_jbd_bms_ble_data(const uint8_t &function, const std::vector<uint8_t> &data);
+  void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;

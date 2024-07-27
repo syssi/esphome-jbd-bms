@@ -146,7 +146,7 @@ void JbdBmsBle::assemble_(const uint8_t *data, uint16_t length) {
 
     std::vector<uint8_t> data(this->frame_buffer_.begin() + 4, this->frame_buffer_.end() - 3);
 
-    this->on_jbd_bms_ble_data(function, data);
+    this->on_jbd_bms_data(function, data);
     this->frame_buffer_.clear();
   }
 }
@@ -161,7 +161,7 @@ void JbdBmsBle::update() {
   this->send_command_(JBD_CMD_READ, JBD_CMD_HWINFO);
 }
 
-void JbdBmsBle::on_jbd_bms_ble_data(const uint8_t &function, const std::vector<uint8_t> &data) {
+void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data) {
   this->reset_online_status_tracker_();
 
   switch (function) {
