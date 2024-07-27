@@ -112,9 +112,9 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void set_device_model_text_sensor(text_sensor::TextSensor *device_model_text_sensor) {
     device_model_text_sensor_ = device_model_text_sensor;
   }
-  void set_enable_fake_traffic(bool enable_fake_traffic) { enable_fake_traffic_ = enable_fake_traffic; }
   bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
+  void on_jbd_bms_ble_data(const uint8_t &function, const std::vector<uint8_t> &data);
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;
@@ -174,10 +174,8 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   uint16_t char_command_handle_;
   uint8_t no_response_count_{0};
   uint8_t mosfet_status_{255};
-  bool enable_fake_traffic_;
 
   void assemble_(const uint8_t *data, uint16_t length);
-  void on_jbd_bms_ble_data_(const uint8_t &function, const std::vector<uint8_t> &data);
   void on_cell_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_version_data_(const std::vector<uint8_t> &data);

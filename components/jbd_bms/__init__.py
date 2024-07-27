@@ -10,7 +10,6 @@ AUTO_LOAD = ["binary_sensor", "sensor", "switch", "text_sensor"]
 MULTI_CONF = True
 
 CONF_JBD_BMS_ID = "jbd_bms_id"
-CONF_ENABLE_FAKE_TRAFFIC = "enable_fake_traffic"
 CONF_RX_TIMEOUT = "rx_timeout"
 
 jbd_bms_ns = cg.esphome_ns.namespace("jbd_bms")
@@ -20,7 +19,6 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(JbdBms),
-            cv.Optional(CONF_ENABLE_FAKE_TRAFFIC, default=False): cv.boolean,
             cv.Optional(
                 CONF_RX_TIMEOUT, default="150ms"
             ): cv.positive_time_period_milliseconds,
@@ -36,5 +34,4 @@ async def to_code(config):
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
 
-    cg.add(var.set_enable_fake_traffic(config[CONF_ENABLE_FAKE_TRAFFIC]))
     cg.add(var.set_rx_timeout(config[CONF_RX_TIMEOUT]))

@@ -146,30 +146,12 @@ void JbdBmsBle::assemble_(const uint8_t *data, uint16_t length) {
 
     std::vector<uint8_t> data(this->frame_buffer_.begin() + 4, this->frame_buffer_.end() - 3);
 
-    this->on_jbd_bms_ble_data_(function, data);
+    this->on_jbd_bms_ble_data(function, data);
     this->frame_buffer_.clear();
   }
 }
 
 void JbdBmsBle::update() {
-  if (this->enable_fake_traffic_) {
-    // Start: 0xDD 0x03 0x00 0x1D
-    this->on_jbd_bms_ble_data_(
-        JBD_CMD_HWINFO, {0x06, 0x18, 0x00, 0x00, 0x01, 0xF2, 0x01, 0xF4, 0x00, 0x00, 0x2C, 0x7C, 0x00, 0x00, 0x00,
-                         0x00, 0x00, 0x00, 0x80, 0x64, 0x03, 0x04, 0x03, 0x0B, 0x8B, 0x0B, 0x8A, 0x0B, 0x84});
-    // End: 0xFA 0x8D 0x77
-
-    // Start: 0xDD 0x04 0x00 0x08
-    this->on_jbd_bms_ble_data_(JBD_CMD_CELLINFO, {0x0F, 0x45, 0x0F, 0x3D, 0x0F, 0x37, 0x0F, 0x3D});
-    // End: 0xFE 0xC6 0x77
-
-    // Start: 0xDD 0x05 0x00 0x19
-    this->on_jbd_bms_ble_data_(JBD_CMD_HWVER,
-                               {0x4A, 0x42, 0x44, 0x2D, 0x53, 0x50, 0x30, 0x34, 0x53, 0x30, 0x33, 0x34, 0x2D,
-                                0x4C, 0x34, 0x53, 0x2D, 0x32, 0x30, 0x30, 0x41, 0x2D, 0x42, 0x2D, 0x55});
-    // End: 0xFA, 0x08, 0x77
-  }
-
   this->track_online_status_();
   if (this->node_state != espbt::ClientState::ESTABLISHED) {
     ESP_LOGW(TAG, "[%s] Not connected", this->parent_->address_str().c_str());
@@ -179,7 +161,7 @@ void JbdBmsBle::update() {
   this->send_command_(JBD_CMD_READ, JBD_CMD_HWINFO);
 }
 
-void JbdBmsBle::on_jbd_bms_ble_data_(const uint8_t &function, const std::vector<uint8_t> &data) {
+void JbdBmsBle::on_jbd_bms_ble_data(const uint8_t &function, const std::vector<uint8_t> &data) {
   this->reset_online_status_tracker_();
 
   switch (function) {
@@ -397,7 +379,6 @@ void JbdBmsBle::publish_device_unavailable_() {
 
 void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   ESP_LOGCONFIG(TAG, "JbdBmsBle:");
-  ESP_LOGCONFIG(TAG, "  Fake traffic enabled: %s", YESNO(this->enable_fake_traffic_));
 
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);

@@ -105,10 +105,10 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void set_device_model_text_sensor(text_sensor::TextSensor *device_model_text_sensor) {
     device_model_text_sensor_ = device_model_text_sensor;
   }
-  void set_enable_fake_traffic(bool enable_fake_traffic) { enable_fake_traffic_ = enable_fake_traffic; }
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
   bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
+  void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;
@@ -168,9 +168,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   uint16_t rx_timeout_{150};
   uint8_t no_response_count_{0};
   uint8_t mosfet_status_{255};
-  bool enable_fake_traffic_;
 
-  void on_jbd_bms_data_(const uint8_t &function, const std::vector<uint8_t> &data);
   void on_cell_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_version_data_(const std::vector<uint8_t> &data);

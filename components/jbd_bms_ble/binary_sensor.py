@@ -1,11 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import binary_sensor
 import esphome.config_validation as cv
-from esphome.const import (
-    CONF_ID,
-    DEVICE_CLASS_CONNECTIVITY,
-    ENTITY_CATEGORY_DIAGNOSTIC,
-)
+from esphome.const import CONF_ID, DEVICE_CLASS_CONNECTIVITY, ENTITY_CATEGORY_DIAGNOSTIC
 
 from . import CONF_JBD_BMS_BLE_ID, JbdBmsBle
 from .const import CONF_CHARGING, CONF_DISCHARGING
