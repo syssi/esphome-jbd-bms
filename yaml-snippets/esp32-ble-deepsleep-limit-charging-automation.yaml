@@ -10,7 +10,7 @@ esphome:
   min_version: 2024.6.0
   project:
     name: "syssi.esphome-jbd-bms"
-    version: 1.5.0
+    version: 1.6.0
 
 esp32:
   board: wemos_d1_mini32
