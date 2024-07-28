@@ -112,6 +112,8 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void set_device_model_text_sensor(text_sensor::TextSensor *device_model_text_sensor) {
     device_model_text_sensor_ = device_model_text_sensor;
   }
+
+  bool send_command(uint8_t action, uint8_t function);
   bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
@@ -186,7 +188,6 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void publish_device_unavailable_();
   void reset_online_status_tracker_();
   void track_online_status_();
-  bool send_command_(uint8_t action, uint8_t function);
   std::string error_bits_to_string_(uint16_t bitmask);
 
   uint16_t chksum_(const uint8_t data[], const uint16_t len) {

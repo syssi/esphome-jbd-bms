@@ -47,7 +47,7 @@ static const char *const ERRORS[ERRORS_SIZE] = {
     "Unknown (0x0F)",                 // 0x0F
 };
 
-void JbdBms::setup() { this->send_command_(JBD_CMD_READ, JBD_CMD_HWVER); }
+void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWVER); }
 
 void JbdBms::loop() {
   const uint32_t now = millis();
@@ -74,7 +74,7 @@ void JbdBms::loop() {
 
 void JbdBms::update() {
   this->track_online_status_();
-  this->send_command_(JBD_CMD_READ, JBD_CMD_HWINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
 }
 
 bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
@@ -300,7 +300,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
                          (float) (jbd_get_16bit(23 + (i * 2)) - 2731) * 0.1f);
   }
 
-  this->send_command_(JBD_CMD_READ, JBD_CMD_CELLINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
 }
 
 void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
@@ -513,7 +513,7 @@ bool JbdBms::write_register(uint8_t address, uint16_t value) {
   return true;
 }
 
-void JbdBms::send_command_(uint8_t action, uint8_t function) {
+void JbdBms::send_command(uint8_t action, uint8_t function) {
   uint8_t frame[7];
   uint8_t data_len = 0;
 

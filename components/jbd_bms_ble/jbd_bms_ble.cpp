@@ -91,7 +91,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       this->node_state = espbt::ClientState::ESTABLISHED;
 
       ESP_LOGI(TAG, "Request device info");
-      this->send_command_(JBD_CMD_READ, JBD_CMD_HWVER);
+      this->send_command(JBD_CMD_READ, JBD_CMD_HWVER);
 
       break;
     }
@@ -158,7 +158,7 @@ void JbdBmsBle::update() {
     return;
   }
 
-  this->send_command_(JBD_CMD_READ, JBD_CMD_HWINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
 }
 
 void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data) {
@@ -310,7 +310,7 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
                          (float) (jbd_get_16bit(23 + (i * 2)) - 2731) * 0.1f);
   }
 
-  this->send_command_(JBD_CMD_READ, JBD_CMD_CELLINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
 }
 
 void JbdBmsBle::on_hardware_version_data_(const std::vector<uint8_t> &data) {
@@ -520,7 +520,7 @@ bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
   return (status == 0);
 }
 
-bool JbdBmsBle::send_command_(uint8_t action, uint8_t function) {
+bool JbdBmsBle::send_command(uint8_t action, uint8_t function) {
   uint8_t frame[7];
   uint8_t data_len = 0;
 

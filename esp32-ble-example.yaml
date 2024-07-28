@@ -64,6 +64,12 @@ jbd_bms_ble:
     ble_client_id: client0
     update_interval: 2s
 
+button:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    retrieve_hardware_version:
+      name: "${name} retrieve hardware version"
+
 binary_sensor:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
