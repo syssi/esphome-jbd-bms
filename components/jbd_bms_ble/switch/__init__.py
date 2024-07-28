@@ -3,7 +3,7 @@ from esphome.components import switch
 import esphome.config_validation as cv
 from esphome.const import CONF_ICON, CONF_ID
 
-from .. import CONF_JBD_BMS_BLE_ID, JbdBmsBle, jbd_bms_ble_ns
+from .. import CONF_JBD_BMS_BLE_ID, JBD_BMS_BLE_COMPONENT_SCHEMA, jbd_bms_ble_ns
 from ..const import CONF_CHARGING, CONF_DISCHARGING
 
 DEPENDENCIES = ["jbd_bms_ble"]
@@ -26,9 +26,8 @@ SWITCHES = {
 
 JbdSwitch = jbd_bms_ble_ns.class_("JbdSwitch", switch.Switch, cg.Component)
 
-CONFIG_SCHEMA = cv.Schema(
+CONFIG_SCHEMA = JBD_BMS_BLE_COMPONENT_SCHEMA.extend(
     {
-        cv.GenerateID(CONF_JBD_BMS_BLE_ID): cv.use_id(JbdBmsBle),
         cv.Optional(CONF_DISCHARGING): switch.SWITCH_SCHEMA.extend(
             {
                 cv.GenerateID(): cv.declare_id(JbdSwitch),

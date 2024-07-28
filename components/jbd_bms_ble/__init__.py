@@ -15,6 +15,12 @@ JbdBmsBle = jbd_bms_ble_ns.class_(
     "JbdBmsBle", ble_client.BLEClientNode, cg.PollingComponent
 )
 
+JBD_BMS_BLE_COMPONENT_SCHEMA = cv.Schema(
+    {
+        cv.GenerateID(CONF_JBD_BMS_BLE_ID): cv.use_id(JbdBmsBle),
+    }
+)
+
 CONFIG_SCHEMA = (
     cv.Schema(
         {
