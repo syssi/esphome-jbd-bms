@@ -3,7 +3,7 @@ from esphome.components import switch
 import esphome.config_validation as cv
 from esphome.const import CONF_ICON, CONF_ID
 
-from .. import CONF_JBD_BMS_ID, JBD_BMS_COMPONENT_SCHEMA, JbdBms, jbd_bms_ns
+from .. import CONF_JBD_BMS_ID, JBD_BMS_COMPONENT_SCHEMA, jbd_bms_ns
 from ..const import CONF_CHARGING, CONF_DISCHARGING
 
 DEPENDENCIES = ["jbd_bms"]
