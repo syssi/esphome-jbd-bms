@@ -10,7 +10,7 @@ esphome:
   min_version: 2024.6.0
   project:
     name: "syssi.esphome-jbd-bms"
-    version: 1.6.0
+    version: 2.0.0
 
 esp32:
   board: wemos_d1_mini32
@@ -62,6 +62,7 @@ ble_client:
 jbd_bms_ble:
   - id: bms0
     ble_client_id: client0
+    # Some Liontron BMS models require an update interval of less than 8s
     update_interval: 2s
 
 button:
