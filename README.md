@@ -27,6 +27,8 @@ ESPHome component to monitor and control a JBD-BMS via UART-TTL or BLE
 * Basen BG-24100, 8S 24V 100A battery pack (JDB-SP16S020-100A, reported by [@teunito](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-5836709))
 * CLRD LFP-82460-COMM, 8S 24V 60A battery pack (15710026-SP10S020-L8S-50A-50AH, reported by [@andrewww173](https://github.com/syssi/esphome-jbd-bms/issues/4#issuecomment-1188292512))
 * Overkill JBD-SP25S003 100A 16S (JBD-SP25S003-L16S-100A-100A-B, reported by [@Uksa007](https://github.com/syssi/esphome-jbd-bms/issues/31))
+* LIONTRON LiFePO4 LX 12.8V 40Ah (LISMART1240LX, reported by [@jassi0001](https://github.com/syssi/esphome-jbd-bms/issues/81))
+* LIONTRON LiFePO4 LX 12.8V 55Ah (LISMART1255LX, reported by [@jassi0001](https://github.com/syssi/esphome-jbd-bms/issues/81))
 
 ## Untested devices
 
