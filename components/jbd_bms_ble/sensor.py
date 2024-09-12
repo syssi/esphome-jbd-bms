@@ -30,7 +30,6 @@ CONF_STATE_OF_CHARGE = "state_of_charge"
 CONF_NOMINAL_CAPACITY = "nominal_capacity"
 CONF_CHARGING_CYCLES = "charging_cycles"
 CONF_CAPACITY_REMAINING = "capacity_remaining"
-CONF_BATTERY_CYCLE_CAPACITY = "battery_cycle_capacity"
 CONF_TOTAL_VOLTAGE = "total_voltage"
 CONF_CHARGING_POWER = "charging_power"
 CONF_DISCHARGING_POWER = "discharging_power"
@@ -103,7 +102,6 @@ ICON_BATTERY_STRINGS = "mdi:car-battery"
 ICON_CAPACITY_REMAINING = "mdi:battery-50"
 ICON_NOMINAL_CAPACITY = "mdi:battery-50"
 ICON_CHARGING_CYCLES = "mdi:battery-sync"
-ICON_BATTERY_CYCLE_CAPACITY = "mdi:battery-50"
 ICON_MIN_CELL_VOLTAGE = "mdi:battery-minus-outline"
 ICON_MAX_CELL_VOLTAGE = "mdi:battery-plus-outline"
 ICON_MIN_VOLTAGE_CELL = "mdi:battery-minus-outline"
@@ -236,13 +234,6 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_CAPACITY_REMAINING): sensor.sensor_schema(
             unit_of_measurement=UNIT_AMPERE_HOURS,
             icon=ICON_CAPACITY_REMAINING,
-            accuracy_decimals=2,
-            device_class=DEVICE_CLASS_EMPTY,
-            state_class=STATE_CLASS_MEASUREMENT,
-        ),
-        cv.Optional(CONF_BATTERY_CYCLE_CAPACITY): sensor.sensor_schema(
-            unit_of_measurement=UNIT_AMPERE_HOURS,
-            icon=ICON_BATTERY_CYCLE_CAPACITY,
             accuracy_decimals=2,
             device_class=DEVICE_CLASS_EMPTY,
             state_class=STATE_CLASS_MEASUREMENT,
