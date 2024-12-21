@@ -35,6 +35,7 @@ ESPHome component to monitor and control a JBD-BMS via UART-TTL or BLE
 * Overkill JBD-SP25S003 100A 16S (JBD-SP25S003-L16S-100A-100A-B, reported by [@Uksa007](https://github.com/syssi/esphome-jbd-bms/issues/31))
 * LIONTRON LiFePO4 LX 12.8V 40Ah (LISMART1240LX, reported by [@jassi0001](https://github.com/syssi/esphome-jbd-bms/issues/81))
 * LIONTRON LiFePO4 LX 12.8V 55Ah (LISMART1255LX, reported by [@jassi0001](https://github.com/syssi/esphome-jbd-bms/issues/81))
+* Vatrer Power 51.2V 100Ah LiFePo4 battery bank (SP16S020L16S100A, reported by [@ThomasCr](https://github.com/syssi/esphome-jbd-bms/issues/101))
 
 ## Untested devices
 
