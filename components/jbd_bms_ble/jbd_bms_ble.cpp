@@ -61,6 +61,19 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
     }
     case ESP_GATTC_DISCONNECT_EVT: {
       this->node_state = espbt::ClientState::IDLE;
+
+      if (this->char_notify_handle_ != 0) {
+        auto status = esp_ble_gattc_unregister_for_notify(this->parent()->get_gattc_if(),
+                                                          this->parent()->get_remote_bda(), this->char_notify_handle_);
+        if (status) {
+          ESP_LOGW(TAG, "esp_ble_gattc_unregister_for_notify failed, status=%d", status);
+        }
+      }
+      this->char_notify_handle_ = 0;
+      this->char_command_handle_ = 0;
+
+      this->frame_buffer_.clear();
+
       break;
     }
     case ESP_GATTC_SEARCH_CMPL_EVT: {
