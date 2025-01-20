@@ -197,8 +197,7 @@ jobs:
       - name: tests/secrets.yaml
         shell: bash
         run: 'echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password" > tests/secrets.yaml'
-      - name: Validate YAML snippets
-        run: |
+      - run: |
           for YAML in tests/esp*.yaml; do
             esphome -s external_components_source ../components config $YAML >/dev/null
           done
