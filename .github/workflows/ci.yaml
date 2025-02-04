@@ -192,7 +192,7 @@ jobs:
         run: 'echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password" > secrets.yaml'
       - run: |
           for YAML in esp*.yaml; do
-            esphome config $YAML >/dev/null
+            esphome -s external_components_source components config $YAML >/dev/null
           done
       - name: tests/secrets.yaml
         shell: bash

@@ -133,6 +133,21 @@ text_sensor:
     device_model:
       name: "${bms1} device model"
 
+select:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    read_eeprom_register:
+      name: "${bms0} read eeprom register"
+      optionsmap:
+        0xAA: "Error Counts"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms1
+    read_eeprom_register:
+      name: "${bms1} read eeprom register"
+      optionsmap:
+        0xAA: "Error Counts"
+
 switch:
   - platform: ble_client
     ble_client_id: client0
