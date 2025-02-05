@@ -46,6 +46,17 @@ CONF_ERRORS_BITMASK = "errors_bitmask"
 CONF_BALANCER_STATUS_BITMASK = "balancer_status_bitmask"
 CONF_BATTERY_STRINGS = "battery_strings"
 CONF_SOFTWARE_VERSION = "software_version"
+CONF_SHORT_CIRCUIT_ERROR_COUNT = "short_circuit_error_count"
+CONF_CHARGE_OVERCURRENT_ERROR_COUNT = "charge_overcurrent_error_count"
+CONF_DISCHARGE_OVERCURRENT_ERROR_COUNT = "discharge_overcurrent_error_count"
+CONF_CELL_OVERVOLTAGE_ERROR_COUNT = "cell_overvoltage_error_count"
+CONF_CELL_UNDERVOLTAGE_ERROR_COUNT = "cell_undervoltage_error_count"
+CONF_CHARGE_OVERTEMPERATURE_ERROR_COUNT = "charge_overtemperature_error_count"
+CONF_CHARGE_UNDERTEMPERATURE_ERROR_COUNT = "charge_undertemperature_error_count"
+CONF_DISCHARGE_OVERTEMPERATURE_ERROR_COUNT = "discharge_overtemperature_error_count"
+CONF_DISCHARGE_UNDERTEMPERATURE_ERROR_COUNT = "discharge_undertemperature_error_count"
+CONF_BATTERY_OVERVOLTAGE_ERROR_COUNT = "battery_overvoltage_error_count"
+CONF_BATTERY_UNDERVOLTAGE_ERROR_COUNT = "battery_undervoltage_error_count"
 
 CONF_CELL_VOLTAGE_1 = "cell_voltage_1"
 CONF_CELL_VOLTAGE_2 = "cell_voltage_2"
@@ -171,6 +182,17 @@ SENSORS = [
     CONF_BALANCER_STATUS_BITMASK,
     CONF_BATTERY_STRINGS,
     CONF_SOFTWARE_VERSION,
+    CONF_SHORT_CIRCUIT_ERROR_COUNT,
+    CONF_CHARGE_OVERCURRENT_ERROR_COUNT,
+    CONF_DISCHARGE_OVERCURRENT_ERROR_COUNT,
+    CONF_CELL_OVERVOLTAGE_ERROR_COUNT,
+    CONF_CELL_UNDERVOLTAGE_ERROR_COUNT,
+    CONF_CHARGE_OVERTEMPERATURE_ERROR_COUNT,
+    CONF_CHARGE_UNDERTEMPERATURE_ERROR_COUNT,
+    CONF_DISCHARGE_OVERTEMPERATURE_ERROR_COUNT,
+    CONF_DISCHARGE_UNDERTEMPERATURE_ERROR_COUNT,
+    CONF_BATTERY_OVERVOLTAGE_ERROR_COUNT,
+    CONF_BATTERY_UNDERVOLTAGE_ERROR_COUNT,
 ]
 
 # pylint: disable=too-many-function-args
@@ -586,6 +608,83 @@ CONFIG_SCHEMA = cv.Schema(
             unit_of_measurement=UNIT_EMPTY,
             icon=ICON_SOFTWARE_VERSION,
             accuracy_decimals=1,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_SHORT_CIRCUIT_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_CHARGE_OVERCURRENT_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_DISCHARGE_OVERCURRENT_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_CELL_OVERVOLTAGE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_CELL_UNDERVOLTAGE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_CHARGE_OVERTEMPERATURE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_CHARGE_UNDERTEMPERATURE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_DISCHARGE_OVERTEMPERATURE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_DISCHARGE_UNDERTEMPERATURE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_BATTERY_OVERVOLTAGE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_BATTERY_UNDERVOLTAGE_ERROR_COUNT): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:counter",
+            accuracy_decimals=0,
             device_class=DEVICE_CLASS_EMPTY,
             state_class=STATE_CLASS_MEASUREMENT,
         ),

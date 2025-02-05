@@ -20,6 +20,7 @@ static const uint8_t JBD_CMD_HWVER = 0x05;
 
 static const uint8_t JBD_CMD_ENTER_FACTORY = 0x00;
 static const uint8_t JBD_CMD_EXIT_FACTORY = 0x01;
+static const uint8_t JBD_CMD_ERROR_COUNTS = 0xAA;
 static const uint8_t JBD_CMD_CAP_REM = 0xE0;   // Set remaining capacity
 static const uint8_t JBD_CMD_MOS = 0xE1;       // Set charging/discharging bitmask
 static const uint8_t JBD_CMD_BALANCER = 0xE2;  // Enable/disable balancer
@@ -165,6 +166,9 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
     case JBD_CMD_HWVER:
       this->on_hardware_version_data_(data);
       break;
+    case JBD_CMD_ERROR_COUNTS:
+      this->on_error_counts_data_(data);
+      break;
     case JBD_CMD_MOS:
     case JBD_CMD_EXIT_FACTORY:
       break;
@@ -220,6 +224,33 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->min_voltage_cell_sensor_, (float) min_voltage_cell);
   this->publish_state_(this->delta_cell_voltage_sensor_, max_cell_voltage - min_cell_voltage);
   this->publish_state_(this->average_cell_voltage_sensor_, average_cell_voltage);
+}
+
+void JbdBms::on_error_counts_data_(const std::vector<uint8_t> &data) {
+  auto jbd_get_16bit = [&](size_t i) -> uint16_t {
+    return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
+  };
+
+  ESP_LOGI(TAG, "Error counts frame (%d bytes) received", data.size());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+
+  uint8_t data_len = data.size();
+  if (data_len != 24) {
+    ESP_LOGW(TAG, "Skipping error counts frame because of invalid length: %d", data_len);
+    return;
+  }
+
+  this->publish_state_(this->short_circuit_error_count_sensor_, jbd_get_16bit(0));
+  this->publish_state_(this->charge_overcurrent_error_count_sensor_, jbd_get_16bit(2));
+  this->publish_state_(this->discharge_overcurrent_error_count_sensor_, jbd_get_16bit(4));
+  this->publish_state_(this->cell_overvoltage_error_count_sensor_, jbd_get_16bit(6));
+  this->publish_state_(this->cell_undervoltage_error_count_sensor_, jbd_get_16bit(8));
+  this->publish_state_(this->charge_overtemperature_error_count_sensor_, jbd_get_16bit(10));
+  this->publish_state_(this->charge_undertemperature_error_count_sensor_, jbd_get_16bit(12));
+  this->publish_state_(this->discharge_overtemperature_error_count_sensor_, jbd_get_16bit(14));
+  this->publish_state_(this->discharge_undertemperature_error_count_sensor_, jbd_get_16bit(16));
+  this->publish_state_(this->battery_overvoltage_error_count_sensor_, jbd_get_16bit(18));
+  this->publish_state_(this->battery_undervoltage_error_count_sensor_, jbd_get_16bit(20));
 }
 
 void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {

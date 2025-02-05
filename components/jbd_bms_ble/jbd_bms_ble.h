@@ -4,6 +4,7 @@
 #include "esphome/components/ble_client/ble_client.h"
 #include "esphome/components/esp32_ble_tracker/esp32_ble_tracker.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
+#include "esphome/components/select/select.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/text_sensor/text_sensor.h"
@@ -37,6 +38,11 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void set_online_status_binary_sensor(binary_sensor::BinarySensor *online_status_binary_sensor) {
     online_status_binary_sensor_ = online_status_binary_sensor;
   }
+
+  void set_read_eeprom_register_select(select::Select *read_eeprom_register_select) {
+    read_eeprom_register_select_ = read_eeprom_register_select;
+  }
+
   void set_state_of_charge_sensor(sensor::Sensor *state_of_charge_sensor) {
     state_of_charge_sensor_ = state_of_charge_sensor;
   }
@@ -94,6 +100,40 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void set_software_version_sensor(sensor::Sensor *software_version_sensor) {
     software_version_sensor_ = software_version_sensor;
   }
+  void set_short_circuit_error_count_sensor(sensor::Sensor *short_circuit_error_count_sensor) {
+    short_circuit_error_count_sensor_ = short_circuit_error_count_sensor;
+  }
+  void set_charge_overcurrent_error_count_sensor(sensor::Sensor *charge_overcurrent_error_count_sensor) {
+    charge_overcurrent_error_count_sensor_ = charge_overcurrent_error_count_sensor;
+  }
+  void set_discharge_overcurrent_error_count_sensor(sensor::Sensor *discharge_overcurrent_error_count_sensor) {
+    discharge_overcurrent_error_count_sensor_ = discharge_overcurrent_error_count_sensor;
+  }
+  void set_cell_overvoltage_error_count_sensor(sensor::Sensor *cell_overvoltage_error_count_sensor) {
+    cell_overvoltage_error_count_sensor_ = cell_overvoltage_error_count_sensor;
+  }
+  void set_cell_undervoltage_error_count_sensor(sensor::Sensor *cell_undervoltage_error_count_sensor) {
+    cell_undervoltage_error_count_sensor_ = cell_undervoltage_error_count_sensor;
+  }
+  void set_charge_overtemperature_error_count_sensor(sensor::Sensor *charge_overtemperature_error_count_sensor) {
+    charge_overtemperature_error_count_sensor_ = charge_overtemperature_error_count_sensor;
+  }
+  void set_charge_undertemperature_error_count_sensor(sensor::Sensor *charge_undertemperature_error_count_sensor) {
+    charge_undertemperature_error_count_sensor_ = charge_undertemperature_error_count_sensor;
+  }
+  void set_discharge_overtemperature_error_count_sensor(sensor::Sensor *discharge_overtemperature_error_count_sensor) {
+    discharge_overtemperature_error_count_sensor_ = discharge_overtemperature_error_count_sensor;
+  }
+  void set_discharge_undertemperature_error_count_sensor(
+      sensor::Sensor *discharge_undertemperature_error_count_sensor) {
+    discharge_undertemperature_error_count_sensor_ = discharge_undertemperature_error_count_sensor;
+  }
+  void set_battery_overvoltage_error_count_sensor(sensor::Sensor *battery_overvoltage_error_count_sensor) {
+    battery_overvoltage_error_count_sensor_ = battery_overvoltage_error_count_sensor;
+  }
+  void set_battery_undervoltage_error_count_sensor(sensor::Sensor *battery_undervoltage_error_count_sensor) {
+    battery_undervoltage_error_count_sensor_ = battery_undervoltage_error_count_sensor;
+  }
   void set_cell_voltage_sensor(uint8_t cell, sensor::Sensor *cell_voltage_sensor) {
     this->cells_[cell].cell_voltage_sensor_ = cell_voltage_sensor;
   }
@@ -124,6 +164,8 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   binary_sensor::BinarySensor *discharging_binary_sensor_;
   binary_sensor::BinarySensor *online_status_binary_sensor_;
 
+  select::Select *read_eeprom_register_select_;
+
   sensor::Sensor *state_of_charge_sensor_;
   sensor::Sensor *total_voltage_sensor_;
   sensor::Sensor *current_sensor_;
@@ -145,6 +187,17 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   sensor::Sensor *battery_strings_sensor_;
   sensor::Sensor *temperature_sensors_sensor_;
   sensor::Sensor *software_version_sensor_;
+  sensor::Sensor *short_circuit_error_count_sensor_;
+  sensor::Sensor *charge_overcurrent_error_count_sensor_;
+  sensor::Sensor *discharge_overcurrent_error_count_sensor_;
+  sensor::Sensor *cell_overvoltage_error_count_sensor_;
+  sensor::Sensor *cell_undervoltage_error_count_sensor_;
+  sensor::Sensor *charge_overtemperature_error_count_sensor_;
+  sensor::Sensor *charge_undertemperature_error_count_sensor_;
+  sensor::Sensor *discharge_overtemperature_error_count_sensor_;
+  sensor::Sensor *discharge_undertemperature_error_count_sensor_;
+  sensor::Sensor *battery_overvoltage_error_count_sensor_;
+  sensor::Sensor *battery_undervoltage_error_count_sensor_;
 
   switch_::Switch *charging_switch_;
   switch_::Switch *discharging_switch_;
@@ -179,6 +232,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
 
   void assemble_(const uint8_t *data, uint16_t length);
   void on_cell_info_data_(const std::vector<uint8_t> &data);
+  void on_error_counts_data_(const std::vector<uint8_t> &data);
   void on_hardware_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_version_data_(const std::vector<uint8_t> &data);
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);

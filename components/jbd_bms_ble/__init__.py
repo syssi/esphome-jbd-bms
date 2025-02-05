@@ -5,7 +5,7 @@ from esphome.const import CONF_ID
 
 CODEOWNERS = ["@syssi"]
 
-AUTO_LOAD = ["binary_sensor", "button", "sensor", "switch", "text_sensor"]
+AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
 MULTI_CONF = True
 
 CONF_JBD_BMS_BLE_ID = "jbd_bms_ble_id"
