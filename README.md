@@ -27,6 +27,7 @@ ESPHome component to monitor and control a JBD-BMS via UART-TTL or BLE
 * JBD-AP21S001 150A 20S (JBD-AP21S001-L20S-150A-B, reported by [@yarosman](https://github.com/syssi/esphome-jbd-bms/issues/25))
 * JBD-AP21S001 200A 21S (JBD-AP21S001-L21S-200A-B, reported by [@cctweaker](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-6026019))
 * JBD-AP21S002 200A 21S (JBD-AP21S002-L21S-200A-B, reported by [@Zahnpasta83](https://github.com/syssi/esphome-jbd-bms/issues/44))
+* JBD-AP21S002 200A 21S, using RS485 (JBD-AP21S002-L21S-200A-B, reported by [@andrewfraley](https://github.com/syssi/esphome-jbd-bms/issues/121))
 * JBD-DP04S007 100A 4S (JBD-DP04S007-L4S-100A, reported by [@reflexsa](https://github.com/syssi/esphome-jbd-bms/discussions/20))
 * JBD-SP18S 100A 18S (JBD-SP18S-100A-086, reported by [@mobilex-Godelmann](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-5061954))
 * JBD-UP16015 200A 16S (reported by [@jasonxcool](https://github.com/syssi/esphome-jbd-bms/discussions/106#discussioncomment-11059688))
