@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import switch
 import esphome.config_validation as cv
-from esphome.const import CONF_ICON, CONF_ID
+from esphome.const import CONF_ID
 
 from .. import CONF_JBD_BMS_ID, JBD_BMS_COMPONENT_SCHEMA, jbd_bms_ns
 from ..const import CONF_CHARGING, CONF_DISCHARGING
@@ -30,23 +30,17 @@ JbdSwitch = jbd_bms_ns.class_("JbdSwitch", switch.Switch, cg.Component)
 
 CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
     {
-        cv.Optional(CONF_DISCHARGING): switch.SWITCH_SCHEMA.extend(
-            {
-                cv.GenerateID(): cv.declare_id(JbdSwitch),
-                cv.Optional(CONF_ICON, default=ICON_DISCHARGING): cv.icon,
-            }
+        cv.Optional(CONF_DISCHARGING): switch.switch_schema(
+            JbdSwitch,
+            icon=ICON_DISCHARGING,
         ).extend(cv.COMPONENT_SCHEMA),
-        cv.Optional(CONF_CHARGING): switch.SWITCH_SCHEMA.extend(
-            {
-                cv.GenerateID(): cv.declare_id(JbdSwitch),
-                cv.Optional(CONF_ICON, default=ICON_CHARGING): cv.icon,
-            }
+        cv.Optional(CONF_CHARGING): switch.switch_schema(
+            JbdSwitch,
+            icon=ICON_CHARGING,
         ).extend(cv.COMPONENT_SCHEMA),
-        # cv.Optional(CONF_BALANCER): switch.SWITCH_SCHEMA.extend(
-        #     {
-        #         cv.GenerateID(): cv.declare_id(JbdSwitch),
-        #         cv.Optional(CONF_ICON, default=ICON_BALANCER): cv.icon,
-        #     }
+        # cv.Optional(CONF_BALANCER): switch.switch_schema(
+        #     JbdSwitch,
+        #     icon=ICON_BALANCER,
         # ).extend(cv.COMPONENT_SCHEMA),
     }
 )

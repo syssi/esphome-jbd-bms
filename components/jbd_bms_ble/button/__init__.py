@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import button
 import esphome.config_validation as cv
-from esphome.const import CONF_ICON, CONF_ID
+from esphome.const import CONF_ID
 
 from .. import CONF_JBD_BMS_BLE_ID, JBD_BMS_BLE_COMPONENT_SCHEMA, jbd_bms_ble_ns
 
@@ -21,13 +21,9 @@ JbdButton = jbd_bms_ble_ns.class_("JbdButton", button.Button, cg.Component)
 
 CONFIG_SCHEMA = JBD_BMS_BLE_COMPONENT_SCHEMA.extend(
     {
-        cv.Optional(CONF_RETRIEVE_HARDWARE_VERSION): button.BUTTON_SCHEMA.extend(
-            {
-                cv.GenerateID(): cv.declare_id(JbdButton),
-                cv.Optional(
-                    CONF_ICON, default=ICON_CONF_RETRIEVE_HARDWARE_VERSION
-                ): cv.icon,
-            }
+        cv.Optional(CONF_RETRIEVE_HARDWARE_VERSION): button.button_schema(
+            JbdButton,
+            icon=ICON_CONF_RETRIEVE_HARDWARE_VERSION,
         ).extend(cv.COMPONENT_SCHEMA),
     }
 )
