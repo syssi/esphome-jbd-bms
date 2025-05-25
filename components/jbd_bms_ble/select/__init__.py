@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import select
 import esphome.config_validation as cv
-from esphome.const import CONF_ICON, CONF_ID
+from esphome.const import CONF_ID
 
 from .. import CONF_JBD_BMS_BLE_ID, JBD_BMS_BLE_COMPONENT_SCHEMA, jbd_bms_ble_ns
 
@@ -34,13 +34,19 @@ SELECTS = {
     CONF_READ_EEPROM_REGISTER,
 }
 
-JBD_SELECT_SCHEMA = select.SELECT_SCHEMA.extend(
-    {
-        cv.GenerateID(): cv.declare_id(JbdSelect),
-        cv.Optional(CONF_ICON, default="mdi:cog"): cv.icon,
-        cv.Optional(CONF_OPTIONSMAP): ensure_option_map,
-    }
-).extend(cv.COMPONENT_SCHEMA)
+JBD_SELECT_SCHEMA = (
+    select.select_schema(
+        JbdSelect,
+        icon="mdi:cog",
+    )
+    .extend(
+        {
+            cv.Optional(CONF_OPTIONSMAP): ensure_option_map,
+        }
+    )
+    .extend(cv.COMPONENT_SCHEMA)
+)
+
 
 CONFIG_SCHEMA = JBD_BMS_BLE_COMPONENT_SCHEMA.extend(
     {
