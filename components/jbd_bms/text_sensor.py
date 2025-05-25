@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import text_sensor
 import esphome.config_validation as cv
-from esphome.const import CONF_ICON, CONF_ID
+from esphome.const import CONF_ID
 
 from . import CONF_JBD_BMS_ID, JbdBms
 
@@ -26,23 +26,17 @@ TEXT_SENSORS = [
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(CONF_JBD_BMS_ID): cv.use_id(JbdBms),
-        cv.Optional(CONF_ERRORS): text_sensor.TEXT_SENSOR_SCHEMA.extend(
-            {
-                cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
-                cv.Optional(CONF_ICON, default=ICON_ERRORS): cv.icon,
-            }
+        cv.Optional(CONF_ERRORS): text_sensor.text_sensor_schema(
+            text_sensor.TextSensor,
+            icon=ICON_ERRORS,
         ),
-        cv.Optional(CONF_OPERATION_STATUS): text_sensor.TEXT_SENSOR_SCHEMA.extend(
-            {
-                cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
-                cv.Optional(CONF_ICON, default=ICON_OPERATION_STATUS): cv.icon,
-            }
+        cv.Optional(CONF_OPERATION_STATUS): text_sensor.text_sensor_schema(
+            text_sensor.TextSensor,
+            icon=ICON_OPERATION_STATUS,
         ),
-        cv.Optional(CONF_DEVICE_MODEL): text_sensor.TEXT_SENSOR_SCHEMA.extend(
-            {
-                cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
-                cv.Optional(CONF_ICON, default=ICON_DEVICE_MODEL): cv.icon,
-            }
+        cv.Optional(CONF_DEVICE_MODEL): text_sensor.text_sensor_schema(
+            text_sensor.TextSensor,
+            icon=ICON_DEVICE_MODEL,
         ),
     }
 )
