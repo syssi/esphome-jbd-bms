@@ -22,6 +22,7 @@ ESPHome component to monitor and control a JBD-BMS via UART-TTL or BLE
 * JBD-SP22S003A 50A 22S (JBD-SP22S003A-L22S, reported by [@johkn](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-5942928))
 * JBD-SP22S003B 100A 21S (JBD-SP22S003B-L21S-100A, reported by [@chipsi](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-7075070))
 * JBD-SP22S003B 100A 22S (JBD-SP22S003B-L22S-100A, reported by [@chipsi](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-7075070))
+* JBD-SP25S002 80A 24S (JBD-SP25S002-L24S-80A-B-U-C, reported by [@br3ily](https://github.com/syssi/esphome-jbd-bms/issues/134))
 * JBD-AP20S003 200A 20S (JBD-AP20S003-L20S-200A-B, reported by [@chipsi](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-7075070))
 * JBD-AP20S006 200A 20S (JBD-AP20S006-L20S-200A-B, reported by [@rk125](https://github.com/syssi/esphome-jbd-bms/discussions/16))
 * JBD-AP21S001 150A 20S (JBD-AP21S001-L20S-150A-B, reported by [@yarosman](https://github.com/syssi/esphome-jbd-bms/issues/25))
