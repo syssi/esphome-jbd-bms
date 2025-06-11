@@ -10,11 +10,11 @@ DEPENDENCIES = ["jbd_bms"]
 CODEOWNERS = ["@syssi"]
 
 CONF_RETRIEVE_HARDWARE_VERSION = "retrieve_hardware_version"
-
-ICON_CONF_RETRIEVE_HARDWARE_VERSION = "mdi:numeric"
+CONF_FORCE_SOC_RESET = "force_soc_reset"
 
 BUTTONS = {
     CONF_RETRIEVE_HARDWARE_VERSION: 0x05,
+    CONF_FORCE_SOC_RESET: 0x0A,
 }
 
 JbdButton = jbd_bms_ns.class_("JbdButton", button.Button, cg.Component)
@@ -23,7 +23,11 @@ CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
     {
         cv.Optional(CONF_RETRIEVE_HARDWARE_VERSION): button.button_schema(
             JbdButton,
-            icon=ICON_CONF_RETRIEVE_HARDWARE_VERSION,
+            icon="mdi:numeric",
+        ).extend(cv.COMPONENT_SCHEMA),
+        cv.Optional(CONF_FORCE_SOC_RESET): button.button_schema(
+            JbdButton,
+            icon="mdi:battery-charging-100",
         ).extend(cv.COMPONENT_SCHEMA),
     }
 )

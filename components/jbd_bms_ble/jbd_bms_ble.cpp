@@ -26,6 +26,7 @@ static const uint8_t JBD_CMD_HWVER = 0x05;
 
 static const uint8_t JBD_CMD_ENTER_FACTORY = 0x00;
 static const uint8_t JBD_CMD_EXIT_FACTORY = 0x01;
+static const uint8_t JBD_CMD_FORCE_SOC_RESET = 0x0A;
 static const uint8_t JBD_CMD_ERROR_COUNTS = 0xAA;
 static const uint8_t JBD_CMD_CAP_REM = 0xE0;   // Set remaining capacity
 static const uint8_t JBD_CMD_MOS = 0xE1;       // Set charging/discharging bitmask
@@ -193,6 +194,7 @@ void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8
       break;
     case JBD_CMD_MOS:
     case JBD_CMD_EXIT_FACTORY:
+    case JBD_CMD_FORCE_SOC_RESET:
       break;
     default:
       ESP_LOGW(TAG, "Unhandled response (function 0x%02X) received: %s", function,

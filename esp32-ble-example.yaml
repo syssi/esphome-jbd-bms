@@ -60,6 +60,8 @@ button:
     jbd_bms_ble_id: bms0
     retrieve_hardware_version:
       name: "${name} retrieve hardware version"
+    force_soc_reset:
+      name: "${name} force soc reset"
 
 binary_sensor:
   - platform: jbd_bms_ble
