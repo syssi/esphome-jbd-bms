@@ -8,9 +8,17 @@ namespace jbd_bms {
 static const char *const TAG = "jbd_bms.button";
 
 static const uint8_t JBD_CMD_READ = 0xA5;
+static const uint8_t JBD_CMD_FORCE_SOC_RESET = 0x0A;
 
 void JbdButton::dump_config() { LOG_BUTTON("", "JbdBms Button", this); }
-void JbdButton::press_action() { this->parent_->send_command(JBD_CMD_READ, this->holding_register_); }
+void JbdButton::press_action() {
+  if (this->holding_register_ == JBD_CMD_FORCE_SOC_RESET) {
+    this->parent_->write_register(this->holding_register_, 0x0100);
+    return;
+  }
+
+  this->parent_->send_command(JBD_CMD_READ, this->holding_register_);
+}
 
 }  // namespace jbd_bms
 }  // namespace esphome
