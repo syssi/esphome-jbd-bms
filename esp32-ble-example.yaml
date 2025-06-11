@@ -96,8 +96,6 @@ sensor:
       name: "${name} charging cycles"
     capacity_remaining:
       name: "${name} capacity remaining"
-    battery_cycle_capacity:
-      name: "${name} battery cycle capacity"
     total_voltage:
       name: "${name} total voltage"
     average_cell_voltage:
