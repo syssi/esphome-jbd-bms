@@ -11,7 +11,6 @@ DEPENDENCIES = ["jbd_bms"]
 CODEOWNERS = ["@syssi"]
 
 CONF_BALANCER = "balancer"
-CONF_BLUETOOTH = "bluetooth"
 CONF_BUZZER = "buzzer"
 
 ICON_DISCHARGING = "mdi:battery-charging-50"
