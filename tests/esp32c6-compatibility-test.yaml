@@ -1,24 +1,18 @@
 substitutions:
   name: esp32c6-compatibility-test
   device_description: "Verify the project builds from source on ESP32C6"
-  external_components_source: github://syssi/esphome-ant-bms@main
+  external_components_source: github://syssi/esphome-jbd-bms@main
 
 esphome:
   name: ${name}
   comment: ${device_description}
-  min_version: 2024.6.0
-  platformio_options:
-    board_build.flash_size: 8MB
+  min_version: 2025.6.0
 
 esp32:
   board: esp32-c6-devkitc-1
   variant: esp32c6
   framework:
     type: esp-idf
-    version: 5.3.1
-    platform_version: 6.9.0
-    sdkconfig_options:
-      CONFIG_ESPTOOLPY_FLASHSIZE_8MB: y
 
 external_components:
   - source: ${external_components_source}
