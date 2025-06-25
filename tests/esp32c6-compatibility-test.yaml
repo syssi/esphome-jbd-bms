@@ -1,5 +1,7 @@
 substitutions:
   name: esp32c6-compatibility-test
+  bms0: bms0
+  bms1: bms1
   device_description: "Verify the project builds from source on ESP32C6"
   external_components_source: github://syssi/esphome-jbd-bms@main
 
@@ -59,9 +61,9 @@ sensor:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
     total_voltage:
-      name: "${name} total voltage"
+      name: "${bms0} total voltage"
 
   - platform: jbd_bms
     jbd_bms_id: bms1
     total_voltage:
-      name: "${name} total voltage"
+      name: "${bms1} total voltage"
