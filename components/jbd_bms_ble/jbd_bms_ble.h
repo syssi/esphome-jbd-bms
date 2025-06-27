@@ -152,11 +152,16 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void set_device_model_text_sensor(text_sensor::TextSensor *device_model_text_sensor) {
     device_model_text_sensor_ = device_model_text_sensor;
   }
+  void set_password(const std::string &password) {
+    password_ = password;
+    enable_authentication_ = !password.empty();
+  }
 
   bool send_command(uint8_t action, uint8_t function);
   bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
+  void assemble(const uint8_t *data, uint16_t length);
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;
@@ -230,7 +235,6 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   uint8_t no_response_count_{0};
   uint8_t mosfet_status_{255};
 
-  void assemble_(const uint8_t *data, uint16_t length);
   void on_cell_info_data_(const std::vector<uint8_t> &data);
   void on_error_counts_data_(const std::vector<uint8_t> &data);
   void on_hardware_info_data_(const std::vector<uint8_t> &data);
@@ -251,6 +255,42 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
     }
     return checksum;
   }
+
+  uint8_t auth_chksum_(const uint8_t *data, uint16_t length) {
+    uint8_t checksum = 0;
+    for (uint16_t i = 0; i < length; i++) {
+      checksum += data[i];
+    }
+    return checksum;
+  }
+
+  enum class AuthState {
+    NOT_AUTHENTICATED,
+    SENDING_APP_KEY,
+    REQUESTING_RANDOM,
+    SENDING_PASSWORD,
+    REQUESTING_ROOT_RANDOM,
+    SENDING_ROOT_PASSWORD,
+    AUTHENTICATED,
+    FAILED
+  };
+
+  bool enable_authentication_{false};
+  AuthState authentication_state_{AuthState::NOT_AUTHENTICATED};
+  uint8_t random_byte_;
+  std::string password_{""};
+  uint32_t auth_timeout_start_;
+
+  void start_authentication_();
+  void send_app_key_();
+  void request_random_byte_();
+  void send_encrypted_password_();
+  void send_root_password_();
+  void send_auth_frame_(uint8_t *frame, size_t length);
+  void assemble_auth_frame_(const uint8_t *data, uint16_t length);
+  void handle_auth_response_(uint8_t command, const uint8_t *data, uint8_t data_len);
+  void check_auth_timeout_();
+  void fallback_to_normal_communication_();
 };
 
 }  // namespace jbd_bms_ble
