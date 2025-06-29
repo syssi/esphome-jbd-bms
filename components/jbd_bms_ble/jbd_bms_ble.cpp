@@ -193,17 +193,6 @@ void JbdBmsBle::send_encrypted_password_() {
 
   // Use configured password or default to "123123" if empty
   std::string password_str = this->password_.empty() ? "123123" : this->password_;
-  uint8_t password[6];
-
-  for (int i = 0; i < 6; i++) {
-    password[i] = static_cast<uint8_t>(password_str[i]);
-  }
-
-  uint8_t encrypted[6];
-
-  for (int i = 0; i < 6; i++) {
-    encrypted[i] = ((remote_bda[i] ^ password[i]) + this->random_byte_) & 255;
-  }
 
   uint8_t frame[11];
   frame[0] = JBD_AUTH_PKT_START;
@@ -212,7 +201,7 @@ void JbdBmsBle::send_encrypted_password_() {
   frame[3] = 0x06;
 
   for (int i = 0; i < 6; i++) {
-    frame[4 + i] = encrypted[i];
+    frame[4 + i] = ((remote_bda[i] ^ static_cast<uint8_t>(password_str[i])) + this->random_byte_) & 255;
   }
 
   frame[10] = auth_chksum_(frame + 2, 8);
