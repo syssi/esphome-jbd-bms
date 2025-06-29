@@ -289,8 +289,6 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void send_auth_frame_(uint8_t *frame, size_t length);
   void assemble_auth_frame_(const uint8_t *data, uint16_t length);
   void handle_auth_response_(uint8_t command, const uint8_t *data, uint8_t data_len);
-  void check_auth_timeout_();
-  void fallback_to_normal_communication_();
 };
 
 }  // namespace jbd_bms_ble

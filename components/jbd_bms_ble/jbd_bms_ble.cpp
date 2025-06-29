@@ -386,14 +386,9 @@ void JbdBmsBle::update() {
     return;
   }
 
-  // Check for authentication timeout
-  if (this->enable_authentication_) {
-    this->check_auth_timeout_();
-
-    if (this->authentication_state_ != AuthState::AUTHENTICATED) {
-      ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str().c_str());
-      return;
-    }
+  if (this->enable_authentication_ && this->authentication_state_ != AuthState::AUTHENTICATED) {
+    ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str().c_str());
+    return;
   }
 
   this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
@@ -829,38 +824,6 @@ std::string JbdBmsBle::error_bits_to_string_(const uint16_t mask) {
     }
   }
   return values;
-}
-
-void JbdBmsBle::check_auth_timeout_() {
-  // Only check timeout during app key phase
-  if (this->authentication_state_ != AuthState::SENDING_APP_KEY) {
-    return;
-  }
-
-  // Check if 3 seconds have passed since sending app key
-  uint32_t now = millis();
-  if (now - this->auth_timeout_start_ >= 3000) {
-    ESP_LOGI(
-        TAG,
-        "Authentication timeout (3s) - device doesn't support FF:AA protocol, falling back to normal communication");
-    this->fallback_to_normal_communication_();
-  }
-}
-
-void JbdBmsBle::fallback_to_normal_communication_() {
-  ESP_LOGD(TAG, "Disabling authentication and switching to normal BMS communication");
-
-  // Disable authentication entirely for this device
-  this->enable_authentication_ = false;
-  this->authentication_state_ = AuthState::AUTHENTICATED;
-
-  // Clear any authentication state
-  this->random_byte_ = 0;
-  this->auth_timeout_start_ = 0;
-
-  // Start normal data collection immediately
-  ESP_LOGI(TAG, "Authentication disabled - starting normal BMS data collection");
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
 }
 
 }  // namespace jbd_bms_ble
