@@ -184,7 +184,7 @@ void JbdBmsBle::request_random_byte_() {
 }
 
 void JbdBmsBle::send_user_password_() {
-  ESP_LOGD(TAG, "Sending encrypted password with random byte: 0x%02X", this->random_byte_);
+  ESP_LOGD(TAG, "Sending encrypted user password with random byte: 0x%02X", this->random_byte_);
 
   uint8_t *remote_bda = this->parent()->get_remote_bda();
 
@@ -207,7 +207,7 @@ void JbdBmsBle::send_user_password_() {
 }
 
 void JbdBmsBle::send_root_password_() {
-  ESP_LOGD(TAG, "Sending root password with random byte: 0x%02X", this->random_byte_);
+  ESP_LOGD(TAG, "Sending encrypted root password with random byte: 0x%02X", this->random_byte_);
 
   uint8_t *remote_bda = this->parent()->get_remote_bda();
   uint8_t encrypted[ROOT_PASSWORD_LENGTH];
