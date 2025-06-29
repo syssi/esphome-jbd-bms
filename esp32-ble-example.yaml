@@ -54,7 +54,8 @@ jbd_bms_ble:
     ble_client_id: client0
     # Some Liontron BMS models require an update interval of less than 8s
     update_interval: 2s
-    password: "123456"
+    # Default password of the JBD-SP04S034 V1.3 which requires authentication
+    # password: "123456"
 
 button:
   - platform: jbd_bms_ble
