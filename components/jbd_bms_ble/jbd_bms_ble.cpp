@@ -154,9 +154,6 @@ void JbdBmsBle::start_authentication_() {
 void JbdBmsBle::send_app_key_() {
   ESP_LOGD(TAG, "Sending app key");
 
-  // Start timeout timer for 3 seconds
-  this->auth_timeout_start_ = millis();
-
   uint8_t frame[11];
   frame[0] = JBD_AUTH_PKT_START;
   frame[1] = JBD_AUTH_PKT_SECOND;

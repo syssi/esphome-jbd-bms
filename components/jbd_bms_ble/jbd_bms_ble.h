@@ -279,7 +279,6 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   AuthState authentication_state_{AuthState::NOT_AUTHENTICATED};
   uint8_t random_byte_;
   std::string password_{""};
-  uint32_t auth_timeout_start_;
 
   void start_authentication_();
   void send_app_key_();
@@ -287,7 +286,6 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void send_user_password_();
   void send_root_password_();
   void send_auth_frame_(uint8_t *frame, size_t length);
-  void assemble_auth_frame_(const uint8_t *data, uint16_t length);
   void handle_auth_response_(uint8_t command, const uint8_t *data, uint8_t data_len);
 };
 
