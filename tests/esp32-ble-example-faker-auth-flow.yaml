@@ -1,0 +1,138 @@
+<<: !include ../esp32-ble-example-debug.yaml
+
+# Example 1
+#
+# >>> ff:aa:15:06:30:30:30:30:30:30:3b       # Send app password
+# <<< ff:aa:15:01:00:16                      # App password acknowledgement (0x00)
+#
+# >>> ff:aa:17:00:17                         # Request random byte
+# <<< ff:aa:17:01:24:3c                      # Random byte 0x24 response
+#
+# >>> ff:aa:18:06:45:bb:75:2a:64:24:45       # Send unknown (`123456`) password
+# <<< ff:aa:18:01:00:19                      # Password acknowledgement (0x00)
+#
+# >>> ff:aa:17:00:17                                                 # Request random byte
+# <<< ff:aa:17:01:c9:e1                                              # Random byte 0xC9 response
+#
+# >>> ff:aa:1d:0f:23:b0:ef:19:ca:0f:40:2d:ea:09:ec:fb:f9:fb:fc:17    # Send root password
+# <<< ff:aa:1d:01:00:1e                                              # Root password ACK (0x00)
+
+# Example 2
+#
+# >>> ff:aa:15:06:30:30:30:30:30:30:3b       # Send app password
+# <<< ff:aa:15:01:00:16                      # App password acknowledgement (0x00)
+#
+# >>> ff:aa:17:00:17                         # Request random byte
+# <<< ff:aa:17:01:45:5d                      # Random byte 0x45 response
+#
+# >>> ff:aa:18:06:66:dc:96:4b:85:45:0b       # Send unknown (`123456`) password
+# <<< ff:aa:18:01:00:19                      # Password acknowledgement (0x00)
+#
+# >>> ff:aa:17:00:17                         # Request random byte
+# <<< ff:aa:17:01:f3:0b                      # Password acknowledgement (0xf3)
+#
+# >>> ff:aa:1d:0f:4d:da:19:43:f4:39:6a:57:14:33:16:25:23:25:26:8d    # Send root password
+# <<< ff:aa:1d:01:00:1e                                              # Root password ACK (0x00)
+
+
+ble_client:
+  - id: client0
+    mac_address: "10:a5:62:32:75:36"
+
+jbd_bms_ble:
+  - id: bms0
+    ble_client_id: client0
+    update_interval: 30s
+    password: "123456"
+
+interval:
+  # Test Flow 1: Password "123456" with random bytes 0x24 and 0xC9
+  - interval: 20s
+    then:
+      # Step 1: App Password Acknowledgement (0x00)
+      # Response to: ff:aa:15:06:30:30:30:30:30:30:3b
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_1", "Test 1 - Step 1: App Password Acknowledgement (0x00)");
+          uint8_t frame[] = {0xFF, 0xAA, 0x15, 0x01, 0x00, 0x16};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 2: First Random Byte Response (0x24) - for user password
+      # Response to: ff:aa:17:00:17
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_1", "Test 1 - Step 2: First Random Byte Response (0x24) - for user password");
+          uint8_t frame[] = {0xFF, 0xAA, 0x17, 0x01, 0x24, 0x3C};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 3: Password Acknowledgement (0x00)
+      # Response to: ff:aa:18:06:45:bb:75:2a:64:24:45
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_1", "Test 1 - Step 3: Password Acknowledgement (0x00)");
+          uint8_t frame[] = {0xFF, 0xAA, 0x18, 0x01, 0x00, 0x19};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 4: Second Random Byte Response (0xC9) - for root password
+      # Response to: ff:aa:17:00:17 (second request)
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_1", "Test 1 - Step 4: Second Random Byte Response (0xC9) - for root password");
+          uint8_t frame[] = {0xFF, 0xAA, 0x17, 0x01, 0xC9, 0xE1};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 5: Root Password ACK (0x00)
+      # Response to: ff:aa:1d:0f:23:b0:ef:19:ca:0f:40:2d:ea:09:ec:fb:f9:fb:fc:17
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_1", "Test 1 - Step 5: Root Password Acknowledgement (0x00)");
+          uint8_t frame[] = {0xFF, 0xAA, 0x1D, 0x01, 0x00, 0x1E};
+          id(bms0).assemble(frame, sizeof(frame));
+
+  # Test Flow 2: Password "123456" with random bytes 0x45 and 0xF3
+  - interval: 30s
+    then:
+      # Step 1: App Password Acknowledgement (0x00)
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_2", "Test 2 - Step 1: App Password Acknowledgement (0x00)");
+          uint8_t frame[] = {0xFF, 0xAA, 0x15, 0x01, 0x00, 0x16};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 2: First Random Byte Response (0x45) - for user password
+      # Response to: ff:aa:17:00:17
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_2", "Test 2 - Step 2: First Random Byte Response (0x45) - for user password");
+          uint8_t frame[] = {0xFF, 0xAA, 0x17, 0x01, 0x45, 0x5D};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 3: Password Acknowledgement (0x00)
+      # Expected encrypted password for "123456": ff:aa:18:06:66:dc:96:4b:85:45:0b
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_2", "Test 2 - Step 3: Password Acknowledgement (0x00)");
+          uint8_t frame[] = {0xFF, 0xAA, 0x18, 0x01, 0x00, 0x19};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 4: Second Random Byte Response (0xF3) - for root password
+      # Response to: ff:aa:17:00:17 (second request)
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_2", "Test 2 - Step 4: Second Random Byte Response (0xF3) - for root password");
+          uint8_t frame[] = {0xFF, 0xAA, 0x17, 0x01, 0xF3, 0x0B};
+          id(bms0).assemble(frame, sizeof(frame));
+
+      - delay: 500ms
+
+      # Step 5: Root Password ACK (0x00)
+      # Expected root password: ff:aa:1d:0f:4d:da:19:43:f4:39:6a:57:14:33:16:25:23:25:26:8d
+      - lambda: |-
+          ESP_LOGI("auth_flow_example_2", "Test 2 - Step 5: Root Password Acknowledgement (0x00)");
+          uint8_t frame[] = {0xFF, 0xAA, 0x1D, 0x01, 0x00, 0x1E};
+          id(bms0).assemble(frame, sizeof(frame));
