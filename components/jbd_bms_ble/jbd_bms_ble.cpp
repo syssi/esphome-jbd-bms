@@ -186,7 +186,7 @@ void JbdBmsBle::request_random_byte_() {
   this->send_auth_frame_(frame, sizeof(frame));
 }
 
-void JbdBmsBle::send_encrypted_password_() {
+void JbdBmsBle::send_user_password_() {
   ESP_LOGD(TAG, "Sending encrypted password with random byte: 0x%02X", this->random_byte_);
 
   uint8_t *remote_bda = this->parent()->get_remote_bda();
@@ -343,7 +343,7 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
       ESP_LOGD(TAG, "Received random byte: 0x%02X", this->random_byte_);
       if (this->authentication_state_ == AuthState::REQUESTING_RANDOM) {
         this->authentication_state_ = AuthState::SENDING_PASSWORD;
-        this->send_encrypted_password_();
+        this->send_user_password_();
       } else if (this->authentication_state_ == AuthState::REQUESTING_ROOT_RANDOM) {
         this->authentication_state_ = AuthState::SENDING_ROOT_PASSWORD;
         this->send_root_password_();

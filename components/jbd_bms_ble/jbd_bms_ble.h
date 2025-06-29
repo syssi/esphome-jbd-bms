@@ -284,7 +284,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void start_authentication_();
   void send_app_key_();
   void request_random_byte_();
-  void send_encrypted_password_();
+  void send_user_password_();
   void send_root_password_();
   void send_auth_frame_(uint8_t *frame, size_t length);
   void assemble_auth_frame_(const uint8_t *data, uint16_t length);
