@@ -17,7 +17,7 @@ ESPHome component to monitor and control a JBD-BMS via UART-TTL or BLE
 * JBD-AP21S002 200A 21S (JBD-AP21S002-L21S-200A-B, reported by [@Zahnpasta83](https://github.com/syssi/esphome-jbd-bms/issues/44))
 * JBD-AP21S002 200A 21S, using RS485 (JBD-AP21S002-L21S-200A-B, reported by [@andrewfraley](https://github.com/syssi/esphome-jbd-bms/issues/121))
 * JBD-DP04S007 100A 4S (JBD-DP04S007-L4S-100A, reported by [@reflexsa](https://github.com/syssi/esphome-jbd-bms/discussions/20))
-* JBD-SP04S034 200A 4S V1.3 (JBD-SP04S034-L4S-200A-B-U using BLE with `password: "123456"`, reported by [@tedesco1968](https://github.com/syssi/esphome-jbd-bms/issues/145))
+* JBD-SP04S034 200A 4S V1.3 (SP04S034L4S200A using BLE with `password: "123456"`, reported by [@tedesco1968](https://github.com/syssi/esphome-jbd-bms/issues/145))
 * JBD-SP04S020 120A 4S (JBD-SP04S020-L4S-120A-B-U-K, reported by [@Bretthansenpc](https://github.com/syssi/esphome-jbd-bms/issues/1#issuecomment-1133964580))
 * JBD-SP04S020A 80A 4S (JBD-SP04S020A-L4S-80A-B-U, reported by [@kevin-jake](https://github.com/syssi/esphome-jbd-bms/issues/14))
 * JBD-SP10S009 100A 8S (JBD-SP10S009-L8S-100A-B-K, reported by [@the-butterfry](https://github.com/syssi/esphome-jbd-bms/discussions/17))
