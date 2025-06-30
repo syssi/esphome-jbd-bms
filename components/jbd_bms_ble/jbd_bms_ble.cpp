@@ -384,11 +384,26 @@ void JbdBmsBle::update() {
   }
 
   if (this->enable_authentication_ && this->authentication_state_ != AuthState::AUTHENTICATED) {
+    this->check_auth_timeout_();
     ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str().c_str());
     return;
   }
 
   this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+}
+
+void JbdBmsBle::check_auth_timeout_() {
+  if (this->authentication_state_ == AuthState::NOT_AUTHENTICATED ||
+      this->authentication_state_ == AuthState::AUTHENTICATED) {
+    return;
+  }
+
+  const uint32_t now = millis();
+  if (now - this->auth_timeout_start_ > this->auth_timeout_ms_) {
+    ESP_LOGW(TAG, "[%s] Authentication timeout after %d ms, resetting to retry", this->parent_->address_str().c_str(),
+             this->auth_timeout_ms_);
+    this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
+  }
 }
 
 void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data) {

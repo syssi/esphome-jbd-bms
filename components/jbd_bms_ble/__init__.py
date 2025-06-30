@@ -3,6 +3,8 @@ from esphome.components import ble_client
 import esphome.config_validation as cv
 from esphome.const import CONF_ID, CONF_PASSWORD
 
+CONF_AUTH_TIMEOUT = "auth_timeout"
+
 CODEOWNERS = ["@syssi"]
 
 AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
@@ -49,6 +51,9 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_PASSWORD, default=""): cv.All(
                 cv.string_strict, validate_password
             ),
+            cv.Optional(
+                CONF_AUTH_TIMEOUT, default="10s"
+            ): cv.positive_time_period_milliseconds,
         }
     )
     .extend(ble_client.BLE_CLIENT_SCHEMA)
@@ -63,3 +68,6 @@ async def to_code(config):
 
     if CONF_PASSWORD in config and config[CONF_PASSWORD]:
         cg.add(var.set_password(config[CONF_PASSWORD]))
+
+    if CONF_AUTH_TIMEOUT in config:
+        cg.add(var.set_authentication_timeout(config[CONF_AUTH_TIMEOUT]))

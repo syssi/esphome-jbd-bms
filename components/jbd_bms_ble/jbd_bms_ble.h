@@ -156,6 +156,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
     password_ = password;
     enable_authentication_ = !password.empty();
   }
+  void set_authentication_timeout(uint32_t timeout_ms) { auth_timeout_ms_ = timeout_ms; }
 
   bool send_command(uint8_t action, uint8_t function);
   bool write_register(uint8_t address, uint16_t value);
@@ -279,6 +280,8 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   AuthState authentication_state_{AuthState::NOT_AUTHENTICATED};
   uint8_t random_byte_;
   std::string password_{""};
+  uint32_t auth_timeout_start_{0};
+  uint32_t auth_timeout_ms_{10000};
 
   void start_authentication_();
   void send_app_key_();
@@ -287,6 +290,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void send_root_password_();
   void send_auth_frame_(uint8_t *frame, size_t length);
   void handle_auth_response_(uint8_t command, const uint8_t *data, uint8_t data_len);
+  void check_auth_timeout_();
 };
 
 }  // namespace jbd_bms_ble
