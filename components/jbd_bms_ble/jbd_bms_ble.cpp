@@ -148,6 +148,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
 void JbdBmsBle::start_authentication_() {
   ESP_LOGI(TAG, "Starting authentication flow");
   this->authentication_state_ = AuthState::SENDING_APP_KEY;
+  this->auth_timeout_start_ = millis();
   this->send_app_key_();
 }
 
@@ -384,8 +385,12 @@ void JbdBmsBle::update() {
   }
 
   if (this->enable_authentication_ && this->authentication_state_ != AuthState::AUTHENTICATED) {
-    this->check_auth_timeout_();
-    ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str().c_str());
+    if (this->authentication_state_ == AuthState::NOT_AUTHENTICATED) {
+      this->start_authentication_();
+    } else {
+      this->check_auth_timeout_();
+      ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str().c_str());
+    }
     return;
   }
 
