@@ -20,6 +20,16 @@ static const uint8_t JBD_PKT_END = 0x77;
 static const uint8_t JBD_CMD_READ = 0xA5;
 static const uint8_t JBD_CMD_WRITE = 0x5A;
 
+static const uint8_t JBD_AUTH_PKT_START = 0xFF;
+static const uint8_t JBD_AUTH_PKT_SECOND = 0xAA;
+static const uint8_t JBD_AUTH_PKT_END = 0x77;
+
+static const uint8_t JBD_AUTH_SEND_APP_KEY = 0x15;
+static const uint8_t JBD_AUTH_GET_RANDOM = 0x17;
+static const uint8_t JBD_AUTH_SEND_PASSWORD = 0x18;
+static const uint8_t JBD_AUTH_CHANGE_PASSWORD = 0x16;
+static const uint8_t JBD_AUTH_SEND_ROOT_PASSWORD = 0x1D;
+
 static const uint8_t JBD_CMD_HWINFO = 0x03;
 static const uint8_t JBD_CMD_CELLINFO = 0x04;
 static const uint8_t JBD_CMD_HWVER = 0x05;
@@ -55,6 +65,10 @@ static const char *const ERRORS[ERRORS_SIZE] = {
     "Unknown (0x0F)",                 // 0x0F
 };
 
+static const uint8_t ROOT_PASSWORD[] = {0x4a, 0x42, 0x44, 0x62, 0x74, 0x70, 0x77, 0x64,
+                                        0x21, 0x40, 0x23, 0x32, 0x30, 0x32, 0x33};
+static const size_t ROOT_PASSWORD_LENGTH = sizeof(ROOT_PASSWORD);
+
 void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
                                     esp_ble_gattc_cb_param_t *param) {
   switch (event) {
@@ -75,6 +89,8 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       this->char_command_handle_ = 0;
 
       this->frame_buffer_.clear();
+      this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
+      this->random_byte_ = 0;
 
       break;
     }
@@ -105,7 +121,11 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
     case ESP_GATTC_REG_FOR_NOTIFY_EVT: {
       this->node_state = espbt::ClientState::ESTABLISHED;
 
-      this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+      if (this->enable_authentication_) {
+        this->start_authentication_();
+      } else {
+        this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+      }
 
       break;
     }
@@ -116,7 +136,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       ESP_LOGV(TAG, "Notification received (handle 0x%02X): %s", param->notify.handle,
                format_hex_pretty(param->notify.value, param->notify.value_len).c_str());
 
-      this->assemble_(param->notify.value, param->notify.value_len);
+      this->assemble(param->notify.value, param->notify.value_len);
 
       break;
     }
@@ -125,43 +145,235 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
   }
 }
 
-void JbdBmsBle::assemble_(const uint8_t *data, uint16_t length) {
+void JbdBmsBle::start_authentication_() {
+  ESP_LOGI(TAG, "Starting authentication flow");
+  this->authentication_state_ = AuthState::SENDING_APP_KEY;
+  this->auth_timeout_start_ = millis();
+  this->send_app_key_();
+}
+
+void JbdBmsBle::send_app_key_() {
+  ESP_LOGD(TAG, "Sending app key");
+
+  uint8_t frame[11];
+  frame[0] = JBD_AUTH_PKT_START;
+  frame[1] = JBD_AUTH_PKT_SECOND;
+  frame[2] = JBD_AUTH_SEND_APP_KEY;
+  frame[3] = 0x06;
+  frame[4] = 0x30;
+  frame[5] = 0x30;
+  frame[6] = 0x30;  // "000000"
+  frame[7] = 0x30;
+  frame[8] = 0x30;
+  frame[9] = 0x30;
+  frame[10] = auth_chksum_(frame + 2, 8);
+
+  this->send_auth_frame_(frame, sizeof(frame));
+}
+
+void JbdBmsBle::request_random_byte_() {
+  ESP_LOGD(TAG, "Requesting random byte");
+
+  uint8_t frame[5];
+  frame[0] = JBD_AUTH_PKT_START;
+  frame[1] = JBD_AUTH_PKT_SECOND;
+  frame[2] = JBD_AUTH_GET_RANDOM;
+  frame[3] = 0x00;
+  frame[4] = auth_chksum_(frame + 2, 2);
+
+  this->send_auth_frame_(frame, sizeof(frame));
+}
+
+void JbdBmsBle::send_user_password_() {
+  ESP_LOGD(TAG, "Sending encrypted user password with random byte: 0x%02X", this->random_byte_);
+
+  uint8_t *remote_bda = this->parent()->get_remote_bda();
+
+  // Use configured password or default to "123123" if empty
+  std::string password_str = this->password_.empty() ? "123123" : this->password_;
+
+  uint8_t frame[11];
+  frame[0] = JBD_AUTH_PKT_START;
+  frame[1] = JBD_AUTH_PKT_SECOND;
+  frame[2] = JBD_AUTH_SEND_PASSWORD;
+  frame[3] = 0x06;
+
+  for (int i = 0; i < 6; i++) {
+    frame[4 + i] = ((remote_bda[i] ^ static_cast<uint8_t>(password_str[i])) + this->random_byte_) & 255;
+  }
+
+  frame[10] = auth_chksum_(frame + 2, 8);
+
+  this->send_auth_frame_(frame, sizeof(frame));
+}
+
+void JbdBmsBle::send_root_password_() {
+  ESP_LOGD(TAG, "Sending encrypted root password with random byte: 0x%02X", this->random_byte_);
+
+  uint8_t *remote_bda = this->parent()->get_remote_bda();
+  uint8_t encrypted[ROOT_PASSWORD_LENGTH];
+
+  // Encrypt root password using MAC address and random byte
+  for (size_t i = 0; i < ROOT_PASSWORD_LENGTH; i++) {
+    uint8_t mac_byte = (i < 6) ? remote_bda[i] : 0x00;  // Use 0x00 for bytes beyond MAC length
+    encrypted[i] = ((mac_byte ^ ROOT_PASSWORD[i]) + this->random_byte_) & 255;
+  }
+
+  uint8_t frame[20];  // 4 + 15 + 1
+  frame[0] = JBD_AUTH_PKT_START;
+  frame[1] = JBD_AUTH_PKT_SECOND;
+  frame[2] = JBD_AUTH_SEND_ROOT_PASSWORD;
+  frame[3] = ROOT_PASSWORD_LENGTH;
+
+  for (size_t i = 0; i < ROOT_PASSWORD_LENGTH; i++) {
+    frame[4 + i] = encrypted[i];
+  }
+
+  frame[4 + ROOT_PASSWORD_LENGTH] = auth_chksum_(frame + 2, 2 + ROOT_PASSWORD_LENGTH);
+
+  this->send_auth_frame_(frame, 5 + ROOT_PASSWORD_LENGTH);
+}
+
+void JbdBmsBle::send_auth_frame_(uint8_t *frame, size_t length) {
+  ESP_LOGV(TAG, "Send auth frame (handle 0x%02X): %s", this->char_command_handle_,
+           format_hex_pretty(frame, length).c_str());
+
+  auto status =
+      esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
+                               length, frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
+
+  if (status) {
+    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str().c_str(), status);
+  }
+}
+
+void JbdBmsBle::assemble(const uint8_t *data, uint16_t length) {
   if (this->frame_buffer_.size() > MAX_RESPONSE_SIZE) {
     ESP_LOGW(TAG, "Maximum response size exceeded");
     this->frame_buffer_.clear();
   }
 
-  // Flush buffer on every preamble
-  if (data[0] == 0xDD && data[2] == 0x00) {
+  // Auth frames (0xFF 0xAA) are complete in single BLE notification, process directly
+  if (length >= 5 && data[0] == JBD_AUTH_PKT_START && data[1] == JBD_AUTH_PKT_SECOND) {
+    uint8_t command = data[2];
+    uint8_t data_len = data[3];
+    uint8_t expected_frame_len = 4 + data_len + 1;  // FF AA CMD LEN DATA... CHECKSUM
+
+    if (length >= expected_frame_len) {
+      uint8_t computed_crc = auth_chksum_(data + 2, 2 + data_len);
+      uint8_t remote_crc = data[4 + data_len];
+
+      if (computed_crc == remote_crc) {
+        this->handle_auth_response_(command, data + 4, data_len);
+      } else {
+        ESP_LOGW(TAG, "Auth frame checksum failed! 0x%02X != 0x%02X", computed_crc, remote_crc);
+      }
+    }
+    return;
+  }
+
+  // Regular BMS frames need assembly
+  bool is_new_frame = false;
+  if (length >= 3 && data[0] == JBD_PKT_START && data[2] == 0x00) {
+    is_new_frame = true;
+  }
+
+  if (is_new_frame) {
     this->frame_buffer_.clear();
   }
 
   this->frame_buffer_.insert(this->frame_buffer_.end(), data, data + length);
 
-  if (this->frame_buffer_.back() == JBD_PKT_END) {
+  if (this->frame_buffer_.size() >= 7 && this->frame_buffer_[0] == JBD_PKT_START &&
+      this->frame_buffer_.back() == JBD_PKT_END) {
     const uint8_t *raw = &this->frame_buffer_[0];
-
     uint8_t function = raw[1];
     uint16_t data_len = raw[3];
     uint16_t frame_len = 4 + data_len + 3;
-    if (frame_len != this->frame_buffer_.size()) {
-      ESP_LOGW(TAG, "Invalid frame length");
-      this->frame_buffer_.clear();
-      return;
+
+    if (frame_len == this->frame_buffer_.size()) {
+      uint16_t computed_crc = chksum_(raw + 2, data_len + 2);
+      uint16_t remote_crc = uint16_t(raw[frame_len - 3]) << 8 | (uint16_t(raw[frame_len - 2]) << 0);
+
+      if (computed_crc == remote_crc) {
+        std::vector<uint8_t> frame_data(this->frame_buffer_.begin() + 4, this->frame_buffer_.end() - 3);
+        this->on_jbd_bms_data(function, frame_data);
+      } else {
+        ESP_LOGW(TAG, "CRC check failed! 0x%04X != 0x%04X", computed_crc, remote_crc);
+      }
+    } else {
+      ESP_LOGW(TAG, "Invalid frame length: expected %d, got %d", frame_len, this->frame_buffer_.size());
     }
-
-    uint16_t computed_crc = chksum_(raw + 2, data_len + 2);
-    uint16_t remote_crc = uint16_t(raw[frame_len - 3]) << 8 | (uint16_t(raw[frame_len - 2]) << 0);
-    if (computed_crc != remote_crc) {
-      ESP_LOGW(TAG, "CRC check failed! 0x%04X != 0x%04X", computed_crc, remote_crc);
-      this->frame_buffer_.clear();
-      return;
-    }
-
-    std::vector<uint8_t> data(this->frame_buffer_.begin() + 4, this->frame_buffer_.end() - 3);
-
-    this->on_jbd_bms_data(function, data);
     this->frame_buffer_.clear();
+  }
+}
+
+void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint8_t data_len) {
+  ESP_LOGV(TAG, "Auth response - Command: 0x%02X, Data len: %d", command, data_len);
+
+  switch (command) {
+    case JBD_AUTH_SEND_APP_KEY:
+      switch (data[0]) {
+        case 0x00:  // App key accepted, password required
+          ESP_LOGD(TAG, "App key accepted, password required - requesting random byte");
+          this->authentication_state_ = AuthState::REQUESTING_RANDOM;
+          this->request_random_byte_();
+          break;
+        case 0x02:  // No password set, direct access
+          ESP_LOGI(TAG, "App key accepted, no password required - authentication complete");
+          this->authentication_state_ = AuthState::AUTHENTICATED;
+          // Start normal data collection immediately
+          this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+          break;
+        case 0x01:  // App key rejected
+          ESP_LOGE(TAG, "App key rejected");
+          this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
+          break;
+        default:
+          ESP_LOGW(TAG, "Unknown app key response: 0x%02X", data[0]);
+          this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
+          break;
+      }
+      break;
+
+    case JBD_AUTH_GET_RANDOM:
+      this->random_byte_ = data[0];
+      ESP_LOGD(TAG, "Received random byte: 0x%02X", this->random_byte_);
+      if (this->authentication_state_ == AuthState::REQUESTING_RANDOM) {
+        this->authentication_state_ = AuthState::SENDING_PASSWORD;
+        this->send_user_password_();
+      } else if (this->authentication_state_ == AuthState::REQUESTING_ROOT_RANDOM) {
+        this->authentication_state_ = AuthState::SENDING_ROOT_PASSWORD;
+        this->send_root_password_();
+      }
+      break;
+
+    case JBD_AUTH_SEND_PASSWORD:
+      if (data[0] == 0x00) {  // Success
+        ESP_LOGD(TAG, "Password accepted, requesting new random byte for root password");
+        this->authentication_state_ = AuthState::REQUESTING_ROOT_RANDOM;
+        this->request_random_byte_();
+      } else {
+        ESP_LOGE(TAG, "Password rejected");
+        this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
+      }
+      break;
+
+    case JBD_AUTH_SEND_ROOT_PASSWORD:
+      if (data[0] == 0x00) {  // Success
+        ESP_LOGI(TAG, "Authentication successful!");
+        this->authentication_state_ = AuthState::AUTHENTICATED;
+        // Start normal data collection
+        this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+      } else {
+        ESP_LOGE(TAG, "Root password rejected");
+        this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
+      }
+      break;
+
+    default:
+      ESP_LOGW(TAG, "Unknown auth command: 0x%02X", command);
+      break;
   }
 }
 
@@ -172,7 +384,31 @@ void JbdBmsBle::update() {
     return;
   }
 
+  if (this->enable_authentication_ && this->authentication_state_ != AuthState::AUTHENTICATED) {
+    if (this->authentication_state_ == AuthState::NOT_AUTHENTICATED) {
+      this->start_authentication_();
+    } else {
+      this->check_auth_timeout_();
+      ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str().c_str());
+    }
+    return;
+  }
+
   this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+}
+
+void JbdBmsBle::check_auth_timeout_() {
+  if (this->authentication_state_ == AuthState::NOT_AUTHENTICATED ||
+      this->authentication_state_ == AuthState::AUTHENTICATED) {
+    return;
+  }
+
+  const uint32_t now = millis();
+  if (now - this->auth_timeout_start_ > this->auth_timeout_ms_) {
+    ESP_LOGW(TAG, "[%s] Authentication timeout after %d ms, resetting to retry", this->parent_->address_str().c_str(),
+             this->auth_timeout_ms_);
+    this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
+  }
 }
 
 void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data) {
