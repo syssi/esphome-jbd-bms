@@ -327,11 +327,11 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
           break;
         case 0x01:  // App key rejected
           ESP_LOGE(TAG, "App key rejected");
-          this->authentication_state_ = AuthState::FAILED;
+          this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
           break;
         default:
           ESP_LOGW(TAG, "Unknown app key response: 0x%02X", data[0]);
-          this->authentication_state_ = AuthState::FAILED;
+          this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
           break;
       }
       break;
@@ -355,7 +355,7 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
         this->request_random_byte_();
       } else {
         ESP_LOGE(TAG, "Password rejected");
-        this->authentication_state_ = AuthState::FAILED;
+        this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
       }
       break;
 
@@ -367,7 +367,7 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
         this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
       } else {
         ESP_LOGE(TAG, "Root password rejected");
-        this->authentication_state_ = AuthState::FAILED;
+        this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
       }
       break;
 

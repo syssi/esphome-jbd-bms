@@ -272,8 +272,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
     SENDING_PASSWORD,
     REQUESTING_ROOT_RANDOM,
     SENDING_ROOT_PASSWORD,
-    AUTHENTICATED,
-    FAILED
+    AUTHENTICATED
   };
 
   bool enable_authentication_{false};
