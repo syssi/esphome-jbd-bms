@@ -3,7 +3,7 @@ from esphome.components import binary_sensor
 import esphome.config_validation as cv
 from esphome.const import CONF_ID, DEVICE_CLASS_CONNECTIVITY, ENTITY_CATEGORY_DIAGNOSTIC
 
-from . import CONF_JBD_BMS_ID, JbdBms
+from . import CONF_JBD_BMS_ID, JBD_BMS_COMPONENT_SCHEMA
 from .const import CONF_CHARGING, CONF_DISCHARGING
 
 DEPENDENCIES = ["jbd_bms"]
@@ -24,9 +24,8 @@ BINARY_SENSORS = [
     CONF_ONLINE_STATUS,
 ]
 
-CONFIG_SCHEMA = cv.Schema(
+CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
     {
-        cv.GenerateID(CONF_JBD_BMS_ID): cv.use_id(JbdBms),
         cv.Optional(CONF_CHARGING): binary_sensor.binary_sensor_schema(
             icon=ICON_CHARGING
         ),
