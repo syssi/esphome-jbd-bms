@@ -20,7 +20,7 @@ from esphome.const import (
     UNIT_WATT,
 )
 
-from . import CONF_JBD_BMS_ID, JbdBms
+from . import CONF_JBD_BMS_ID, JBD_BMS_COMPONENT_SCHEMA
 
 DEPENDENCIES = ["jbd_bms"]
 
@@ -196,9 +196,8 @@ SENSORS = [
 ]
 
 # pylint: disable=too-many-function-args
-CONFIG_SCHEMA = cv.Schema(
+CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
     {
-        cv.GenerateID(CONF_JBD_BMS_ID): cv.use_id(JbdBms),
         cv.Optional(CONF_STATE_OF_CHARGE): sensor.sensor_schema(
             unit_of_measurement=UNIT_PERCENT,
             accuracy_decimals=0,
