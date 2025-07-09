@@ -663,6 +663,7 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Discharging", this->discharging_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Online status", this->online_status_binary_sensor_);
 
   LOG_SENSOR("", "Total voltage", this->total_voltage_sensor_);
   LOG_SENSOR("", "Battery strings", this->battery_strings_sensor_);
@@ -685,6 +686,17 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   LOG_SENSOR("", "Max voltage cell", this->max_voltage_cell_sensor_);
   LOG_SENSOR("", "Minimum cell voltage", this->min_cell_voltage_sensor_);
   LOG_SENSOR("", "Temperature sensors", temperature_sensors_sensor_);
+  LOG_SENSOR("", "Short circuit error count", this->short_circuit_error_count_sensor_);
+  LOG_SENSOR("", "Charge overcurrent error count", this->charge_overcurrent_error_count_sensor_);
+  LOG_SENSOR("", "Discharge overcurrent error count", this->discharge_overcurrent_error_count_sensor_);
+  LOG_SENSOR("", "Cell overvoltage error count", this->cell_overvoltage_error_count_sensor_);
+  LOG_SENSOR("", "Cell undervoltage error count", this->cell_undervoltage_error_count_sensor_);
+  LOG_SENSOR("", "Charge overtemperature error count", this->charge_overtemperature_error_count_sensor_);
+  LOG_SENSOR("", "Charge undertemperature error count", this->charge_undertemperature_error_count_sensor_);
+  LOG_SENSOR("", "Discharge overtemperature error count", this->discharge_overtemperature_error_count_sensor_);
+  LOG_SENSOR("", "Discharge undertemperature error count", this->discharge_undertemperature_error_count_sensor_);
+  LOG_SENSOR("", "Battery overvoltage error count", this->battery_overvoltage_error_count_sensor_);
+  LOG_SENSOR("", "Battery undervoltage error count", this->battery_undervoltage_error_count_sensor_);
   LOG_SENSOR("", "Temperature 1", this->temperatures_[0].temperature_sensor_);
   LOG_SENSOR("", "Temperature 2", this->temperatures_[1].temperature_sensor_);
   LOG_SENSOR("", "Temperature 3", this->temperatures_[2].temperature_sensor_);
