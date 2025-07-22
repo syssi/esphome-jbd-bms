@@ -1,0 +1,39 @@
+# Remaining Discharging Time Package
+# Estimates time until battery is empty
+
+substitutions:
+  # Name and ID parameters
+  sensor_name: "bms0 remaining discharging time"
+  sensor_id: bms0_remaining_discharging_time
+
+  # Configuration parameters
+  update_interval: "30s"
+  accuracy_decimals: "1"
+
+  # Sensor ID parameters (can be overridden)
+  current_sensor_id: bms0_average_current
+  capacity_remaining_id: bms0_capacity_remaining
+
+sensor:
+  - platform: template
+    name: ${sensor_name}
+    id: ${sensor_id}
+    unit_of_measurement: "h"
+    device_class: duration
+    accuracy_decimals: ${accuracy_decimals}
+    lambda: |-
+      if (id(${current_sensor_id}).has_state() && id(${capacity_remaining_id}).has_state()) {
+        float current = id(${current_sensor_id}).state;
+        float remaining_capacity = id(${capacity_remaining_id}).state;
+
+        if (remaining_capacity <= 0.1f) {
+          return 0.0f;
+        }
+
+        if (current < -0.1f) {
+          float hours_to_empty = remaining_capacity / abs(current);
+          return hours_to_empty;
+        }
+      }
+      return NAN;
+    update_interval: ${update_interval}

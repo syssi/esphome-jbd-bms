@@ -106,6 +106,7 @@ jobs:
           cd esphome
           pip install -r requirements.txt -r requirements_test.txt
           pip install -e .
+          pip install yq
 
   ruff:
     name: Check ruff
@@ -418,6 +419,14 @@ jobs:
       - name: Register matcher
         run: echo "::add-matcher::.github/workflows/matchers/esphome-config.json"
 
+      - name: Switch packages to local files for testing
+        run: |
+          . venv/bin/activate
+          for YAML in $(grep -l "^packages:" *.yaml); do
+            yq -i '.packages = "!include packages.local.yaml"' $YAML
+            sed -i "s/'!include packages.local.yaml'/!include packages.local.yaml/" $YAML
+          done
+
       - name: Validate example configurations
         run: |
           . venv/bin/activate
@@ -452,6 +461,14 @@ jobs:
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
           cache-key: ${{ needs.common.outputs.cache-key }}
+
+      - name: Switch packages to local files for testing
+        run: |
+          . venv/bin/activate
+          for YAML in $(grep -l "^packages:" *.yaml); do
+            yq -i '.packages = "!include packages.local.yaml"' $YAML
+            sed -i "s/'!include packages.local.yaml'/!include packages.local.yaml/" $YAML
+          done
 
       - name: Compile example configurations
         run: |
