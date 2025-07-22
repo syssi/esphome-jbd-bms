@@ -28,7 +28,7 @@ packages:
     files:
       - path: packages/remaining_charging_time.yaml
         vars:
-          sensor_id: remaining_charging_time
+          sensor_id: bms0_remaining_charging_time
           sensor_name: "${name} remaining charging time"
           current_sensor_id: bms0_average_current
           capacity_remaining_id: bms0_capacity_remaining
@@ -38,7 +38,7 @@ packages:
     files:
       - path: packages/remaining_discharging_time.yaml
         vars:
-          sensor_id: remaining_discharging_time
+          sensor_id: bms0_remaining_discharging_time
           sensor_name: "${name} remaining discharging time"
           current_sensor_id: bms0_average_current
           capacity_remaining_id: bms0_capacity_remaining
