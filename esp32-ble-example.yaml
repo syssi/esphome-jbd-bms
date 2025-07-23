@@ -21,6 +21,28 @@ external_components:
   - source: ${external_components_source}
     refresh: 0s
 
+packages:
+  # Individual time estimation packages from remote repository
+  remaining_charging_time:
+    url: https://github.com/syssi/esphome-jbd-bms
+    files:
+      - path: packages/remaining_charging_time.yaml
+        vars:
+          sensor_id: bms0_remaining_charging_time
+          sensor_name: "${name} remaining charging time"
+          current_sensor_id: bms0_average_current
+          capacity_remaining_id: bms0_capacity_remaining
+          nominal_capacity_id: bms0_nominal_capacity
+  remaining_discharging_time:
+    url: https://github.com/syssi/esphome-jbd-bms
+    files:
+      - path: packages/remaining_discharging_time.yaml
+        vars:
+          sensor_id: bms0_remaining_discharging_time
+          sensor_name: "${name} remaining discharging time"
+          current_sensor_id: bms0_average_current
+          capacity_remaining_id: bms0_capacity_remaining
+
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
@@ -84,6 +106,7 @@ sensor:
       name: "${name} battery strings"
     current:
       name: "${name} current"
+      id: bms0_current
     power:
       name: "${name} power"
     charging_power:
@@ -94,10 +117,12 @@ sensor:
       name: "${name} state of charge"
     nominal_capacity:
       name: "${name} nominal capacity"
+      id: bms0_nominal_capacity
     charging_cycles:
       name: "${name} charging cycles"
     capacity_remaining:
       name: "${name} capacity remaining"
+      id: bms0_capacity_remaining
     battery_cycle_capacity:
       name: "${name} battery cycle capacity"
     total_voltage:
@@ -220,6 +245,16 @@ sensor:
       name: "${name} battery overvoltage error count"
     battery_undervoltage_error_count:
       name: "${name} battery undervoltage error count"
+
+  # Average current sensor with exponential filtering
+  - platform: copy
+    source_id: bms0_current
+    name: "${name} average current"
+    id: bms0_average_current
+    filters:
+      - exponential_moving_average:
+          alpha: 0.1
+          send_every: 1
 
 text_sensor:
   - platform: jbd_bms_ble
