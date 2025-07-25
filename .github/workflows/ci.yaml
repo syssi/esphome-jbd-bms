@@ -423,7 +423,7 @@ jobs:
         run: |
           . venv/bin/activate
           for YAML in $(grep -l "^packages:" *.yaml); do
-            yq -i '.packages = "!include packages.local.yaml"' $YAML
+            yq -i -y '.packages = "!include packages.local.yaml"' $YAML
             sed -i "s/'!include packages.local.yaml'/!include packages.local.yaml/" $YAML
           done
 
@@ -466,7 +466,7 @@ jobs:
         run: |
           . venv/bin/activate
           for YAML in $(grep -l "^packages:" *.yaml); do
-            yq -i '.packages = "!include packages.local.yaml"' $YAML
+            yq -i -y '.packages = "!include packages.local.yaml"' $YAML
             sed -i "s/'!include packages.local.yaml'/!include packages.local.yaml/" $YAML
           done
 
