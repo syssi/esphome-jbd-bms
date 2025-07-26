@@ -1,11 +1,7 @@
 substitutions:
   name: jbd-bms-ble
-  bms0: "${name} bms0"
-  bms1: "${name} bms1"
   device_description: "Monitor and control a Xiaoxiang Battery Management System (JBD-BMS) via BLE"
-  external_components_source: github://syssi/esphome-jbd-bms@main
-  bms0_mac_address: 70:3e:97:07:c0:3e
-  bms1_mac_address: 70:3e:97:07:c0:3f
+  external_components_source: github://syssi/esphome-jbd-bms@test-many-ble-connections
 
 esphome:
   name: ${name}
@@ -49,89 +45,64 @@ esp32_ble_tracker:
     active: false
 
 ble_client:
-  - mac_address: ${bms0_mac_address}
-    id: client0
-  - mac_address: ${bms1_mac_address}
-    id: client1
+  - id: client0
+    mac_address: 70:3e:97:07:c0:01
+  - id: client1
+    mac_address: 70:3e:97:07:c0:02
+  - id: client2
+    mac_address: 70:3e:97:07:c0:03
+  - id: client3
+    mac_address: 70:3e:97:07:c0:04
+  - id: client4
+    mac_address: 70:3e:97:07:c0:05
+  - id: client5
+    mac_address: 70:3e:97:07:c0:06
 
 jbd_bms_ble:
   - id: bms0
     ble_client_id: client0
-    update_interval: 5s
+    update_interval: 2s
   - id: bms1
     ble_client_id: client1
-    update_interval: 5s
-
-binary_sensor:
-  - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms0
-    balancing:
-      name: "${bms0} balancing"
-    charging:
-      name: "${bms0} charging"
-    discharging:
-      name: "${bms0} discharging"
-    online_status:
-      name: "${bms0} online status"
-
-  - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms1
-    balancing:
-      name: "${bms1} balancing"
-    charging:
-      name: "${bms1} charging"
-    discharging:
-      name: "${bms1} discharging"
-    online_status:
-      name: "${bms1} online status"
+    update_interval: 2s
+  - id: bms2
+    ble_client_id: client2
+    update_interval: 2s
+  - id: bms3
+    ble_client_id: client3
+    update_interval: 2s
+  - id: bms4
+    ble_client_id: client4
+    update_interval: 2s
+  - id: bms5
+    ble_client_id: client5
+    update_interval: 2s
 
 sensor:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
-    power:
-      name: "${bms0} power"
-    state_of_charge:
-      name: "${bms0} state of charge"
     total_voltage:
-      name: "${bms0} total voltage"
-    average_cell_voltage:
-      name: "${bms0} average cell voltage"
-    delta_cell_voltage:
-      name: "${bms0} delta cell voltage"
-    # ...
-
+      name: "bms0 total voltage"
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms1
-    power:
-      name: "${bms1} power"
-    state_of_charge:
-      name: "${bms1} state of charge"
     total_voltage:
-      name: "${bms1} total voltage"
-    average_cell_voltage:
-      name: "${bms1} average cell voltage"
-    delta_cell_voltage:
-      name: "${bms1} delta cell voltage"
-    # ...
-
-text_sensor:
+      name: "bms1 total voltage"
   - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms0
-    errors:
-      name: "${bms0} errors"
-    operation_status:
-      name: "${bms0} operation status"
-    device_model:
-      name: "${bms0} device model"
-
+    jbd_bms_ble_id: bms2
+    total_voltage:
+      name: "bms2 total voltage"
   - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms1
-    errors:
-      name: "${bms1} errors"
-    operation_status:
-      name: "${bms1} operation status"
-    device_model:
-      name: "${bms1} device model"
+    jbd_bms_ble_id: bms3
+    total_voltage:
+      name: "bms3 total voltage"
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms4
+    total_voltage:
+      name: "bms4 total voltage"
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms5
+    total_voltage:
+      name: "bms5 total voltage"
 
 select:
   - platform: jbd_bms_ble
@@ -151,22 +122,30 @@ select:
 switch:
   - platform: ble_client
     ble_client_id: client0
-    name: "${bms0} enable bluetooth connection"
-
+    name: "bms0 enable bluetooth connection"
+    restore_mode: ALWAYS_OFF
   - platform: ble_client
     ble_client_id: client1
-    name: "${bms1} enable bluetooth connection"
+    name: "bms1 enable bluetooth connection"
+    restore_mode: ALWAYS_OFF
+  - platform: ble_client
+    ble_client_id: client2
+    name: "bms2 enable bluetooth connection"
+    restore_mode: ALWAYS_OFF
+  - platform: ble_client
+    ble_client_id: client3
+    name: "bms3 enable bluetooth connection"
+    restore_mode: ALWAYS_OFF
+  - platform: ble_client
+    ble_client_id: client4
+    name: "bms4 enable bluetooth connection"
+    restore_mode: ALWAYS_OFF
+  - platform: ble_client
+    ble_client_id: client5
+    name: "bms5 enable bluetooth connection"
+    restore_mode: ALWAYS_OFF
 
-  - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms0
-    charging:
-      name: "${bms0} charging"
-    discharging:
-      name: "${bms0} discharging"
+binary_sensor:
 
-  - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms1
-    charging:
-      name: "${bms1} charging"
-    discharging:
-      name: "${bms1} discharging"
+text_sensor:
+
