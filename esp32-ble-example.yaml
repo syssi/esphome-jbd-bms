@@ -49,6 +49,10 @@ wifi:
 
 ota:
   platform: esphome
+  on_begin:
+    then:
+      - switch.turn_off: ble_client_switch0
+      - logger.log: "BLE connection suspended for OTA update"
 
 logger:
   level: DEBUG
@@ -256,16 +260,6 @@ sensor:
           alpha: 0.1
           send_every: 1
 
-text_sensor:
-  - platform: jbd_bms_ble
-    jbd_bms_ble_id: bms0
-    errors:
-      name: "${name} errors"
-    operation_status:
-      name: "${name} operation status"
-    device_model:
-      name: "${name} device model"
-
 select:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
@@ -279,6 +273,7 @@ switch:
   - platform: ble_client
     ble_client_id: client0
     name: "${name} enable bluetooth connection"
+    id: ble_client_switch0
 
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
@@ -286,6 +281,16 @@ switch:
       name: "${name} charging"
     discharging:
       name: "${name} discharging"
+
+text_sensor:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    errors:
+      name: "${name} errors"
+    operation_status:
+      name: "${name} operation status"
+    device_model:
+      name: "${name} device model"
 
 # Uncomment this section if you want to update the error count sensors periodically
 #

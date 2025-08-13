@@ -30,6 +30,11 @@ wifi:
 
 ota:
   platform: esphome
+  on_begin:
+    then:
+      - switch.turn_off: ble_client_switch0
+      - switch.turn_off: ble_client_switch1
+      - logger.log: "BLE connection suspended for OTA update"
 
 logger:
   level: DEBUG
@@ -152,10 +157,12 @@ switch:
   - platform: ble_client
     ble_client_id: client0
     name: "${bms0} enable bluetooth connection"
+    id: ble_client_switch0
 
   - platform: ble_client
     ble_client_id: client1
     name: "${bms1} enable bluetooth connection"
+    id: ble_client_switch1
 
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
