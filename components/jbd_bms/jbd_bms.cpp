@@ -49,6 +49,18 @@ static const char *const ERRORS[ERRORS_SIZE] = {
     "Unknown (0x0F)",                 // 0x0F
 };
 
+static const uint8_t OPERATION_STATUS_SIZE = 8;
+static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
+    "Charging",        // 0x01
+    "Discharging",     // 0x02
+    "Unknown (0x04)",  // 0x04
+    "Unknown (0x08)",  // 0x08
+    "Unknown (0x10)",  // 0x10
+    "Unknown (0x20)",  // 0x20
+    "Unknown (0x40)",  // 0x40
+    "Unknown (0x80)",  // 0x80
+};
+
 void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO); }
 
 void JbdBms::loop() {
@@ -303,7 +315,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   // 16    2   0x00 0x00              Protection Status
   uint16_t errors_bitmask = jbd_get_16bit(16);
   this->publish_state_(this->errors_bitmask_sensor_, (float) errors_bitmask);
-  this->publish_state_(this->errors_text_sensor_, this->error_bits_to_string_(errors_bitmask));
+  this->publish_state_(this->errors_text_sensor_, this->bitmask_to_string_(ERRORS, ERRORS_SIZE, errors_bitmask));
 
   // 18    1   0x80                   Version                                      0x10 = 1.0, 0x80 = 8.0
   this->publish_state_(this->software_version_sensor_, (data[18] >> 4) + ((data[18] & 0x0f) * 0.1f));
@@ -315,6 +327,8 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   uint8_t operation_status = data[20];
   this->mosfet_status_ = operation_status;
   this->publish_state_(this->operation_status_bitmask_sensor_, operation_status);
+  this->publish_state_(this->operation_status_text_sensor_,
+                       this->bitmask_to_string_(OPERATION_STATUS, OPERATION_STATUS_SIZE, operation_status));
   this->publish_state_(this->charging_binary_sensor_, operation_status & JBD_MOS_CHARGE);
   this->publish_state_(this->charging_switch_, operation_status & JBD_MOS_CHARGE);
   this->publish_state_(this->discharging_binary_sensor_, operation_status & JBD_MOS_DISCHARGE);
@@ -574,12 +588,13 @@ void JbdBms::send_command(uint8_t action, uint8_t function) {
   this->flush();
 }
 
-std::string JbdBms::error_bits_to_string_(const uint16_t mask) {
+std::string JbdBms::bitmask_to_string_(const char *const messages[], const uint8_t &messages_size,
+                                       const uint16_t &mask) {
   std::string values = "";
   if (mask) {
-    for (int i = 0; i < ERRORS_SIZE; i++) {
+    for (int i = 0; i < messages_size; i++) {
       if (mask & (1 << i)) {
-        values.append(ERRORS[i]);
+        values.append(messages[i]);
         values.append(";");
       }
     }

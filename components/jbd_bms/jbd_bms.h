@@ -235,7 +235,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void publish_device_unavailable_();
   void reset_online_status_tracker_();
   void track_online_status_();
-  std::string error_bits_to_string_(uint16_t bitmask);
+  std::string bitmask_to_string_(const char *const messages[], const uint8_t &messages_size, const uint16_t &mask);
 
   uint16_t chksum_(const uint8_t data[], const uint16_t len) {
     uint16_t checksum = 0x00;
