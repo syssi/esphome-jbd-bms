@@ -12,7 +12,7 @@ void JbdSelect::dump_config() {
   LOG_SELECT(TAG, "JbdBms Select", this);
   ESP_LOGCONFIG(TAG, "  Options are:");
   auto options = this->traits.get_options();
-  for (auto i = 0; i < this->mappings_.size(); i++) {
+  for (size_t i = 0; i < this->mappings_.size(); i++) {
     ESP_LOGCONFIG(TAG, "    %i: %s", this->mappings_.at(i), options.at(i).c_str());
   }
 }
