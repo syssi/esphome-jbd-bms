@@ -54,7 +54,7 @@ Untested but probably supported devices:
 
 ## Requirements
 
-* [ESPHome 2024.6.0 or higher](https://github.com/esphome/esphome/releases).
+* [ESPHome 2025.11.0 or higher](https://github.com/esphome/esphome/releases).
 * Generic ESP32 or ESP8266 board
 
 ## Schematics
