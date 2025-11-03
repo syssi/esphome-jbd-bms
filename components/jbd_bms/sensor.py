@@ -98,6 +98,11 @@ CONF_TEMPERATURE_4 = "temperature_4"
 CONF_TEMPERATURE_5 = "temperature_5"
 CONF_TEMPERATURE_6 = "temperature_6"
 
+#UP only
+CONF_MOSFET_TEMPERATURE = "mosfet_temperature"
+CONF_AMBIENT_TEMPERATURE = "ambient_temperature"
+CONF_STATE_OF_HEALTH = "state_of_health"
+
 ICON_CURRENT_DC = "mdi:current-dc"
 ICON_BATTERY_STRINGS = "mdi:car-battery"
 ICON_CAPACITY_REMAINING = "mdi:battery-50"
@@ -193,6 +198,9 @@ SENSORS = [
     CONF_DISCHARGE_UNDERTEMPERATURE_ERROR_COUNT,
     CONF_BATTERY_OVERVOLTAGE_ERROR_COUNT,
     CONF_BATTERY_UNDERVOLTAGE_ERROR_COUNT,
+    CONF_MOSFET_TEMPERATURE,
+    CONF_AMBIENT_TEMPERATURE,
+    CONF_STATE_OF_HEALTH,
 ]
 
 # pylint: disable=too-many-function-args
@@ -683,6 +691,26 @@ CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
         cv.Optional(CONF_BATTERY_UNDERVOLTAGE_ERROR_COUNT): sensor.sensor_schema(
             unit_of_measurement=UNIT_EMPTY,
             icon="mdi:counter",
+            accuracy_decimals=0,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_MOSFET_TEMPERATURE): sensor.sensor_schema(
+            unit_of_measurement=UNIT_CELSIUS,
+            icon=ICON_EMPTY,
+            accuracy_decimals=1,
+            device_class=DEVICE_CLASS_TEMPERATURE,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_AMBIENT_TEMPERATURE): sensor.sensor_schema(
+            unit_of_measurement=UNIT_CELSIUS,
+            icon=ICON_EMPTY,
+            accuracy_decimals=1,
+            device_class=DEVICE_CLASS_TEMPERATURE,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_STATE_OF_HEALTH): sensor.sensor_schema(
+            unit_of_measurement=UNIT_PERCENT,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_EMPTY,
             state_class=STATE_CLASS_MEASUREMENT,

@@ -12,16 +12,25 @@ CODEOWNERS = ["@syssi"]
 
 CONF_BALANCING = "balancing"
 CONF_ONLINE_STATUS = "online_status"
+CONF_PRECHARGING = "precharging"
+CONF_FAN = "fan"
+CONF_HEAT = "heat"
 
 ICON_CHARGING = "mdi:battery-charging"
 ICON_DISCHARGING = "mdi:power-plug"
 ICON_BALANCING = "mdi:battery-heart-variant"
+ICON_FAN = "mdi:fan"
+ICON_HEAT = "mdi:radiator"
 
 BINARY_SENSORS = [
     CONF_CHARGING,
     CONF_DISCHARGING,
     CONF_BALANCING,
     CONF_ONLINE_STATUS,
+    # UP ONLY
+    CONF_PRECHARGING,
+    CONF_HEAT,
+    CONF_FAN,
 ]
 
 CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
@@ -38,6 +47,13 @@ CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
         cv.Optional(CONF_ONLINE_STATUS): binary_sensor.binary_sensor_schema(
             device_class=DEVICE_CLASS_CONNECTIVITY,
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        ),
+        cv.Optional(CONF_PRECHARGING): binary_sensor.binary_sensor_schema(),
+        cv.Optional(CONF_HEAT): binary_sensor.binary_sensor_schema(
+            icon=ICON_HEAT
+        ),
+        cv.Optional(CONF_FAN): binary_sensor.binary_sensor_schema(
+            icon=ICON_FAN
         ),
     }
 )
