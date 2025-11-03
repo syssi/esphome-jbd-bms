@@ -111,7 +111,7 @@ void JbdBmsUP::on_pack_status(const std::vector<uint8_t> &data) {
     };
 
     float total_voltage = (float)get_16bit(0) * 0.01;
-    float current = (float)(get_32bit(4) - 300000) * 0.01;
+    float current = ((float)get_32bit(4) - 300000.0) * 0.01;
     float power = total_voltage * current;
     this->publish_state_(this->total_voltage_sensor_, total_voltage);
     this->publish_state_(this->current_sensor_, current);
@@ -124,7 +124,7 @@ void JbdBmsUP::on_pack_status(const std::vector<uint8_t> &data) {
     this->publish_state_(this->nominal_capacity_sensor_, (float)get_16bit(12) * 0.01);
     this->publish_state_(this->mosfet_temperature_sensor_, ((float)get_16bit(16) - 500) * 0.1);
     this->publish_state_(this->ambient_temperature_sensor_, ((float)get_16bit(18) - 500) * 0.1);
-    this->publish_state_(this->state_of_health_sensor_, (float)get_16bit(20));
+    this->publish_state_(this->state_of_health_sensor_, (float)get_16bit(22));
 
     this->mosfet_status_ = get_16bit(32);
     auto mos_states = this->mosfet_status_;
