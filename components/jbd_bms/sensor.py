@@ -98,7 +98,7 @@ CONF_TEMPERATURE_4 = "temperature_4"
 CONF_TEMPERATURE_5 = "temperature_5"
 CONF_TEMPERATURE_6 = "temperature_6"
 
-#UP only
+# UP only
 CONF_MOSFET_TEMPERATURE = "mosfet_temperature"
 CONF_AMBIENT_TEMPERATURE = "ambient_temperature"
 CONF_STATE_OF_HEALTH = "state_of_health"

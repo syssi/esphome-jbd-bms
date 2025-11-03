@@ -49,12 +49,8 @@ CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
         ),
         cv.Optional(CONF_PRECHARGING): binary_sensor.binary_sensor_schema(),
-        cv.Optional(CONF_HEAT): binary_sensor.binary_sensor_schema(
-            icon=ICON_HEAT
-        ),
-        cv.Optional(CONF_FAN): binary_sensor.binary_sensor_schema(
-            icon=ICON_FAN
-        ),
+        cv.Optional(CONF_HEAT): binary_sensor.binary_sensor_schema(icon=ICON_HEAT),
+        cv.Optional(CONF_FAN): binary_sensor.binary_sensor_schema(icon=ICON_FAN),
     }
 )
 

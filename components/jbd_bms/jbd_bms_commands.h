@@ -1,4 +1,7 @@
-# pragma once
+#pragma once
+
+namespace esphome {
+namespace jbd_bms {
 
 static const uint8_t JBD_CMD_READ = 0xA5;
 static const uint8_t JBD_CMD_WRITE = 0x5A;
@@ -15,3 +18,5 @@ static const uint8_t JBD_CMD_CAP_REM = 0xE0;   // Set remaining capacity
 static const uint8_t JBD_CMD_MOS = 0xE1;       // Set charging/discharging bitmask
 static const uint8_t JBD_CMD_BALANCER = 0xE2;  // Enable/disable balancer
 
+}  // namespace jbd_bms
+}  // namespace esphome

@@ -51,7 +51,7 @@ static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
 void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO); }
 
 void JbdBms::loop() {
-  if (! this->is_master_) {
+  if (!this->is_master_) {
     return;
   }
   const uint32_t now = millis();
@@ -66,7 +66,7 @@ void JbdBms::loop() {
   while (this->available()) {
     uint8_t byte;
     this->read_byte(&byte);
-    if (this->parse_jbd_bms_byte_(byte)) {
+    if (this->parse_jbd_bms_byte(byte)) {
       this->last_byte_ = now;
     } else {
       ESP_LOGVV(TAG, "Buffer cleared due to reset: %s",
@@ -81,7 +81,7 @@ void JbdBms::update() {
   this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
 }
 
-bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
+bool JbdBms::parse_jbd_bms_byte(uint8_t byte) {
   size_t at = this->rx_buffer_.size();
   this->rx_buffer_.push_back(byte);
   const uint8_t *raw = &this->rx_buffer_[0];
