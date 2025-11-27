@@ -109,8 +109,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
     case ESP_GATTC_SEARCH_CMPL_EVT: {
       auto *char_notify = this->parent_->get_characteristic(JBD_BMS_SERVICE_UUID, JBD_BMS_NOTIFY_CHARACTERISTIC_UUID);
       if (char_notify == nullptr) {
-        ESP_LOGE(TAG, "[%s] No notify service found at device, not an JBD BMS..?",
-                 this->parent_->address_str().c_str());
+        ESP_LOGE(TAG, "[%s] No notify service found at device, not an JBD BMS..?", this->parent_->address_str());
         break;
       }
       this->char_notify_handle_ = char_notify->handle;
@@ -123,8 +122,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
 
       auto *char_command = this->parent_->get_characteristic(JBD_BMS_SERVICE_UUID, JBD_BMS_CONTROL_CHARACTERISTIC_UUID);
       if (char_command == nullptr) {
-        ESP_LOGE(TAG, "[%s] No control service found at device, not an JBD BMS..?",
-                 this->parent_->address_str().c_str());
+        ESP_LOGE(TAG, "[%s] No control service found at device, not an JBD BMS..?", this->parent_->address_str());
         break;
       }
       this->char_command_handle_ = char_command->handle;
@@ -255,7 +253,7 @@ void JbdBmsBle::send_auth_frame_(uint8_t *frame, size_t length) {
                                length, frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
 
   if (status) {
-    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str().c_str(), status);
+    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str(), status);
   }
 }
 
@@ -392,7 +390,7 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
 void JbdBmsBle::update() {
   this->track_online_status_();
   if (this->node_state != espbt::ClientState::ESTABLISHED) {
-    ESP_LOGW(TAG, "[%s] Not connected", this->parent_->address_str().c_str());
+    ESP_LOGW(TAG, "[%s] Not connected", this->parent_->address_str());
     return;
   }
 
@@ -401,7 +399,7 @@ void JbdBmsBle::update() {
       this->start_authentication_();
     } else {
       this->check_auth_timeout_();
-      ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str().c_str());
+      ESP_LOGV(TAG, "[%s] Not authenticated yet", this->parent_->address_str());
     }
     return;
   }
@@ -417,7 +415,7 @@ void JbdBmsBle::check_auth_timeout_() {
 
   const uint32_t now = millis();
   if (now - this->auth_timeout_start_ > this->auth_timeout_ms_) {
-    ESP_LOGW(TAG, "[%s] Authentication timeout after %d ms, resetting to retry", this->parent_->address_str().c_str(),
+    ESP_LOGW(TAG, "[%s] Authentication timeout after %d ms, resetting to retry", this->parent_->address_str(),
              this->auth_timeout_ms_);
     this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
   }
@@ -821,7 +819,7 @@ bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
                                sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
 
   if (status) {
-    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str().c_str(), status);
+    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str(), status);
   }
 
   return (status == 0);
@@ -847,7 +845,7 @@ bool JbdBmsBle::send_command(uint8_t action, uint8_t function) {
                                sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
 
   if (status) {
-    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str().c_str(), status);
+    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", this->parent_->address_str(), status);
   }
 
   return (status == 0);
