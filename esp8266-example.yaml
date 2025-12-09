@@ -12,7 +12,7 @@ esphome:
   min_version: 2025.11.0
   project:
     name: "syssi.esphome-jbd-bms"
-    version: 2.2.0
+    version: 2.3.0
 
 esp8266:
   board: d1_mini
