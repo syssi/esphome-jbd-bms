@@ -35,6 +35,9 @@ class JbdBmsUP : public JbdBms {
   void set_heat_binary_sensor(binary_sensor::BinarySensor *heat_binary_sensor) {
     heat_binary_sensor_ = heat_binary_sensor;
   }
+  void set_protect_bitmask_sensor(sensor::Sensor *errors_bitmask_sensor) {
+    errors_bitmask_sensor_ = errors_bitmask_sensor;
+  }
 
  protected:
   void on_pack_status_(const std::vector<uint8_t> &data);
@@ -45,10 +48,13 @@ class JbdBmsUP : public JbdBms {
   sensor::Sensor *mosfet_temperature_sensor_{nullptr};
   sensor::Sensor *ambient_temperature_sensor_{nullptr};
   sensor::Sensor *state_of_health_sensor_{nullptr};
+  sensor::Sensor *protect_bitmask_sensor_{nullptr};
 
   binary_sensor::BinarySensor *precharging_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *heat_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *fan_binary_sensor_{nullptr};
+
+  text_sensor::TextSensor *protect_text_sensor_{nullptr};
 };
 
 }  // namespace jbd_bms

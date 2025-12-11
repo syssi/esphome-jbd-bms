@@ -578,7 +578,7 @@ void JbdBms::send_command(uint8_t action, uint8_t function) {
 }
 
 std::string JbdBms::bitmask_to_string_(const char *const messages[], const uint8_t &messages_size,
-                                       const uint16_t &mask) {
+                                       const uint32_t &mask) {
   std::string values = "";
   if (mask) {
     for (int i = 0; i < messages_size; i++) {

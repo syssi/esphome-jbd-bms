@@ -8,6 +8,65 @@ namespace jbd_bms {
 
 static const char *const TAG = "jbd_bms_up";
 
+static const uint8_t ERRORS_SIZE = 18;
+static const char *const ERRORS[ERRORS_SIZE] = {
+    "Cell overvoltage",                 // 0x0001
+    "Cell undervoltage",                // 0x0002
+    "Pack overvoltage",                 // 0x0004
+    "Pack undervoltage",                // 0x0008
+    "Charging overcurrent",             // 0x0010
+    "Discharging overcurrent",          // 0x0020
+    "Charging over temperature",        // 0x0040
+    "Charging under temperature",       // 0x0080
+    "Discharging over temperature",     // 0x0100
+    "Discharging under temperature",    // 0x0200
+    "Mosfet over temperature",          // 0x0400
+    "Ambient over temperature",         // 0x0800
+    "Ambient under temperature",        // 0x1000
+    "Voltage difference too large",     // 0x2000
+    "Temperature difference too large", // 0x4000
+    "SOC too low",                      // 0x8000
+    "EEP fault",                      // 0x010000
+    "Real time clock abnormal",       // 0x020000
+};
+static const uint8_t PROTECT_SIZE = 27;
+static const char *const PROTECT[PROTECT_SIZE] = {
+    "Cell overvoltage",                 // 0x00000001
+    "Cell undervoltage",                // 0x00000002
+    "Pack overvoltage",                 // 0x00000004
+    "Pack undervoltage",                // 0x00000008
+    "Charging overcurrent 1",           // 0x00000010
+    "Charging overcurrent 2",           // 0x00000020
+    "Discharging overcurrent 1",        // 0x00000040
+    "Discharging overcurrent 2",        // 0x00000080
+    "Charging over temperature",        // 0x00000100
+    "Charging under temperature",       // 0x00000200
+    "Discharging over temperature",     // 0x00000400
+    "Discharging under temperature",    // 0x00000800
+    "Mosfet over temperature",          // 0x00001000
+    "Ambient over temperature",         // 0x00002000
+    "Ambient under temperature",        // 0x00004000
+    "Voltage difference too large",     // 0x00008000
+    "Temperature difference too large", // 0x00010000
+    "SOC too low",                      // 0x00020000
+    "Short circuit",                    // 0x00040000
+    "Monomer offline",                  // 0x00080000
+    "Temperature drop",                 // 0x00100000
+    "Charge Mosfet fault",              // 0x00200000
+    "Discharge Mosfet fault",           // 0x00400000
+    "Current limiting fault",           // 0x00800000
+    "Aerosol fault",                    // 0x01000000
+    "Full charge protection",           // 0x02000000
+    "Abnormal AFE communication",       // 0x04000000
+};
+
+static const uint8_t OPERATION_STATUS_SIZE = 3;
+static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
+    "Idle",            // 0x00
+    "Charging",        // 0x01
+    "Discharging",     // 0x02
+};
+
 enum JBDAddress {
   JBD_PACK_STATUS = 0x1000,
 };
@@ -121,8 +180,23 @@ void JbdBmsUP::on_pack_status_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->nominal_capacity_sensor_, (float) get_16bit(12) * 0.01);
   this->publish_state_(this->mosfet_temperature_sensor_, ((float) get_16bit(16) - 500) * 0.1);
   this->publish_state_(this->ambient_temperature_sensor_, ((float) get_16bit(18) - 500) * 0.1);
+  uint16_t operation_status = get_16bit(20);
+
+  this->publish_state_(this->operation_status_bitmask_sensor_, operation_status);
+  if (operation_status < OPERATION_STATUS_SIZE) {
+    this->publish_state_(this->operation_status_text_sensor_, OPERATION_STATUS[operation_status]);
+  } else {
+    this->publish_state_(this->operation_status_text_sensor_, "Unknown");
+  }
+
   this->publish_state_(this->state_of_health_sensor_, (float) get_16bit(22));
 
+  uint16_t protect_bitmask = ((uint32_t)get_16bit(24) << 16) | (uint32_t)get_16bit(26);
+  uint32_t errors_bitmask = ((uint32_t)get_16bit(28) << 16) | (uint32_t)get_16bit(30);
+  this->publish_state_(this->protect_bitmask_sensor_, (float) protect_bitmask);
+  this->publish_state_(this->protect_text_sensor_, this->bitmask_to_string_(PROTECT, PROTECT_SIZE, protect_bitmask));
+  this->publish_state_(this->errors_bitmask_sensor_, (float) errors_bitmask);
+  this->publish_state_(this->errors_text_sensor_, this->bitmask_to_string_(ERRORS, ERRORS_SIZE, errors_bitmask));
   this->mosfet_status_ = get_16bit(32);
   auto mos_states = this->mosfet_status_;
   this->publish_state_(discharging_binary_sensor_, mos_states & 0x01);
