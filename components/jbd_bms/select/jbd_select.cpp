@@ -11,9 +11,9 @@ static const uint8_t JBD_CMD_READ = 0xA5;
 void JbdSelect::dump_config() {
   LOG_SELECT(TAG, "JbdBms Select", this);
   ESP_LOGCONFIG(TAG, "  Options are:");
-  auto options = this->traits.get_options();
+  const auto &options = this->traits.get_options();
   for (size_t i = 0; i < this->mappings_.size(); i++) {
-    ESP_LOGCONFIG(TAG, "    %i: %s", this->mappings_.at(i), options.at(i).c_str());
+    ESP_LOGCONFIG(TAG, "    %i: %s", this->mappings_.at(i), options.at(i));
   }
 }
 
