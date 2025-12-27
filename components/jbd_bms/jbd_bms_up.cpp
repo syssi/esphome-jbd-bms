@@ -8,6 +8,9 @@ namespace jbd_bms {
 
 static const char *const TAG = "jbd_bms_up";
 
+static const uint8_t JBD_PKT_START = 0xDD;
+static const uint8_t JBD_PKT_END = 0x77;
+
 static const uint8_t ERRORS_SIZE = 18;
 static const char *const ERRORS[ERRORS_SIZE] = {
     "Cell overvoltage",                 // 0x0001
@@ -76,7 +79,87 @@ enum JBDFunction {
   JBD_WRITE_BMS = 0x79,
 };
 
+TaskHandle_t uart_task_handle = nullptr;
+void uart_task(void *pv_params) {
+    JbdBmsUP *jbd = (JbdBmsUP *)pv_params;
+    jbd->tx_thread();
+}
+
+void JbdBmsUP::setup() {
+    ESP_LOGW(TAG, "Setup of id-%d (master: %d)", address_, is_master());
+    if (this->is_master()) {
+        mutex_ = new Mutex();
+        tx_ringbuffer = RingBuffer::create(tx_ringbuffer_size_);
+        if (tx_ringbuffer == NULL) {
+            ESP_LOGE(TAG, "id-%d: Failed to create TX ring buffer", address_);
+        }
+        current_uart_ = address_;
+        xTaskCreate(uart_task, "uartTask", 2048, this, 5, &uart_task_handle);
+    }
+    this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+
+}
+void JbdBmsUP::tx_thread() {
+    std::vector<uint8_t> data_vec;
+    uint8_t *data;
+    ESP_LOGW(TAG, "Waiting for tx");
+    while(true) {
+        int battery = -1;
+        uint8_t len;
+        while (tx_ringbuffer->read(&len, 1, pdMS_TO_TICKS(1000)) != 1)
+            ;
+        ESP_LOGVV(TAG, "Got tx byte: %02x", len);
+        data_vec.reserve(len);
+        data = data_vec.data();
+        size_t read_bytes = 0;
+        while (read_bytes < len)
+            read_bytes += tx_ringbuffer->read(data+read_bytes, len-read_bytes, pdMS_TO_TICKS(1000));
+        uint8_t uart = data[0];
+        while (true) {
+            mutex_->lock();
+            int32_t delay = (int32_t)(tx_wait_ - millis());
+            mutex_->unlock();
+            if (delay > 0)
+                vTaskDelay(pdMS_TO_TICKS(delay));
+            else
+                break;
+        }
+        if (uart != current_uart_)
+            this->switch_uart_(uart);
+        this->write_array(&data[1], len-1);
+        ESP_LOGI(TAG, "id-%d: Sending %d bytes", uart, len-1);
+        this->flush();
+        mutex_->lock();
+        tx_wait_ = millis() + rx_timeout_;
+        mutex_->unlock();
+    }
+}
+
+void JbdBmsUP::update_tx_wait() {
+    uint32_t deadline = last_byte_ + 20;
+    mutex_->lock();
+    if ((int32_t)(deadline - tx_wait_) > 0)
+        tx_wait_ = deadline;
+    mutex_->unlock();
+}
+
+void JbdBmsUP::switch_uart_(uint8_t battery) {
+    // It turns out this should never be needed, as sening a command to
+    // battery1 seems to apply it to all batteries?
+    for(JbdBmsUP *bat = this->master_; bat; bat = bat->next_battery()) {
+        if (bat->address() == battery) {
+            parent_->set_tx_pin(bat->tx_pin());
+            parent_->set_rx_pin(bat->rx_pin());
+            parent_->load_settings(false);
+            current_uart_ = battery;
+            return;
+        }
+    }
+    ESP_LOGE(TAG, "Failed to set UART for battery: %d", battery);
+}
+
 bool JbdBmsUP::parse_jbd_bms_byte(uint8_t byte) {
+  master_->update_tx_wait();
   size_t at = this->rx_buffer_.size();
   this->rx_buffer_.push_back(byte);
   const uint8_t *raw = &this->rx_buffer_[0];
@@ -123,11 +206,12 @@ bool JbdBmsUP::parse_jbd_bms_byte(uint8_t byte) {
     return false;
   }
   uint16_t address =
-      (uint16_t(raw[2]) << 8) | (uint16_t(raw[3]) << 0) ESP_LOGVV(TAG, "RX <- %s", format_hex_pretty(raw, at).c_str());
+      (uint16_t(raw[2]) << 8) | (uint16_t(raw[3]) << 0);
+  ESP_LOGVV(TAG, "RX <- %s", format_hex_pretty(raw, at).c_str());
 
   std::vector<uint8_t> data(this->rx_buffer_.begin() + 8, this->rx_buffer_.begin() + frame_len - 2);
   bool found = false;
-  for (auto *battery : this->batteries_) {
+  for (auto *battery = this->master_; battery; battery = battery->next_battery()) {
     if (battery->address() != bat_address) {
       continue;
     }
@@ -232,6 +316,7 @@ void JbdBmsUP::on_pack_status_(const std::vector<uint8_t> &data) {
   this->publish_state_(device_model_text_sensor_, std::string(data.begin() + pos, data.begin() + pos + 30));
 }
 
+/*
 bool JbdBmsUP::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
   if (this->mosfet_status_ == 255) {
     ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
@@ -250,6 +335,7 @@ bool JbdBmsUP::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state
   send_command(JBD_WRITE_BMS, 0x2902, 0x2904, data);
   return true;
 }
+*/
 
 void JbdBmsUP::send_command(uint8_t action, uint8_t function) {
   std::vector<uint8_t> data;
@@ -266,28 +352,52 @@ void JbdBmsUP::send_command(uint8_t function, uint16_t start_address, uint16_t e
                             const std::vector<uint8_t> &data) {
   uint8_t header[256];
   uint8_t crc_arr[2];
-  if (data.size() > 246) {
-    ESP_LOGE(TAG, "Data length %d > 246.  Cannot send", data.size());
+  if (data.size() > 244) {
+    ESP_LOGE(TAG, "Data length %d > 244.  Cannot send", data.size());
     return;
   }
-  header[0] = address_;
-  header[1] = function;
-  header[2] = start_address >> 8;
-  header[3] = start_address & 0xff;
-  header[4] = end_address >> 8;
-  header[5] = end_address & 0xff;
-  header[6] = data.size() >> 8;
-  header[7] = data.size() & 0xff;
+  header[0] = data.size() + 11; // length
+  header[1] = master_->address();  // uart to use
+  header[2] = address_;
+  header[3] = function;
+  header[4] = start_address >> 8;
+  header[5] = start_address & 0xff;
+  header[6] = end_address >> 8;
+  header[7] = end_address & 0xff;
+  header[8] = data.size() >> 8;
+  header[9] = data.size() & 0xff;
   if (data.size()) {
-    memcpy(header + 8, data.data(), data.size());
+    memcpy(header + 10, data.data(), data.size());
   }
-  auto crc = crc16(header, data.size() + 8);
-  header[8 + data.size()] = crc & 0xff;
-  header[9 + data.size()] = crc >> 8;
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(header, 10 + data.size()).c_str());
-  this->write_array(header, 10 + data.size());
-  this->flush();
+  auto crc = crc16(header+2, data.size() + 8);
+  header[10 + data.size()] = crc & 0xff;
+  header[11 + data.size()] = crc >> 8;
+  ESP_LOGW(TAG, "Send command: %s", format_hex_pretty(header, 12 + data.size()).c_str());
+  master_->tx_ringbuffer->write(header, 12 + data.size());
 }
+
+bool JbdBmsUP::write_register(uint8_t address, uint16_t value) {
+  uint8_t frame[11];
+  uint8_t data_len = 2;
+
+  frame[0] = 10; // length
+  frame[1] = address_;
+  frame[2] = JBD_PKT_START;
+  frame[3] = JBD_CMD_WRITE;
+  frame[4] = address;
+  frame[5] = data_len;
+  frame[6] = value >> 8;
+  frame[7] = value >> 0;
+  auto crc = chksum_(frame + 4, data_len + 2);
+  frame[8] = crc >> 8;
+  frame[9] = crc >> 0;
+  frame[10] = JBD_PKT_END;
+
+  ESP_LOGW(TAG, "Write register: %s", format_hex_pretty(frame, sizeof(frame)).c_str());
+  master_->tx_ringbuffer->write(frame, sizeof(frame));
+  return true;
+}
+
 
 }  // namespace jbd_bms
 }  // namespace esphome

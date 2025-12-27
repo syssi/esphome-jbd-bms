@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import uart
 import esphome.config_validation as cv
-from esphome.const import CONF_ID, CONF_UART_ID, CONF_PROTOCOL, CONF_ADDRESS
+from esphome.const import CONF_ID, CONF_UART_ID, CONF_PROTOCOL, CONF_ADDRESS, CONF_TX_PIN, CONF_RX_PIN
 
 CODEOWNERS = ["@syssi"]
 
@@ -42,6 +42,8 @@ CONFIG_SCHEMA = (
                 upper=True,
             ),
             cv.Optional(CONF_ADDRESS, default=1): cv.int_range(0, 16),
+            cv.Optional(CONF_TX_PIN): uart.pins.internal_gpio_output_pin_schema,
+            cv.Optional(CONF_RX_PIN): uart.pins.internal_gpio_input_pin_schema,
         }
     )
     .extend(cv.polling_component_schema("2s"))
@@ -59,7 +61,17 @@ async def to_code(config):
     cg.add(var.set_rx_timeout(config[CONF_RX_TIMEOUT]))
     if config[CONF_PROTOCOL] == "UP":
         if config[CONF_UART_ID] not in MASTERS:
-            MASTERS[config[CONF_UART_ID]] = var
-            cg.add(var.set_is_master(True))
+            MASTERS[config[CONF_UART_ID]] = [var]
+            master = var
+            prev = None
+        else:
+            master = MASTERS[config[CONF_UART_ID]][0]
+            prev = MASTERS[config[CONF_UART_ID]][-1]
         cg.add(var.set_battery_address(config[CONF_ADDRESS]))
-        cg.add(MASTERS[config[CONF_UART_ID]].add_battery(var))
+        if prev:
+            cg.add(prev.set_next_battery(var))
+        cg.add(var.set_master(master))
+        tx_pin = await cg.gpio_pin_expression(config[CONF_TX_PIN])
+        cg.add(var.set_tx_pin(tx_pin))
+        rx_pin = await cg.gpio_pin_expression(config[CONF_RX_PIN])
+        cg.add(var.set_rx_pin(rx_pin))

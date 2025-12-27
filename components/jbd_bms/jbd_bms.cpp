@@ -51,7 +51,7 @@ static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
 void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO); }
 
 void JbdBms::loop() {
-  if (!this->is_master_) {
+  if (!this->is_master()) {
     return;
   }
   const uint32_t now = millis();
@@ -520,6 +520,22 @@ void JbdBms::publish_state_(text_sensor::TextSensor *text_sensor, const std::str
     return;
 
   text_sensor->publish_state(state);
+}
+
+bool JbdBms::change_mosfet_status(mos_state_e state) {
+  if (this->mosfet_status_ == 255) {
+    ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
+    return false;
+  }
+
+  uint16_t value = (this->mosfet_status_ & 0xFC) | (uint8_t) state;
+
+  this->mosfet_status_ = value;
+
+  value ^= (1 << 0);
+  value ^= (1 << 1);
+
+  return this->write_register(JBD_CMD_MOS, value);
 }
 
 bool JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {

@@ -11,6 +11,8 @@
 namespace esphome {
 namespace jbd_bms {
 
+enum mos_state_e { ENABLE = 0x03, DISABLE = 0x00 };
+
 class JbdBms : public uart::UARTDevice, public PollingComponent {
  public:
   void loop() override;
@@ -150,7 +152,9 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   virtual void send_command(uint8_t action, uint8_t function);
   virtual bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
+  bool change_mosfet_status(mos_state_e state);
   virtual void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
+  virtual bool is_master() { return true; }
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;
@@ -221,7 +225,6 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   std::vector<uint8_t> rx_buffer_;
   uint32_t last_byte_{0};
   uint16_t rx_timeout_{150};
-  bool is_master_{true};
   uint8_t no_response_count_{0};
   uint8_t mosfet_status_{255};
 
