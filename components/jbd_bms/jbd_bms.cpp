@@ -1,6 +1,7 @@
 #include "jbd_bms.h"
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
+#include "jbd_bms_commands.h"
 
 namespace esphome {
 namespace jbd_bms {
@@ -11,20 +12,6 @@ static const uint8_t MAX_NO_RESPONSE_COUNT = 5;
 
 static const uint8_t JBD_PKT_START = 0xDD;
 static const uint8_t JBD_PKT_END = 0x77;
-static const uint8_t JBD_CMD_READ = 0xA5;
-static const uint8_t JBD_CMD_WRITE = 0x5A;
-
-static const uint8_t JBD_CMD_HWINFO = 0x03;
-static const uint8_t JBD_CMD_CELLINFO = 0x04;
-static const uint8_t JBD_CMD_HWVER = 0x05;
-
-static const uint8_t JBD_CMD_ENTER_FACTORY = 0x00;
-static const uint8_t JBD_CMD_EXIT_FACTORY = 0x01;
-static const uint8_t JBD_CMD_FORCE_SOC_RESET = 0x0A;
-static const uint8_t JBD_CMD_ERROR_COUNTS = 0xAA;
-static const uint8_t JBD_CMD_CAP_REM = 0xE0;   // Set remaining capacity
-static const uint8_t JBD_CMD_MOS = 0xE1;       // Set charging/discharging bitmask
-static const uint8_t JBD_CMD_BALANCER = 0xE2;  // Enable/disable balancer
 
 static const uint8_t JBD_MOS_CHARGE = 0x01;
 static const uint8_t JBD_MOS_DISCHARGE = 0x02;
@@ -64,6 +51,9 @@ static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
 void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO); }
 
 void JbdBms::loop() {
+  if (!this->is_master()) {
+    return;
+  }
   const uint32_t now = millis();
 
   if (now - this->last_byte_ > this->rx_timeout_) {
@@ -76,7 +66,7 @@ void JbdBms::loop() {
   while (this->available()) {
     uint8_t byte;
     this->read_byte(&byte);
-    if (this->parse_jbd_bms_byte_(byte)) {
+    if (this->parse_jbd_bms_byte(byte)) {
       this->last_byte_ = now;
     } else {
       ESP_LOGVV(TAG, "Buffer cleared due to reset: %s",
@@ -91,7 +81,7 @@ void JbdBms::update() {
   this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
 }
 
-bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
+bool JbdBms::parse_jbd_bms_byte(uint8_t byte) {
   size_t at = this->rx_buffer_.size();
   this->rx_buffer_.push_back(byte);
   const uint8_t *raw = &this->rx_buffer_[0];
@@ -416,7 +406,6 @@ void JbdBms::publish_device_unavailable_() {
 void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   ESP_LOGCONFIG(TAG, "JbdBms:");
   ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
-
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Discharging", this->discharging_binary_sensor_);
@@ -533,6 +522,22 @@ void JbdBms::publish_state_(text_sensor::TextSensor *text_sensor, const std::str
   text_sensor->publish_state(state);
 }
 
+bool JbdBms::change_mosfet_status(mos_state_e state) {
+  if (this->mosfet_status_ == 255) {
+    ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
+    return false;
+  }
+
+  uint16_t value = (this->mosfet_status_ & 0xFC) | (uint8_t) state;
+
+  this->mosfet_status_ = value;
+
+  value ^= (1 << 0);
+  value ^= (1 << 1);
+
+  return this->write_register(JBD_CMD_MOS, value);
+}
+
 bool JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
   if (this->mosfet_status_ == 255) {
     ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
@@ -589,7 +594,7 @@ void JbdBms::send_command(uint8_t action, uint8_t function) {
 }
 
 std::string JbdBms::bitmask_to_string_(const char *const messages[], const uint8_t &messages_size,
-                                       const uint16_t &mask) {
+                                       const uint32_t &mask) {
   std::string values = "";
   if (mask) {
     for (int i = 0; i < messages_size; i++) {

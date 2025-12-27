@@ -1,0 +1,242 @@
+substitutions:
+  name: jbd-bms-uart
+  device_description: "Monitor and control a UP Xiaoxiang Battery Management System (JBD-BMS) via UART"
+  external_components_source: github://syssi/esphome-jbd-bms@main
+  tx_pin: GPIO16
+  rx_pin: GPIO17
+  rx_timeout: 150ms
+
+esphome:
+  name: ${name}
+  comment: ${device_description}
+  min_version: 2024.6.0
+  project:
+    name: "syssi.esphome-jbd-bms"
+    version: 2.2.0
+
+esp32:
+  board: wemos_d1_mini32
+  framework:
+    type: esp-idf
+
+external_components:
+  - source: ${external_components_source}
+    refresh: 0s
+
+packages:
+  # Individual time estimation packages from remote repository
+  remaining_charging_time:
+    url: https://github.com/syssi/esphome-jbd-bms
+    files:
+      - path: packages/remaining_charging_time.yaml
+        vars:
+          sensor_id: bms0_remaining_charging_time
+          sensor_name: "${name} remaining charging time"
+          current_sensor_id: bms0_average_current
+          capacity_remaining_id: bms0_capacity_remaining
+          nominal_capacity_id: bms0_nominal_capacity
+  remaining_discharging_time:
+    url: https://github.com/syssi/esphome-jbd-bms
+    files:
+      - path: packages/remaining_discharging_time.yaml
+        vars:
+          sensor_id: bms0_remaining_discharging_time
+          sensor_name: "${name} remaining discharging time"
+          current_sensor_id: bms0_average_current
+          capacity_remaining_id: bms0_capacity_remaining
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+ota:
+  platform: esphome
+
+logger:
+  level: DEBUG
+
+# If you use Home Assistant please remove this `mqtt` section and uncomment the `api` component!
+# The native API has many advantages over MQTT: https://esphome.io/components/api.html#advantages-over-mqtt
+mqtt:
+  broker: !secret mqtt_host
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  id: mqtt_client
+
+# api:
+
+uart:
+  - id: uart_0
+    baud_rate: 9600
+    tx_pin: ${tx_pin}
+    rx_pin: ${rx_pin}
+
+jbd_bms:
+  - id: bms0
+    update_interval: 2s
+    rx_timeout: ${rx_timeout}
+    protocol: UP
+    address: 1
+
+button:
+  - platform: jbd_bms
+    jbd_bms_id: bms0
+    retrieve_hardware_version:
+      name: "${name} retrieve hardware version"
+    force_soc_reset:
+      name: "${name} force soc reset"
+
+binary_sensor:
+  - platform: jbd_bms
+    jbd_bms_id: bms0
+    charging:
+      name: "${name} charging"
+    discharging:
+      name: "${name} discharging"
+    precharging:
+      name: "${name} precharging"
+    heat:
+      name: "${name} heat"
+    fan:
+      name: "${name} fan"
+    online_status:
+      name: "${name} online status"
+
+sensor:
+  - platform: jbd_bms
+    jbd_bms_id: bms0
+    battery_strings:
+      name: "${name} battery strings"
+    current:
+      name: "${name} current"
+      id: bms0_current
+    power:
+      name: "${name} power"
+    charging_power:
+      name: "${name} charging power"
+    discharging_power:
+      name: "${name} discharging power"
+    state_of_charge:
+      name: "${name} state of charge"
+    nominal_capacity:
+      name: "${name} nominal capacity"
+      id: bms0_nominal_capacity
+    charging_cycles:
+      name: "${name} charging cycles"
+    capacity_remaining:
+      name: "${name} capacity remaining"
+      id: bms0_capacity_remaining
+    battery_cycle_capacity:
+      name: "${name} battery cycle capacity"
+    total_voltage:
+      name: "${name} total voltage"
+    average_cell_voltage:
+      name: "${name} average cell voltage"
+    delta_cell_voltage:
+      name: "${name} delta cell voltage"
+    min_cell_voltage:
+      name: "${name} min cell voltage"
+    max_cell_voltage:
+      name: "${name} max cell voltage"
+    min_voltage_cell:
+      name: "${name} min voltage cell"
+    max_voltage_cell:
+      name: "${name} max voltage cell"
+    mosfet_temperature:
+      name: "${name} mosfet temperature"
+    ambient_temperature:
+      name: "${name} ambient temperature"
+    state_of_health:
+      name: "${name} state of health"
+    temperature_1:
+      name: "${name} temperature 1"
+    temperature_2:
+      name: "${name} temperature 2"
+    temperature_3:
+      name: "${name} temperature 3"
+    temperature_4:
+      name: "${name} temperature 4"
+    cell_voltage_1:
+      name: "${name} cell voltage 1"
+    cell_voltage_2:
+      name: "${name} cell voltage 2"
+    cell_voltage_3:
+      name: "${name} cell voltage 3"
+    cell_voltage_4:
+      name: "${name} cell voltage 4"
+    cell_voltage_5:
+      name: "${name} cell voltage 5"
+    cell_voltage_6:
+      name: "${name} cell voltage 6"
+    cell_voltage_7:
+      name: "${name} cell voltage 7"
+    cell_voltage_8:
+      name: "${name} cell voltage 8"
+    cell_voltage_9:
+      name: "${name} cell voltage 9"
+    cell_voltage_10:
+      name: "${name} cell voltage 10"
+    cell_voltage_11:
+      name: "${name} cell voltage 11"
+    cell_voltage_12:
+      name: "${name} cell voltage 12"
+    cell_voltage_13:
+      name: "${name} cell voltage 13"
+    cell_voltage_14:
+      name: "${name} cell voltage 14"
+    cell_voltage_15:
+      name: "${name} cell voltage 15"
+    cell_voltage_16:
+      name: "${name} cell voltage 16"
+    operation_status_bitmask:
+      name: "${name} operation status bitmask"
+    errors_bitmask:
+      name: "${name} errors bitmask"
+    software_version:
+      name: "${name} software version"
+
+  # Average current sensor with exponential filtering
+  - platform: copy
+    source_id: bms0_current
+    name: "${name} average current"
+    id: bms0_average_current
+    filters:
+      - exponential_moving_average:
+          alpha: 0.1
+          send_every: 1
+
+text_sensor:
+  - platform: jbd_bms
+    jbd_bms_id: bms0
+    errors:
+      name: "${name} errors"
+    operation_status:
+      name: "${name} operation status"
+    device_model:
+      name: "${name} device model"
+
+select:
+  - platform: jbd_bms
+    jbd_bms_id: bms0
+    read_eeprom_register:
+      name: "${name} read eeprom register"
+      id: read_eeprom_register0
+      optionsmap:
+        0xAA: "Error Counts"
+
+switch:
+  - platform: jbd_bms
+    jbd_bms_id: bms0
+    charging:
+      name: "${name} charging"
+    discharging:
+      name: "${name} discharging"
+
+# Uncomment this section if you want to update the error count sensors periodically
+#
+# interval:
+#   - interval: 30min
+#     then:
+#       - select.set:
+#           id: read_eeprom_register0
+#           option: "Error Counts"
