@@ -68,7 +68,7 @@ void JbdBms::loop() {
 
   if (now - this->last_byte_ > this->rx_timeout_) {
     ESP_LOGVV(TAG, "Buffer cleared due to timeout: %s",
-              format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());
+              format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  // NOLINT
     this->rx_buffer_.clear();
     this->last_byte_ = now;
   }
@@ -80,7 +80,7 @@ void JbdBms::loop() {
       this->last_byte_ = now;
     } else {
       ESP_LOGVV(TAG, "Buffer cleared due to reset: %s",
-                format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());
+                format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  // NOLINT
       this->rx_buffer_.clear();
     }
   }
@@ -155,7 +155,7 @@ bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
     return false;
   }
 
-  ESP_LOGVV(TAG, "RX <- %s", format_hex_pretty(raw, at + 1).c_str());
+  ESP_LOGVV(TAG, "RX <- %s", format_hex_pretty(raw, at + 1).c_str());  // NOLINT
 
   std::vector<uint8_t> data(this->rx_buffer_.begin() + 4, this->rx_buffer_.begin() + frame_len - 3);
 
@@ -188,7 +188,7 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
       break;
     default:
       ESP_LOGW(TAG, "Unhandled response (function 0x%02X) received: %s", function,
-               format_hex_pretty(&data.front(), data.size()).c_str());
+               format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
   }
 }
 
@@ -198,7 +198,7 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Cell info frame (%d bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
 
   uint8_t data_len = data.size();
   if (data_len < 2 || data_len > 64 || (data_len % 2) != 0) {
@@ -246,7 +246,7 @@ void JbdBms::on_error_counts_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Error counts frame (%d bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
 
   uint8_t data_len = data.size();
   if (data_len != 24) {
@@ -276,7 +276,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Hardware info frame (%d bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
 
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
 
@@ -351,7 +351,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
 
 void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
   ESP_LOGI(TAG, "Hardware version frame (%d bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
 
   // Byte Len  Payload                                              Content
   // 0    25   0x4A 0x42 0x44 0x2D 0x53 0x50 0x30 0x34 0x53 0x30
@@ -564,7 +564,7 @@ bool JbdBms::write_register(uint8_t address, uint16_t value) {
   frame[7] = crc >> 0;
   frame[8] = JBD_PKT_END;
 
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame, sizeof(frame)).c_str());
+  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame, sizeof(frame)).c_str());  // NOLINT
   this->write_array(frame, 9);
   this->flush();
 
