@@ -11,6 +11,8 @@
 namespace esphome {
 namespace jbd_bms {
 
+enum mos_state_e { ENABLE = 0x03, DISABLE = 0x00 };
+
 class JbdBms : public uart::UARTDevice, public PollingComponent {
  public:
   void loop() override;
@@ -146,10 +148,13 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
     device_model_text_sensor_ = device_model_text_sensor;
   }
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
-  void send_command(uint8_t action, uint8_t function);
-  bool write_register(uint8_t address, uint16_t value);
+
+  virtual void send_command(uint8_t action, uint8_t function);
+  virtual bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
-  void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
+  bool change_mosfet_status(mos_state_e state);
+  virtual void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
+  virtual bool is_master() { return true; }
 
  protected:
   binary_sensor::BinarySensor *balancing_binary_sensor_;
@@ -227,7 +232,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void on_error_counts_data_(const std::vector<uint8_t> &data);
   void on_hardware_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_version_data_(const std::vector<uint8_t> &data);
-  bool parse_jbd_bms_byte_(uint8_t byte);
+  virtual bool parse_jbd_bms_byte(uint8_t byte);
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);
   void publish_state_(sensor::Sensor *sensor, float value);
   void publish_state_(switch_::Switch *obj, const bool &state);
@@ -235,7 +240,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void publish_device_unavailable_();
   void reset_online_status_tracker_();
   void track_online_status_();
-  std::string bitmask_to_string_(const char *const messages[], const uint8_t &messages_size, const uint16_t &mask);
+  std::string bitmask_to_string_(const char *const messages[], const uint8_t &messages_size, const uint32_t &mask);
 
   uint16_t chksum_(const uint8_t data[], const uint16_t len) {
     uint16_t checksum = 0x00;

@@ -1,0 +1,403 @@
+#include "jbd_bms_up.h"
+#include "esphome/core/log.h"
+#include "esphome/core/helpers.h"
+#include "jbd_bms_commands.h"
+
+namespace esphome {
+namespace jbd_bms {
+
+static const char *const TAG = "jbd_bms_up";
+
+static const uint8_t JBD_PKT_START = 0xDD;
+static const uint8_t JBD_PKT_END = 0x77;
+
+static const uint8_t ERRORS_SIZE = 18;
+static const char *const ERRORS[ERRORS_SIZE] = {
+    "Cell overvoltage",                 // 0x0001
+    "Cell undervoltage",                // 0x0002
+    "Pack overvoltage",                 // 0x0004
+    "Pack undervoltage",                // 0x0008
+    "Charging overcurrent",             // 0x0010
+    "Discharging overcurrent",          // 0x0020
+    "Charging over temperature",        // 0x0040
+    "Charging under temperature",       // 0x0080
+    "Discharging over temperature",     // 0x0100
+    "Discharging under temperature",    // 0x0200
+    "Mosfet over temperature",          // 0x0400
+    "Ambient over temperature",         // 0x0800
+    "Ambient under temperature",        // 0x1000
+    "Voltage difference too large",     // 0x2000
+    "Temperature difference too large", // 0x4000
+    "SOC too low",                      // 0x8000
+    "EEP fault",                      // 0x010000
+    "Real time clock abnormal",       // 0x020000
+};
+static const uint8_t PROTECT_SIZE = 27;
+static const char *const PROTECT[PROTECT_SIZE] = {
+    "Cell overvoltage",                 // 0x00000001
+    "Cell undervoltage",                // 0x00000002
+    "Pack overvoltage",                 // 0x00000004
+    "Pack undervoltage",                // 0x00000008
+    "Charging overcurrent 1",           // 0x00000010
+    "Charging overcurrent 2",           // 0x00000020
+    "Discharging overcurrent 1",        // 0x00000040
+    "Discharging overcurrent 2",        // 0x00000080
+    "Charging over temperature",        // 0x00000100
+    "Charging under temperature",       // 0x00000200
+    "Discharging over temperature",     // 0x00000400
+    "Discharging under temperature",    // 0x00000800
+    "Mosfet over temperature",          // 0x00001000
+    "Ambient over temperature",         // 0x00002000
+    "Ambient under temperature",        // 0x00004000
+    "Voltage difference too large",     // 0x00008000
+    "Temperature difference too large", // 0x00010000
+    "SOC too low",                      // 0x00020000
+    "Short circuit",                    // 0x00040000
+    "Monomer offline",                  // 0x00080000
+    "Temperature drop",                 // 0x00100000
+    "Charge Mosfet fault",              // 0x00200000
+    "Discharge Mosfet fault",           // 0x00400000
+    "Current limiting fault",           // 0x00800000
+    "Aerosol fault",                    // 0x01000000
+    "Full charge protection",           // 0x02000000
+    "Abnormal AFE communication",       // 0x04000000
+};
+
+static const uint8_t OPERATION_STATUS_SIZE = 3;
+static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
+    "Idle",            // 0x00
+    "Charging",        // 0x01
+    "Discharging",     // 0x02
+};
+
+enum JBDAddress {
+  JBD_PACK_STATUS = 0x1000,
+};
+
+enum JBDFunction {
+  JBD_READ_BMS = 0x78,
+  JBD_WRITE_BMS = 0x79,
+};
+
+TaskHandle_t uart_task_handle = nullptr;
+void uart_task(void *pv_params) {
+    JbdBmsUP *jbd = (JbdBmsUP *)pv_params;
+    jbd->tx_thread();
+}
+
+void JbdBmsUP::setup() {
+    ESP_LOGW(TAG, "Setup of id-%d (master: %d)", address_, is_master());
+    if (this->is_master()) {
+        mutex_ = new Mutex();
+        tx_ringbuffer = RingBuffer::create(tx_ringbuffer_size_);
+        if (tx_ringbuffer == NULL) {
+            ESP_LOGE(TAG, "id-%d: Failed to create TX ring buffer", address_);
+        }
+        current_uart_ = address_;
+        xTaskCreate(uart_task, "uartTask", 2048, this, 5, &uart_task_handle);
+    }
+    this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+
+}
+void JbdBmsUP::tx_thread() {
+    std::vector<uint8_t> data_vec;
+    uint8_t *data;
+    ESP_LOGW(TAG, "Waiting for tx");
+    while(true) {
+        int battery = -1;
+        uint8_t len;
+        while (tx_ringbuffer->read(&len, 1, pdMS_TO_TICKS(1000)) != 1)
+            ;
+        ESP_LOGVV(TAG, "Got tx byte: %02x", len);
+        data_vec.reserve(len);
+        data = data_vec.data();
+        size_t read_bytes = 0;
+        while (read_bytes < len)
+            read_bytes += tx_ringbuffer->read(data+read_bytes, len-read_bytes, pdMS_TO_TICKS(1000));
+        uint8_t uart = data[0];
+        while (true) {
+            mutex_->lock();
+            int32_t delay = (int32_t)(tx_wait_ - millis());
+            mutex_->unlock();
+            if (delay > 0)
+                vTaskDelay(pdMS_TO_TICKS(delay));
+            else
+                break;
+        }
+        if (uart != current_uart_)
+            this->switch_uart_(uart);
+        this->write_array(&data[1], len-1);
+        ESP_LOGI(TAG, "id-%d: Sending %d bytes", uart, len-1);
+        this->flush();
+        mutex_->lock();
+        tx_wait_ = millis() + rx_timeout_;
+        mutex_->unlock();
+    }
+}
+
+void JbdBmsUP::update_tx_wait() {
+    uint32_t deadline = last_byte_ + 20;
+    mutex_->lock();
+    if ((int32_t)(deadline - tx_wait_) > 0)
+        tx_wait_ = deadline;
+    mutex_->unlock();
+}
+
+void JbdBmsUP::switch_uart_(uint8_t battery) {
+    // It turns out this should never be needed, as sening a command to
+    // battery1 seems to apply it to all batteries?
+    for(JbdBmsUP *bat = this->master_; bat; bat = bat->next_battery()) {
+        if (bat->address() == battery) {
+            parent_->set_tx_pin(bat->tx_pin());
+            parent_->set_rx_pin(bat->rx_pin());
+            parent_->load_settings(false);
+            current_uart_ = battery;
+            return;
+        }
+    }
+    ESP_LOGE(TAG, "Failed to set UART for battery: %d", battery);
+}
+
+bool JbdBmsUP::parse_jbd_bms_byte(uint8_t byte) {
+  master_->update_tx_wait();
+  size_t at = this->rx_buffer_.size();
+  this->rx_buffer_.push_back(byte);
+  const uint8_t *raw = &this->rx_buffer_[0];
+
+  // Example response
+  // 0x01 : Bank
+  // 0x78 : Function code
+  // 0x1000 : Start address
+  // 0x10a0 : End address
+  // 0x0000 : Data length
+  // <data> : data
+  // 0x7fb2 : crc16 (LSB 1st)
+
+  if (at == 0) {
+    if (raw[0] > 16) {
+      ESP_LOGW(TAG, "Invalid header: 0x%02X", raw[0]);
+
+      // return false to reset buffer
+      return false;
+    }
+
+    return true;
+  }
+
+  // Byte 1 (Function)
+  // Byte 2,3 (Start addresss)
+  // Byte 4,5 (End addresss)
+  // Byte 6,7 (Length)
+  if (at < 8)
+    return true;
+
+  uint16_t data_len = (raw[6] << 8) | raw[7];
+  uint16_t frame_len = 8 + data_len + 2;
+
+  if (at < frame_len - 1)
+    return true;
+
+  uint8_t bat_address = raw[0];
+  uint8_t function = raw[1];
+  uint16_t computed_crc = crc16(raw, data_len + 8);
+  uint16_t remote_crc = (uint16_t(raw[8 + data_len]) << 0) | (uint16_t(raw[9 + data_len]) << 8);
+  if (computed_crc != remote_crc) {
+    ESP_LOGW(TAG, "CRC check failed! 0x%04X != 0x%04X", computed_crc, remote_crc);
+    return false;
+  }
+  uint16_t address =
+      (uint16_t(raw[2]) << 8) | (uint16_t(raw[3]) << 0);
+  ESP_LOGVV(TAG, "RX <- %s", format_hex_pretty(raw, at).c_str());
+
+  std::vector<uint8_t> data(this->rx_buffer_.begin() + 8, this->rx_buffer_.begin() + frame_len - 2);
+  bool found = false;
+  for (auto *battery = this->master_; battery; battery = battery->next_battery()) {
+    if (battery->address() != bat_address) {
+      continue;
+    }
+    found = true;
+    battery->on_jbd_bms_data(function, address, data);
+    break;
+  }
+  if (!found) {
+    ESP_LOGW(TAG, "Got unknown battery address 0x%02X! ", bat_address);
+  }
+
+  // reset buffer
+  ESP_LOGV(TAG, "Clearing buffer of %d bytes - parse succeeded", at);
+  this->rx_buffer_.clear();
+  return true;
+}
+
+void JbdBmsUP::on_jbd_bms_data(const uint8_t &function, const uint16_t &reg_address, const std::vector<uint8_t> &data) {
+  this->reset_online_status_tracker_();
+  if (function == JBD_READ_BMS) {
+    switch (reg_address) {
+      case JBD_PACK_STATUS:
+        ESP_LOGVV(TAG, "Got pack status");
+        on_pack_status_(data);
+        return;
+    }
+  }
+  ESP_LOGW(TAG, "Unhandled response (function 0x%02X) received: %s", function,
+           format_hex_pretty(&data.front(), data.size()).c_str());
+}
+
+void JbdBmsUP::on_pack_status_(const std::vector<uint8_t> &data) {
+  auto get_16bit = [&](size_t i) -> uint16_t { return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0); };
+  auto get_32bit = [&](size_t i) -> uint32_t {
+    return (uint32_t(data[i + 0]) << 24) | (uint32_t(data[i + 1]) << 16) | (uint32_t(data[i + 2]) << 8) |
+           (uint32_t(data[i + 3]) << 0);
+  };
+
+  float total_voltage = (float) get_16bit(0) * 0.01;
+  float current = ((float) get_32bit(4) - 300000.0) * 0.01;
+  float power = total_voltage * current;
+  this->publish_state_(this->total_voltage_sensor_, total_voltage);
+  this->publish_state_(this->current_sensor_, current);
+  this->publish_state_(this->power_sensor_, power);
+  this->publish_state_(this->charging_power_sensor_, std::max(0.0f, power));               // 500W vs 0W -> 500W
+  this->publish_state_(this->discharging_power_sensor_, std::abs(std::min(0.0f, power)));  // -500W vs 0W -> 500W
+
+  this->publish_state_(this->state_of_charge_sensor_, (float) get_16bit(8) * 0.01);
+  this->publish_state_(this->capacity_remaining_sensor_, (float) get_16bit(10) * 0.01);
+  this->publish_state_(this->nominal_capacity_sensor_, (float) get_16bit(12) * 0.01);
+  this->publish_state_(this->mosfet_temperature_sensor_, ((float) get_16bit(16) - 500) * 0.1);
+  this->publish_state_(this->ambient_temperature_sensor_, ((float) get_16bit(18) - 500) * 0.1);
+  uint16_t operation_status = get_16bit(20);
+
+  this->publish_state_(this->operation_status_bitmask_sensor_, operation_status);
+  if (operation_status < OPERATION_STATUS_SIZE) {
+    this->publish_state_(this->operation_status_text_sensor_, OPERATION_STATUS[operation_status]);
+  } else {
+    this->publish_state_(this->operation_status_text_sensor_, "Unknown");
+  }
+
+  this->publish_state_(this->state_of_health_sensor_, (float) get_16bit(22));
+
+  uint16_t protect_bitmask = ((uint32_t)get_16bit(24) << 16) | (uint32_t)get_16bit(26);
+  uint32_t errors_bitmask = ((uint32_t)get_16bit(28) << 16) | (uint32_t)get_16bit(30);
+  this->publish_state_(this->protect_bitmask_sensor_, (float) protect_bitmask);
+  this->publish_state_(this->protect_text_sensor_, this->bitmask_to_string_(PROTECT, PROTECT_SIZE, protect_bitmask));
+  this->publish_state_(this->errors_bitmask_sensor_, (float) errors_bitmask);
+  this->publish_state_(this->errors_text_sensor_, this->bitmask_to_string_(ERRORS, ERRORS_SIZE, errors_bitmask));
+  this->mosfet_status_ = get_16bit(32);
+  auto mos_states = this->mosfet_status_;
+  this->publish_state_(discharging_binary_sensor_, mos_states & 0x01);
+  this->publish_state_(charging_binary_sensor_, mos_states & 0x02);
+  this->publish_state_(precharging_binary_sensor_, mos_states & 0x04);
+  this->publish_state_(heat_binary_sensor_, mos_states & 0x08);
+  this->publish_state_(fan_binary_sensor_, mos_states & 0x10);
+
+  this->publish_state_(this->charging_cycles_sensor_, get_16bit(36));
+
+  this->publish_state_(this->max_voltage_cell_sensor_, get_16bit(38));
+  float max_cell_voltage = (float) get_16bit(40) * 0.001;
+  this->publish_state_(this->max_cell_voltage_sensor_, max_cell_voltage);
+  this->publish_state_(this->min_voltage_cell_sensor_, get_16bit(42));
+  float min_cell_voltage = (float) get_16bit(44) * 0.001;
+  this->publish_state_(this->min_cell_voltage_sensor_, min_cell_voltage);
+  this->publish_state_(this->average_cell_voltage_sensor_, (float) get_16bit(46) * 0.001);
+  this->publish_state_(this->delta_cell_voltage_sensor_, max_cell_voltage - min_cell_voltage);
+  int num_cells = get_16bit(66);
+  this->publish_state_(this->battery_strings_sensor_, num_cells);
+  for (int i = 0; i < std::min(num_cells, 32); i++) {
+    this->publish_state_(this->cells_[i].cell_voltage_sensor_, (float) get_16bit(68 + 2 * i) * 0.001);
+  }
+  int pos = 68 + 2 * num_cells;
+  int num_temperature_sensors = get_16bit(pos);
+  pos += 2;
+  for (int i = 0; i < std::min(num_temperature_sensors, 6); i++) {
+    this->publish_state_(this->temperatures_[i].temperature_sensor_,
+                         (float) ((uint32_t) get_16bit(pos + 2 * i) - 500) * 0.001);
+  }
+  pos += 2 * num_temperature_sensors;
+  pos += 6;
+  this->publish_state_(device_model_text_sensor_, std::string(data.begin() + pos, data.begin() + pos + 30));
+}
+
+/*
+bool JbdBmsUP::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
+  if (this->mosfet_status_ == 255) {
+    ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
+    return false;
+  }
+
+  uint16_t value = (this->mosfet_status_ & (~(1 << bitmask))) | ((uint8_t) state << bitmask);
+
+  std::vector<uint8_t> data(6);
+  data[0] = 0x11;
+  data[1] = 'J';
+  data[2] = 'B';
+  data[3] = 'D';
+  data[4] = value >> 8;
+  data[5] = value & 0xff;
+  send_command(JBD_WRITE_BMS, 0x2902, 0x2904, data);
+  return true;
+}
+*/
+
+void JbdBmsUP::send_command(uint8_t action, uint8_t function) {
+  std::vector<uint8_t> data;
+  if (action == JBD_CMD_READ) {
+    if (function == JBD_CMD_HWINFO) {
+      send_command(0x78, 0x1000, 0x10a0, data);
+      return;
+    }
+  }
+  ESP_LOGW(TAG, "Invallid command: %02x, %02x", action, function);
+}
+
+void JbdBmsUP::send_command(uint8_t function, uint16_t start_address, uint16_t end_address,
+                            const std::vector<uint8_t> &data) {
+  uint8_t header[256];
+  uint8_t crc_arr[2];
+  if (data.size() > 244) {
+    ESP_LOGE(TAG, "Data length %d > 244.  Cannot send", data.size());
+    return;
+  }
+  header[0] = data.size() + 11; // length
+  header[1] = master_->address();  // uart to use
+  header[2] = address_;
+  header[3] = function;
+  header[4] = start_address >> 8;
+  header[5] = start_address & 0xff;
+  header[6] = end_address >> 8;
+  header[7] = end_address & 0xff;
+  header[8] = data.size() >> 8;
+  header[9] = data.size() & 0xff;
+  if (data.size()) {
+    memcpy(header + 10, data.data(), data.size());
+  }
+  auto crc = crc16(header+2, data.size() + 8);
+  header[10 + data.size()] = crc & 0xff;
+  header[11 + data.size()] = crc >> 8;
+  ESP_LOGW(TAG, "Send command: %s", format_hex_pretty(header, 12 + data.size()).c_str());
+  master_->tx_ringbuffer->write(header, 12 + data.size());
+}
+
+bool JbdBmsUP::write_register(uint8_t address, uint16_t value) {
+  uint8_t frame[11];
+  uint8_t data_len = 2;
+
+  frame[0] = 10; // length
+  frame[1] = address_;
+  frame[2] = JBD_PKT_START;
+  frame[3] = JBD_CMD_WRITE;
+  frame[4] = address;
+  frame[5] = data_len;
+  frame[6] = value >> 8;
+  frame[7] = value >> 0;
+  auto crc = chksum_(frame + 4, data_len + 2);
+  frame[8] = crc >> 8;
+  frame[9] = crc >> 0;
+  frame[10] = JBD_PKT_END;
+
+  ESP_LOGW(TAG, "Write register: %s", format_hex_pretty(frame, sizeof(frame)).c_str());
+  master_->tx_ringbuffer->write(frame, sizeof(frame));
+  return true;
+}
+
+
+}  // namespace jbd_bms
+}  // namespace esphome
