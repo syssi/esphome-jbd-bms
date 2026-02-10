@@ -146,6 +146,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
     device_model_text_sensor_ = device_model_text_sensor;
   }
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
+  void set_flow_control_pin(GPIOPin *flow_control_pin) { this->flow_control_pin_ = flow_control_pin; }
   void send_command(uint8_t action, uint8_t function);
   bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
@@ -220,6 +221,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   std::vector<uint8_t> rx_buffer_;
   uint32_t last_byte_{0};
   uint16_t rx_timeout_{150};
+  GPIOPin *flow_control_pin_{nullptr};
   uint8_t no_response_count_{0};
   uint8_t mosfet_status_{255};
 

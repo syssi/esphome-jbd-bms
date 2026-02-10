@@ -61,7 +61,12 @@ static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
     "Unknown (0x80)",  // 0x80
 };
 
-void JbdBms::setup() { this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO); }
+void JbdBms::setup() {
+  if (this->flow_control_pin_ != nullptr) {
+    this->flow_control_pin_->setup();
+  }
+  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+}
 
 void JbdBms::loop() {
   const uint32_t now = millis();
@@ -415,6 +420,7 @@ void JbdBms::publish_device_unavailable_() {
 
 void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   ESP_LOGCONFIG(TAG, "JbdBms:");
+  LOG_PIN("  Flow Control Pin: ", this->flow_control_pin_);
   ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
 
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
@@ -550,6 +556,9 @@ bool JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) 
 }
 
 bool JbdBms::write_register(uint8_t address, uint16_t value) {
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(true);
+
   uint8_t frame[9];
   uint8_t data_len = 2;
 
@@ -568,10 +577,16 @@ bool JbdBms::write_register(uint8_t address, uint16_t value) {
   this->write_array(frame, 9);
   this->flush();
 
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(false);
+
   return true;
 }
 
 void JbdBms::send_command(uint8_t action, uint8_t function) {
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(true);
+
   uint8_t frame[7];
   uint8_t data_len = 0;
 
@@ -586,6 +601,9 @@ void JbdBms::send_command(uint8_t action, uint8_t function) {
 
   this->write_array(frame, 7);
   this->flush();
+
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(false);
 }
 
 std::string JbdBms::bitmask_to_string_(const char *const messages[], const uint8_t &messages_size,
