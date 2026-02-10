@@ -56,6 +56,7 @@ jbd_bms:
   - id: bms1
     update_interval: 2s
     rx_timeout: 150ms
+    # flow_control_pin: GPIO12
 
 sensor:
   - platform: jbd_bms_ble

@@ -73,6 +73,7 @@ jbd_bms:
   - id: bms0
     update_interval: 2s
     rx_timeout: ${rx_timeout}
+    # flow_control_pin: GPIO12
 
 button:
   - platform: jbd_bms

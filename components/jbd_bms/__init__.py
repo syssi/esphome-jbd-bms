@@ -1,7 +1,9 @@
+from esphome import pins
 import esphome.codegen as cg
 from esphome.components import uart
 import esphome.config_validation as cv
-from esphome.const import CONF_ID
+from esphome.const import CONF_FLOW_CONTROL_PIN, CONF_ID
+from esphome.cpp_helpers import gpio_pin_expression
 
 CODEOWNERS = ["@syssi"]
 
@@ -28,6 +30,7 @@ CONFIG_SCHEMA = (
             cv.Optional(
                 CONF_RX_TIMEOUT, default="150ms"
             ): cv.positive_time_period_milliseconds,
+            cv.Optional(CONF_FLOW_CONTROL_PIN): pins.gpio_output_pin_schema,
         }
     )
     .extend(cv.polling_component_schema("2s"))
@@ -41,3 +44,6 @@ async def to_code(config):
     await uart.register_uart_device(var, config)
 
     cg.add(var.set_rx_timeout(config[CONF_RX_TIMEOUT]))
+    if CONF_FLOW_CONTROL_PIN in config:
+        pin = await gpio_pin_expression(config[CONF_FLOW_CONTROL_PIN])
+        cg.add(var.set_flow_control_pin(pin))
