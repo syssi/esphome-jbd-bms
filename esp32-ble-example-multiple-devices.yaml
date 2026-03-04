@@ -67,6 +67,25 @@ jbd_bms_ble:
     ble_client_id: client1
     update_interval: 5s
 
+button:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    retrieve_hardware_version:
+      name: "${bms0} retrieve hardware version"
+    retrieve_error_counts:
+      name: "${bms0} retrieve error counts"
+    force_soc_reset:
+      name: "${bms0} force soc reset"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms1
+    retrieve_hardware_version:
+      name: "${bms1} retrieve hardware version"
+    retrieve_error_counts:
+      name: "${bms1} retrieve error counts"
+    force_soc_reset:
+      name: "${bms1} force soc reset"
+
 binary_sensor:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0

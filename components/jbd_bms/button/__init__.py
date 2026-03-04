@@ -10,10 +10,12 @@ DEPENDENCIES = ["jbd_bms"]
 CODEOWNERS = ["@syssi"]
 
 CONF_RETRIEVE_HARDWARE_VERSION = "retrieve_hardware_version"
+CONF_RETRIEVE_ERROR_COUNTS = "retrieve_error_counts"
 CONF_FORCE_SOC_RESET = "force_soc_reset"
 
 BUTTONS = {
     CONF_RETRIEVE_HARDWARE_VERSION: 0x05,
+    CONF_RETRIEVE_ERROR_COUNTS: 0xAA,
     CONF_FORCE_SOC_RESET: 0x0A,
 }
 
@@ -24,6 +26,10 @@ CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
         cv.Optional(CONF_RETRIEVE_HARDWARE_VERSION): button.button_schema(
             JbdButton,
             icon="mdi:numeric",
+        ).extend(cv.COMPONENT_SCHEMA),
+        cv.Optional(CONF_RETRIEVE_ERROR_COUNTS): button.button_schema(
+            JbdButton,
+            icon="mdi:counter",
         ).extend(cv.COMPONENT_SCHEMA),
         cv.Optional(CONF_FORCE_SOC_RESET): button.button_schema(
             JbdButton,
