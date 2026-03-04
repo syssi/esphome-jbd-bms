@@ -82,6 +82,8 @@ button:
     jbd_bms_id: bms0
     retrieve_hardware_version:
       name: "${name} retrieve hardware version"
+    retrieve_error_counts:
+      name: "${name} retrieve error counts"
     force_soc_reset:
       name: "${name} force soc reset"
 
