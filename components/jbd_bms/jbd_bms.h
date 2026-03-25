@@ -153,53 +153,53 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
 
  protected:
-  binary_sensor::BinarySensor *balancing_binary_sensor_;
-  binary_sensor::BinarySensor *charging_binary_sensor_;
-  binary_sensor::BinarySensor *discharging_binary_sensor_;
-  binary_sensor::BinarySensor *online_status_binary_sensor_;
+  binary_sensor::BinarySensor *balancing_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *charging_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *discharging_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *online_status_binary_sensor_{nullptr};
 
-  select::Select *read_eeprom_register_select_;
+  select::Select *read_eeprom_register_select_{nullptr};
 
-  sensor::Sensor *state_of_charge_sensor_;
-  sensor::Sensor *total_voltage_sensor_;
-  sensor::Sensor *current_sensor_;
-  sensor::Sensor *power_sensor_;
-  sensor::Sensor *charging_power_sensor_;
-  sensor::Sensor *discharging_power_sensor_;
-  sensor::Sensor *nominal_capacity_sensor_;
-  sensor::Sensor *charging_cycles_sensor_;
-  sensor::Sensor *capacity_remaining_sensor_;
-  sensor::Sensor *min_cell_voltage_sensor_;
-  sensor::Sensor *max_cell_voltage_sensor_;
-  sensor::Sensor *min_voltage_cell_sensor_;
-  sensor::Sensor *max_voltage_cell_sensor_;
-  sensor::Sensor *delta_cell_voltage_sensor_;
-  sensor::Sensor *average_cell_voltage_sensor_;
-  sensor::Sensor *operation_status_bitmask_sensor_;
-  sensor::Sensor *errors_bitmask_sensor_;
-  sensor::Sensor *balancer_status_bitmask_sensor_;
-  sensor::Sensor *battery_strings_sensor_;
-  sensor::Sensor *temperature_sensors_sensor_;
-  sensor::Sensor *software_version_sensor_;
-  sensor::Sensor *short_circuit_error_count_sensor_;
-  sensor::Sensor *charge_overcurrent_error_count_sensor_;
-  sensor::Sensor *discharge_overcurrent_error_count_sensor_;
-  sensor::Sensor *cell_overvoltage_error_count_sensor_;
-  sensor::Sensor *cell_undervoltage_error_count_sensor_;
-  sensor::Sensor *charge_overtemperature_error_count_sensor_;
-  sensor::Sensor *charge_undertemperature_error_count_sensor_;
-  sensor::Sensor *discharge_overtemperature_error_count_sensor_;
-  sensor::Sensor *discharge_undertemperature_error_count_sensor_;
-  sensor::Sensor *battery_overvoltage_error_count_sensor_;
-  sensor::Sensor *battery_undervoltage_error_count_sensor_;
+  sensor::Sensor *state_of_charge_sensor_{nullptr};
+  sensor::Sensor *total_voltage_sensor_{nullptr};
+  sensor::Sensor *current_sensor_{nullptr};
+  sensor::Sensor *power_sensor_{nullptr};
+  sensor::Sensor *charging_power_sensor_{nullptr};
+  sensor::Sensor *discharging_power_sensor_{nullptr};
+  sensor::Sensor *nominal_capacity_sensor_{nullptr};
+  sensor::Sensor *charging_cycles_sensor_{nullptr};
+  sensor::Sensor *capacity_remaining_sensor_{nullptr};
+  sensor::Sensor *min_cell_voltage_sensor_{nullptr};
+  sensor::Sensor *max_cell_voltage_sensor_{nullptr};
+  sensor::Sensor *min_voltage_cell_sensor_{nullptr};
+  sensor::Sensor *max_voltage_cell_sensor_{nullptr};
+  sensor::Sensor *delta_cell_voltage_sensor_{nullptr};
+  sensor::Sensor *average_cell_voltage_sensor_{nullptr};
+  sensor::Sensor *operation_status_bitmask_sensor_{nullptr};
+  sensor::Sensor *errors_bitmask_sensor_{nullptr};
+  sensor::Sensor *balancer_status_bitmask_sensor_{nullptr};
+  sensor::Sensor *battery_strings_sensor_{nullptr};
+  sensor::Sensor *temperature_sensors_sensor_{nullptr};
+  sensor::Sensor *software_version_sensor_{nullptr};
+  sensor::Sensor *short_circuit_error_count_sensor_{nullptr};
+  sensor::Sensor *charge_overcurrent_error_count_sensor_{nullptr};
+  sensor::Sensor *discharge_overcurrent_error_count_sensor_{nullptr};
+  sensor::Sensor *cell_overvoltage_error_count_sensor_{nullptr};
+  sensor::Sensor *cell_undervoltage_error_count_sensor_{nullptr};
+  sensor::Sensor *charge_overtemperature_error_count_sensor_{nullptr};
+  sensor::Sensor *charge_undertemperature_error_count_sensor_{nullptr};
+  sensor::Sensor *discharge_overtemperature_error_count_sensor_{nullptr};
+  sensor::Sensor *discharge_undertemperature_error_count_sensor_{nullptr};
+  sensor::Sensor *battery_overvoltage_error_count_sensor_{nullptr};
+  sensor::Sensor *battery_undervoltage_error_count_sensor_{nullptr};
 
-  switch_::Switch *charging_switch_;
-  switch_::Switch *discharging_switch_;
-  switch_::Switch *balancer_switch_;
+  switch_::Switch *charging_switch_{nullptr};
+  switch_::Switch *discharging_switch_{nullptr};
+  switch_::Switch *balancer_switch_{nullptr};
 
-  text_sensor::TextSensor *operation_status_text_sensor_;
-  text_sensor::TextSensor *errors_text_sensor_;
-  text_sensor::TextSensor *device_model_text_sensor_;
+  text_sensor::TextSensor *operation_status_text_sensor_{nullptr};
+  text_sensor::TextSensor *errors_text_sensor_{nullptr};
+  text_sensor::TextSensor *device_model_text_sensor_{nullptr};
 
   struct Cell {
     sensor::Sensor *cell_voltage_sensor_{nullptr};
