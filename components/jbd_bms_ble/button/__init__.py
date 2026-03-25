@@ -26,15 +26,15 @@ CONFIG_SCHEMA = JBD_BMS_BLE_COMPONENT_SCHEMA.extend(
         cv.Optional(CONF_RETRIEVE_HARDWARE_VERSION): button.button_schema(
             JbdButton,
             icon="mdi:numeric",
-        ).extend(cv.COMPONENT_SCHEMA),
+        ),
         cv.Optional(CONF_RETRIEVE_ERROR_COUNTS): button.button_schema(
             JbdButton,
             icon="mdi:counter",
-        ).extend(cv.COMPONENT_SCHEMA),
+        ),
         cv.Optional(CONF_FORCE_SOC_RESET): button.button_schema(
             JbdButton,
             icon="mdi:battery-charging-100",
-        ).extend(cv.COMPONENT_SCHEMA),
+        ),
     }
 )
 
