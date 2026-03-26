@@ -1,7 +1,6 @@
 import esphome.codegen as cg
 from esphome.components import select
 import esphome.config_validation as cv
-from esphome.const import CONF_ID
 
 from .. import CONF_JBD_BMS_BLE_ID, JBD_BMS_BLE_COMPONENT_SCHEMA, jbd_bms_ble_ns
 
@@ -62,9 +61,8 @@ async def to_code(config):
         if key in config:
             conf = config[key]
             options_map = conf[CONF_OPTIONSMAP]
-            var = cg.new_Pvariable(conf[CONF_ID])
+            var = await select.new_select(conf, options=list(options_map.values()))
             await cg.register_component(var, conf)
-            await select.register_select(var, conf, options=list(options_map.values()))
             cg.add(var.set_select_mappings(list(options_map.keys())))
 
             cg.add(getattr(hub, f"set_{key}_select")(var))
