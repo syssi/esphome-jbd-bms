@@ -1,6 +1,7 @@
 import esphome.codegen as cg
 from esphome.components import text_sensor
 import esphome.config_validation as cv
+from esphome.const import ENTITY_CATEGORY_DIAGNOSTIC
 
 from . import CONF_JBD_BMS_BLE_ID, JBD_BMS_BLE_COMPONENT_SCHEMA
 
@@ -25,16 +26,15 @@ TEXT_SENSORS = [
 CONFIG_SCHEMA = JBD_BMS_BLE_COMPONENT_SCHEMA.extend(
     {
         cv.Optional(CONF_ERRORS): text_sensor.text_sensor_schema(
-            text_sensor.TextSensor,
             icon=ICON_ERRORS,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
         ),
         cv.Optional(CONF_OPERATION_STATUS): text_sensor.text_sensor_schema(
-            text_sensor.TextSensor,
             icon=ICON_OPERATION_STATUS,
         ),
         cv.Optional(CONF_DEVICE_MODEL): text_sensor.text_sensor_schema(
-            text_sensor.TextSensor,
             icon=ICON_DEVICE_MODEL,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
         ),
     }
 )
