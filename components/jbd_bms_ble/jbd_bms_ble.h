@@ -231,8 +231,8 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
 
   std::vector<uint8_t> frame_buffer_;
   std::string device_model_{""};
-  uint16_t char_notify_handle_;
-  uint16_t char_command_handle_;
+  uint16_t char_notify_handle_{0};
+  uint16_t char_command_handle_{0};
   uint8_t no_response_count_{0};
   uint8_t mosfet_status_{255};
 
