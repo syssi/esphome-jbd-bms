@@ -622,7 +622,7 @@ void JbdBmsBle::on_hardware_version_data_(const std::vector<uint8_t> &data) {
   // 0    25   0x4A 0x42 0x44 0x2D 0x53 0x50 0x30 0x34 0x53 0x30
   //           0x33 0x34 0x2D 0x4C 0x34 0x53 0x2D 0x32 0x30 0x30
   //           0x41 0x2D 0x42 0x2D 0x55
-  this->device_model_ = std::string(data.begin(), data.end());
+  this->device_model_ = std::string(data.begin(), std::find(data.begin(), data.end(), '\0'));
 
   ESP_LOGI(TAG, "  Model name: %s", this->device_model_.c_str());
   this->publish_state_(this->device_model_text_sensor_, this->device_model_);
