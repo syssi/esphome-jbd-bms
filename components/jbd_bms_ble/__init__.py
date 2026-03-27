@@ -6,7 +6,7 @@ from esphome.const import CONF_ID, CONF_PASSWORD
 CONF_AUTH_TIMEOUT = "auth_timeout"
 
 CODEOWNERS = ["@syssi"]
-
+DEPENDENCIES = ["ble_client"]
 AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
 MULTI_CONF = True
 
