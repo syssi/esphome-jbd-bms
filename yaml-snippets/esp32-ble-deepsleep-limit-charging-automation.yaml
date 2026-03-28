@@ -6,6 +6,7 @@ substitutions:
 
 esphome:
   name: ${name}
+  friendly_name: ${name}
   comment: ${device_description}
   project:
     name: "syssi.esphome-jbd-bms"
@@ -63,12 +64,12 @@ sensor:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
     power:
-      name: "${name} power"
+      name: "power"
     total_voltage:
-      name: "${name} total voltage"
+      name: "total voltage"
     state_of_charge:
       id: state_of_charge
-      name: "${name} state of charge"
+      name: "state of charge"
       on_value:
         # Enable charging if the state of charge is below 80%
         - if:
@@ -106,12 +107,12 @@ sensor:
 switch:
   - platform: ble_client
     ble_client_id: client0
-    name: "${name} enable bluetooth connection"
+    name: "enable bluetooth connection"
 
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
     charging:
-      name: "${name} charging"
+      name: "charging"
       id: charging
     discharging:
-      name: "${name} discharging"
+      name: "discharging"
