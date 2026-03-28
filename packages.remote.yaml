@@ -5,7 +5,7 @@ remaining_charging_time:
     - path: packages/remaining_charging_time.yaml
       vars:
         sensor_id: bms0_remaining_charging_time
-        sensor_name: "${name} remaining charging time"
+        sensor_name: "remaining charging time"
         current_sensor_id: bms0_average_current
         capacity_remaining_id: bms0_capacity_remaining
         nominal_capacity_id: bms0_nominal_capacity
@@ -16,6 +16,6 @@ remaining_discharging_time:
     - path: packages/remaining_discharging_time.yaml
       vars:
         sensor_id: bms0_remaining_discharging_time
-        sensor_name: "${name} remaining discharging time"
+        sensor_name: "remaining discharging time"
         current_sensor_id: bms0_average_current
         capacity_remaining_id: bms0_capacity_remaining
