@@ -33,14 +33,14 @@ jbd.c(38) jbd_crc: crc: 0
 jbd.c(40) jbd_crc: crc: fffd
 jbd.c(110) jbd_cmd: returning: 7
 cmd(7):
-0000: DD A5 03 00 FF FD 77                               ......w         
+0000: DD A5 03 00 FF FD 77                               ......w
 jbd.c(303) jbd_rw: retries: 5
 jbd.c(308) jbd_rw: writing...
 jbd.c(310) jbd_rw: bytes: 7
 jbd.c(313) jbd_rw: bytes: 7
 jbd.c(49) jbd_verify: len: 7
 verify(7):
-0000: DD 03 00 1D 06 18 00                               .......         
+0000: DD 03 00 1D 06 18 00                               .......
 jbd.c(55) jbd_verify: start bit: dd
 jbd.c(58) jbd_verify: register: 3, wanted: 3
 jbd.c(61) jbd_verify: status: 0
@@ -52,7 +52,7 @@ jbd.c(313) jbd_rw: bytes: 29
 jbd.c(49) jbd_verify: len: 29
 verify(29):
 0000: 00 01 F2 01 F4 00 00 2C 7C 00 00 00 00 00 00 80    .......,|.......
-0010: 64 03 04 03 0B 8C 0B 8A 0B 84 FA 8C 77             d...........w   
+0010: 64 03 04 03 0B 8C 0B 8A 0B 84 FA 8C 77             d...........w
 jbd.c(55) jbd_verify: start bit: 0
 jbd.c(303) jbd_rw: retries: 3
 jbd.c(308) jbd_rw: writing...
@@ -62,7 +62,7 @@ jbd.c(49) jbd_verify: len: 36
 verify(36):
 0000: DD 03 00 1D 06 18 00 00 01 F2 01 F4 00 00 2C 7C    ..............,|
 0010: 00 00 00 00 00 00 80 64 03 04 03 0B 8C 0B 8A 0B    .......d........
-0020: 84 FA 8C 77                                        ...w            
+0020: 84 FA 8C 77                                        ...w
 jbd.c(55) jbd_verify: start bit: dd
 jbd.c(58) jbd_verify: register: 3, wanted: 3
 jbd.c(61) jbd_verify: status: 0
@@ -101,7 +101,7 @@ jbd.c(38) jbd_crc: crc: 0
 jbd.c(40) jbd_crc: crc: fffc
 jbd.c(110) jbd_cmd: returning: 7
 cmd(7):
-0000: DD A5 04 00 FF FC 77                               ......w         
+0000: DD A5 04 00 FF FC 77                               ......w
 jbd.c(303) jbd_rw: retries: 5
 jbd.c(308) jbd_rw: writing...
 jbd.c(310) jbd_rw: bytes: 7
@@ -114,7 +114,7 @@ jbd.c(313) jbd_rw: bytes: 17
 jbd.c(49) jbd_verify: len: 17
 verify(17):
 0000: 00 00 DD 04 00 08 0F 46 0F 3E 0F 37 0F 3D FE C4    .......F.>.7.=..
-0010: 77                                                 w               
+0010: 77                                                 w
 jbd.c(55) jbd_verify: start bit: 0
 jbd.c(303) jbd_rw: retries: 3
 jbd.c(308) jbd_rw: writing...
@@ -122,7 +122,7 @@ jbd.c(310) jbd_rw: bytes: 7
 jbd.c(313) jbd_rw: bytes: 15
 jbd.c(49) jbd_verify: len: 15
 verify(15):
-0000: DD 04 00 08 0F 46 0F 3E 0F 38 0F 3E FE C2 77       .....F.>.8.>..w 
+0000: DD 04 00 08 0F 46 0F 3E 0F 38 0F 3E FE C2 77       .....F.>.8.>..w
 jbd.c(55) jbd_verify: start bit: dd
 jbd.c(58) jbd_verify: register: 4, wanted: 4
 jbd.c(61) jbd_verify: status: 0
@@ -141,7 +141,7 @@ jbd.c(38) jbd_crc: crc: 0
 jbd.c(40) jbd_crc: crc: fffb
 jbd.c(110) jbd_cmd: returning: 7
 cmd(7):
-0000: DD A5 05 00 FF FB 77                               ......w         
+0000: DD A5 05 00 FF FB 77                               ......w
 jbd.c(303) jbd_rw: retries: 5
 jbd.c(308) jbd_rw: writing...
 jbd.c(310) jbd_rw: bytes: 7
@@ -155,7 +155,7 @@ jbd.c(49) jbd_verify: len: 34
 verify(34):
 0000: 0F 3E DD 05 00 19 4A 42 44 2D 53 50 30 34 53 30    .>....JBD-SP04S0
 0010: 33 34 2D 4C 34 53 2D 32 30 30 41 2D 42 2D 55 FA    34-L4S-200A-B-U.
-0020: 08 77                                              .w              
+0020: 08 77                                              .w
 jbd.c(55) jbd_verify: start bit: f
 jbd.c(303) jbd_rw: retries: 3
 jbd.c(308) jbd_rw: writing...
