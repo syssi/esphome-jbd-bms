@@ -134,6 +134,9 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void set_battery_undervoltage_error_count_sensor(sensor::Sensor *battery_undervoltage_error_count_sensor) {
     battery_undervoltage_error_count_sensor_ = battery_undervoltage_error_count_sensor;
   }
+  void set_battery_cycle_capacity_sensor(sensor::Sensor *battery_cycle_capacity_sensor) {
+    battery_cycle_capacity_sensor_ = battery_cycle_capacity_sensor;
+  }
   void set_cell_voltage_sensor(uint8_t cell, sensor::Sensor *cell_voltage_sensor) {
     this->cells_[cell].cell_voltage_sensor_ = cell_voltage_sensor;
   }
@@ -204,6 +207,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   sensor::Sensor *discharge_undertemperature_error_count_sensor_{nullptr};
   sensor::Sensor *battery_overvoltage_error_count_sensor_{nullptr};
   sensor::Sensor *battery_undervoltage_error_count_sensor_{nullptr};
+  sensor::Sensor *battery_cycle_capacity_sensor_{nullptr};
 
   switch_::Switch *charging_switch_{nullptr};
   switch_::Switch *discharging_switch_{nullptr};
