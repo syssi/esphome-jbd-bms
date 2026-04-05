@@ -30,7 +30,7 @@ static const uint8_t JBD_MOS_CHARGE = 0x01;
 static const uint8_t JBD_MOS_DISCHARGE = 0x02;
 
 static const uint8_t ERRORS_SIZE = 16;
-static const char *const ERRORS[ERRORS_SIZE] = {
+static constexpr const char *const ERRORS[ERRORS_SIZE] = {
     "Cell overvoltage",               // 0x00
     "Cell undervoltage",              // 0x01
     "Pack overvoltage",               // 0x02
@@ -50,7 +50,7 @@ static const char *const ERRORS[ERRORS_SIZE] = {
 };
 
 static const uint8_t OPERATION_STATUS_SIZE = 8;
-static const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
+static constexpr const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
     "Charging",        // 0x01
     "Discharging",     // 0x02
     "Unknown (0x04)",  // 0x04
