@@ -313,6 +313,8 @@ jobs:
     defaults:
       run:
         working-directory: esphome
+    env:
+      GH_TOKEN: ${{ github.token }}
     strategy:
       fail-fast: false
       max-parallel: 2
@@ -323,20 +325,8 @@ jobs:
             options: --environment esp8266-arduino-tidy --grep USE_ESP8266
             pio_cache_key: tidyesp8266
           - id: clang-tidy
-            name: Run script/clang-tidy for ESP32 Arduino 1/4
-            options: --environment esp32-arduino-tidy --split-num 4 --split-at 1
-            pio_cache_key: tidyesp32
-          - id: clang-tidy
-            name: Run script/clang-tidy for ESP32 Arduino 2/4
-            options: --environment esp32-arduino-tidy --split-num 4 --split-at 2
-            pio_cache_key: tidyesp32
-          - id: clang-tidy
-            name: Run script/clang-tidy for ESP32 Arduino 3/4
-            options: --environment esp32-arduino-tidy --split-num 4 --split-at 3
-            pio_cache_key: tidyesp32
-          - id: clang-tidy
-            name: Run script/clang-tidy for ESP32 Arduino 4/4
-            options: --environment esp32-arduino-tidy --split-num 4 --split-at 4
+            name: Run script/clang-tidy for ESP32 Arduino
+            options: --environment esp32-arduino-tidy
             pio_cache_key: tidyesp32
           - id: clang-tidy
             name: Run script/clang-tidy for ESP32 IDF
@@ -359,18 +349,20 @@ jobs:
           cache-key: ${{ needs.common.outputs.cache-key }}
 
       - name: Cache platformio
-        if: github.ref == 'refs/heads/dev'
+        if: github.ref == 'refs/heads/main'
         uses: actions/cache@v5.0.4
         with:
           path: ~/.platformio
-          key: platformio-${{ matrix.pio_cache_key }}
+          key: platformio-${{ matrix.pio_cache_key }}-${{ hashFiles('esphome/platformio.ini') }}
+          restore-keys: platformio-${{ matrix.pio_cache_key }}-
 
       - name: Cache platformio
-        if: github.ref != 'refs/heads/dev'
+        if: github.ref != 'refs/heads/main'
         uses: actions/cache/restore@v5.0.4
         with:
           path: ~/.platformio
-          key: platformio-${{ matrix.pio_cache_key }}
+          key: platformio-${{ matrix.pio_cache_key }}-${{ hashFiles('esphome/platformio.ini') }}
+          restore-keys: platformio-${{ matrix.pio_cache_key }}-
 
       - name: Register problem matchers
         run: |
@@ -387,7 +379,7 @@ jobs:
       - name: Run clang-tidy
         run: |
           . venv/bin/activate
-          script/clang-tidy --all-headers --fix ${{ matrix.options }} ../components
+          script/clang-tidy --all-headers --fix ${{ matrix.options }} $(ls ../components/)
         env:
           # Also cache libdeps, store them in a ~/.platformio subfolder
           PLATFORMIO_LIBDEPS_DIR: ~/.platformio/libdeps
@@ -494,6 +486,22 @@ jobs:
             sed -i "s/'!include packages.local.yaml'/!include packages.local.yaml/" $YAML
           done
 
+      - name: Cache platformio
+        if: github.ref == 'refs/heads/main'
+        uses: actions/cache@v5.0.4
+        with:
+          path: ~/.platformio
+          key: platformio-compile-${{ hashFiles('esphome/platformio.ini') }}
+          restore-keys: platformio-compile-
+
+      - name: Cache platformio
+        if: github.ref != 'refs/heads/main'
+        uses: actions/cache/restore@v5.0.4
+        with:
+          path: ~/.platformio
+          key: platformio-compile-${{ hashFiles('esphome/platformio.ini') }}
+          restore-keys: platformio-compile-
+
       - name: Compile example configurations
         run: |
           . venv/bin/activate
@@ -501,9 +509,13 @@ jobs:
           for YAML in esp*faker.yaml esp32-ble-example-multiple-devices.yaml; do
             esphome -s external_components_source components compile $YAML
           done
+        env:
+          PLATFORMIO_LIBDEPS_DIR: ~/.platformio/libdeps
 
       - name: Compile test configurations
         run: |
           . venv/bin/activate
           echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password" > tests/secrets.yaml
           esphome -s external_components_source ../components compile tests/esp32c6-compatibility-test.yaml
+        env:
+          PLATFORMIO_LIBDEPS_DIR: ~/.platformio/libdeps
