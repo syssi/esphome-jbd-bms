@@ -4,8 +4,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/switch/switch.h"
 
-namespace esphome {
-namespace jbd_bms_ble {
+namespace esphome::jbd_bms_ble {
 
 class JbdBmsBle;
 class JbdSwitch : public switch_::Switch, public Component {
@@ -24,5 +23,4 @@ class JbdSwitch : public switch_::Switch, public Component {
   uint8_t bitmask_;
 };
 
-}  // namespace jbd_bms_ble
-}  // namespace esphome
+}  // namespace esphome::jbd_bms_ble

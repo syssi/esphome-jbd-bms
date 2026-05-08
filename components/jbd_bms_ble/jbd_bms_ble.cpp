@@ -9,8 +9,7 @@
 #define ADDR_STR(x) (x).c_str()
 #endif
 
-namespace esphome {
-namespace jbd_bms_ble {
+namespace esphome::jbd_bms_ble {
 
 static const char *const TAG = "jbd_bms_ble";
 
@@ -877,5 +876,4 @@ std::string JbdBmsBle::bitmask_to_string_(const char *const messages[], const ui
   return values;
 }
 
-}  // namespace jbd_bms_ble
-}  // namespace esphome
+}  // namespace esphome::jbd_bms_ble

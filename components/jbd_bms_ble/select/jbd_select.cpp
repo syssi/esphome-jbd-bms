@@ -1,8 +1,7 @@
 #include "jbd_select.h"
 #include "esphome/core/log.h"
 
-namespace esphome {
-namespace jbd_bms_ble {
+namespace esphome::jbd_bms_ble {
 
 static const char *const TAG = "jbd_bms_ble.select";
 
@@ -29,5 +28,4 @@ void JbdSelect::control(const std::string &value) {
   ESP_LOGW(TAG, "Invalid value %s", value.c_str());
 }
 
-}  // namespace jbd_bms_ble
-}  // namespace esphome
+}  // namespace esphome::jbd_bms_ble

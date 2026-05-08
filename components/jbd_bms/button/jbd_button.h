@@ -4,8 +4,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/button/button.h"
 
-namespace esphome {
-namespace jbd_bms {
+namespace esphome::jbd_bms {
 
 class JbdBms;
 class JbdButton : public button::Button, public Component {
@@ -22,5 +21,4 @@ class JbdButton : public button::Button, public Component {
   uint8_t holding_register_;
 };
 
-}  // namespace jbd_bms
-}  // namespace esphome
+}  // namespace esphome::jbd_bms

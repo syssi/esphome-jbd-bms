@@ -7,8 +7,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/select/select.h"
 
-namespace esphome {
-namespace jbd_bms {
+namespace esphome::jbd_bms {
 
 class JbdBms;
 class JbdSelect : public select::Select, public Component {
@@ -25,5 +24,4 @@ class JbdSelect : public select::Select, public Component {
   JbdBms *parent_;
 };
 
-}  // namespace jbd_bms
-}  // namespace esphome
+}  // namespace esphome::jbd_bms
