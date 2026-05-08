@@ -2,8 +2,7 @@
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 
-namespace esphome {
-namespace jbd_bms {
+namespace esphome::jbd_bms {
 
 static const char *const TAG = "jbd_bms";
 
@@ -623,5 +622,4 @@ std::string JbdBms::bitmask_to_string_(const char *const messages[], const uint8
   return values;
 }
 
-}  // namespace jbd_bms
-}  // namespace esphome
+}  // namespace esphome::jbd_bms

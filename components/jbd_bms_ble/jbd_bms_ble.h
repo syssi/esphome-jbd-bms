@@ -13,8 +13,7 @@
 
 #include <esp_gattc_api.h>
 
-namespace esphome {
-namespace jbd_bms_ble {
+namespace esphome::jbd_bms_ble {
 
 namespace espbt = esphome::esp32_ble_tracker;
 
@@ -296,7 +295,6 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   void check_auth_timeout_();
 };
 
-}  // namespace jbd_bms_ble
-}  // namespace esphome
+}  // namespace esphome::jbd_bms_ble
 
 #endif

@@ -2,8 +2,7 @@
 #include "esphome/core/log.h"
 #include "esphome/core/application.h"
 
-namespace esphome {
-namespace jbd_bms {
+namespace esphome::jbd_bms {
 
 static const char *const TAG = "jbd_bms.switch";
 
@@ -17,5 +16,4 @@ void JbdSwitch::write_state(bool state) {
   // this->parent_->write_register(0x01, 0x0000);
 }
 
-}  // namespace jbd_bms
-}  // namespace esphome
+}  // namespace esphome::jbd_bms
