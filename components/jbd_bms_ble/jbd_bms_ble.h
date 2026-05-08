@@ -1,8 +1,6 @@
 #pragma once
 
 #include "esphome/core/component.h"
-#include "esphome/components/ble_client/ble_client.h"
-#include "esphome/components/esp32_ble_tracker/esp32_ble_tracker.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/select/select.h"
 #include "esphome/components/sensor/sensor.h"
@@ -10,17 +8,24 @@
 #include "esphome/components/text_sensor/text_sensor.h"
 
 #ifdef USE_ESP32
-
+#include "esphome/components/ble_client/ble_client.h"
+#include "esphome/components/esp32_ble_tracker/esp32_ble_tracker.h"
 #include <esp_gattc_api.h>
+namespace espbt = esphome::esp32_ble_tracker;
+#endif
 
 namespace esphome::jbd_bms_ble {
 
-namespace espbt = esphome::esp32_ble_tracker;
-
-class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingComponent {
+class JbdBmsBle :
+#ifdef USE_ESP32
+    public esphome::ble_client::BLEClientNode,
+#endif
+    public PollingComponent {
  public:
+#ifdef USE_ESP32
   void gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
                            esp_ble_gattc_cb_param_t *param) override;
+#endif
   void dump_config() override;
   void update() override;
   float get_setup_priority() const override { return setup_priority::DATA; }
@@ -233,7 +238,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   // Version
 
   std::vector<uint8_t> frame_buffer_;
-  std::string device_model_{""};
+  std::string device_model_{};
   uint16_t char_notify_handle_{0};
   uint16_t char_command_handle_{0};
   uint8_t no_response_count_{0};
@@ -281,7 +286,7 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
   bool enable_authentication_{false};
   AuthState authentication_state_{AuthState::NOT_AUTHENTICATED};
   uint8_t random_byte_;
-  std::string password_{""};
+  std::string password_{};
   uint32_t auth_timeout_start_{0};
   uint32_t auth_timeout_ms_{10000};
 
@@ -296,5 +301,3 @@ class JbdBmsBle : public esphome::ble_client::BLEClientNode, public PollingCompo
 };
 
 }  // namespace esphome::jbd_bms_ble
-
-#endif

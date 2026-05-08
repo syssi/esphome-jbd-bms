@@ -1,0 +1,8 @@
+uart:
+  - id: uart_bus
+    baud_rate: 9600
+
+jbd_bms:
+  id: test_bms
+  uart_id: uart_bus
+  update_interval: 5s

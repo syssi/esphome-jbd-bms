@@ -87,6 +87,7 @@ static const uint8_t ROOT_PASSWORD[] = {0x4a, 0x42, 0x44, 0x62, 0x74, 0x70, 0x77
                                         0x21, 0x40, 0x23, 0x32, 0x30, 0x32, 0x33};
 static const size_t ROOT_PASSWORD_LENGTH = sizeof(ROOT_PASSWORD);
 
+#ifdef USE_ESP32
 void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
                                     esp_ble_gattc_cb_param_t *param) {
   switch (event) {
@@ -264,6 +265,7 @@ void JbdBmsBle::send_auth_frame_(uint8_t *frame, size_t length) {
     ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", ADDR_STR(this->parent_->address_str()), status);
   }
 }
+#endif  // USE_ESP32
 
 void JbdBmsBle::assemble(const uint8_t *data, uint16_t length) {
   if (this->frame_buffer_.size() > MAX_RESPONSE_SIZE) {
@@ -326,6 +328,7 @@ void JbdBmsBle::assemble(const uint8_t *data, uint16_t length) {
   }
 }
 
+#ifdef USE_ESP32
 void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint8_t data_len) {
   ESP_LOGV(TAG, "Auth response - Command: 0x%02X, Data len: %d", command, data_len);
 
@@ -428,6 +431,10 @@ void JbdBmsBle::check_auth_timeout_() {
     this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
   }
 }
+#else
+void JbdBmsBle::update() {}
+void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint8_t data_len) {}
+#endif  // USE_ESP32
 
 void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data) {
   this->reset_online_status_tracker_();
@@ -789,6 +796,7 @@ void JbdBmsBle::publish_state_(text_sensor::TextSensor *text_sensor, const std::
   text_sensor->publish_state(state);
 }
 
+#ifdef USE_ESP32
 bool JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
   if (this->mosfet_status_ == 255) {
     ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
@@ -858,10 +866,13 @@ bool JbdBmsBle::send_command(uint8_t action, uint8_t function) {
 
   return (status == 0);
 }
+#else
+bool JbdBmsBle::send_command(uint8_t action, uint8_t function) { return false; }
+#endif  // USE_ESP32
 
 std::string JbdBmsBle::bitmask_to_string_(const char *const messages[], const uint8_t &messages_size,
                                           const uint16_t &mask) {
-  std::string values = "";
+  std::string values;
   if (mask) {
     for (int i = 0; i < messages_size; i++) {
       if (mask & (1 << i)) {
