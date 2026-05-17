@@ -247,6 +247,144 @@ TEST(JbdBmsErrorCountsTest, ErrorCounts) {
   EXPECT_FLOAT_EQ(buv.state, 0.0f);
 }
 
+// ── Protection binary sensors ─────────────────────────────────────────────────
+
+TEST(JbdBmsHwInfoTest, ProtectionBinarySensorsNoneActive) {
+  TestableJbdBms bms;
+  binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
+  bms.set_cell_overvoltage_protection_binary_sensor(&cov);
+  bms.set_cell_undervoltage_protection_binary_sensor(&cuv);
+  bms.set_pack_overvoltage_protection_binary_sensor(&pov);
+  bms.set_pack_undervoltage_protection_binary_sensor(&puv);
+  bms.set_charge_overtemperature_protection_binary_sensor(&cot);
+  bms.set_charge_undertemperature_protection_binary_sensor(&cut);
+  bms.set_discharge_overtemperature_protection_binary_sensor(&dot);
+  bms.set_discharge_undertemperature_protection_binary_sensor(&dut);
+  bms.set_charge_overcurrent_protection_binary_sensor(&co);
+  bms.set_discharge_overcurrent_protection_binary_sensor(&doc);
+  bms.set_short_circuit_protection_binary_sensor(&sc);
+  bms.set_ic_frontend_error_binary_sensor(&ic);
+  bms.set_mosfet_software_lock_binary_sensor(&swl);
+
+  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+
+  EXPECT_FALSE(cov.state);
+  EXPECT_FALSE(cuv.state);
+  EXPECT_FALSE(pov.state);
+  EXPECT_FALSE(puv.state);
+  EXPECT_FALSE(cot.state);
+  EXPECT_FALSE(cut.state);
+  EXPECT_FALSE(dot.state);
+  EXPECT_FALSE(dut.state);
+  EXPECT_FALSE(co.state);
+  EXPECT_FALSE(doc.state);
+  EXPECT_FALSE(sc.state);
+  EXPECT_FALSE(ic.state);
+  EXPECT_FALSE(swl.state);
+}
+
+TEST(JbdBmsHwInfoTest, ProtectionBinarySensorsCellOvervoltage) {
+  TestableJbdBms bms;
+  binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
+  bms.set_cell_overvoltage_protection_binary_sensor(&cov);
+  bms.set_cell_undervoltage_protection_binary_sensor(&cuv);
+  bms.set_pack_overvoltage_protection_binary_sensor(&pov);
+  bms.set_pack_undervoltage_protection_binary_sensor(&puv);
+  bms.set_charge_overtemperature_protection_binary_sensor(&cot);
+  bms.set_charge_undertemperature_protection_binary_sensor(&cut);
+  bms.set_discharge_overtemperature_protection_binary_sensor(&dot);
+  bms.set_discharge_undertemperature_protection_binary_sensor(&dut);
+  bms.set_charge_overcurrent_protection_binary_sensor(&co);
+  bms.set_discharge_overcurrent_protection_binary_sensor(&doc);
+  bms.set_short_circuit_protection_binary_sensor(&sc);
+  bms.set_ic_frontend_error_binary_sensor(&ic);
+  bms.set_mosfet_software_lock_binary_sensor(&swl);
+
+  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_CELL_OVERVOLTAGE);
+
+  EXPECT_TRUE(cov.state);
+  EXPECT_FALSE(cuv.state);
+  EXPECT_FALSE(pov.state);
+  EXPECT_FALSE(puv.state);
+  EXPECT_FALSE(cot.state);
+  EXPECT_FALSE(cut.state);
+  EXPECT_FALSE(dot.state);
+  EXPECT_FALSE(dut.state);
+  EXPECT_FALSE(co.state);
+  EXPECT_FALSE(doc.state);
+  EXPECT_FALSE(sc.state);
+  EXPECT_FALSE(ic.state);
+  EXPECT_FALSE(swl.state);
+}
+
+TEST(JbdBmsHwInfoTest, ProtectionBinarySensorsAllActive) {
+  TestableJbdBms bms;
+  binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
+  bms.set_cell_overvoltage_protection_binary_sensor(&cov);
+  bms.set_cell_undervoltage_protection_binary_sensor(&cuv);
+  bms.set_pack_overvoltage_protection_binary_sensor(&pov);
+  bms.set_pack_undervoltage_protection_binary_sensor(&puv);
+  bms.set_charge_overtemperature_protection_binary_sensor(&cot);
+  bms.set_charge_undertemperature_protection_binary_sensor(&cut);
+  bms.set_discharge_overtemperature_protection_binary_sensor(&dot);
+  bms.set_discharge_undertemperature_protection_binary_sensor(&dut);
+  bms.set_charge_overcurrent_protection_binary_sensor(&co);
+  bms.set_discharge_overcurrent_protection_binary_sensor(&doc);
+  bms.set_short_circuit_protection_binary_sensor(&sc);
+  bms.set_ic_frontend_error_binary_sensor(&ic);
+  bms.set_mosfet_software_lock_binary_sensor(&swl);
+
+  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_ALL_PROTECTIONS);
+
+  EXPECT_TRUE(cov.state);
+  EXPECT_TRUE(cuv.state);
+  EXPECT_TRUE(pov.state);
+  EXPECT_TRUE(puv.state);
+  EXPECT_TRUE(cot.state);
+  EXPECT_TRUE(cut.state);
+  EXPECT_TRUE(dot.state);
+  EXPECT_TRUE(dut.state);
+  EXPECT_TRUE(co.state);
+  EXPECT_TRUE(doc.state);
+  EXPECT_TRUE(sc.state);
+  EXPECT_TRUE(ic.state);
+  EXPECT_TRUE(swl.state);
+}
+
+TEST(JbdBmsHwInfoTest, ProtectionBinarySensorsByteOrder) {
+  TestableJbdBms bms;
+  binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
+  bms.set_cell_overvoltage_protection_binary_sensor(&cov);
+  bms.set_cell_undervoltage_protection_binary_sensor(&cuv);
+  bms.set_pack_overvoltage_protection_binary_sensor(&pov);
+  bms.set_pack_undervoltage_protection_binary_sensor(&puv);
+  bms.set_charge_overtemperature_protection_binary_sensor(&cot);
+  bms.set_charge_undertemperature_protection_binary_sensor(&cut);
+  bms.set_discharge_overtemperature_protection_binary_sensor(&dot);
+  bms.set_discharge_undertemperature_protection_binary_sensor(&dut);
+  bms.set_charge_overcurrent_protection_binary_sensor(&co);
+  bms.set_discharge_overcurrent_protection_binary_sensor(&doc);
+  bms.set_short_circuit_protection_binary_sensor(&sc);
+  bms.set_ic_frontend_error_binary_sensor(&ic);
+  bms.set_mosfet_software_lock_binary_sensor(&swl);
+
+  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_MOSFET_SOFTWARE_LOCK);
+
+  EXPECT_FALSE(cov.state);
+  EXPECT_FALSE(cuv.state);
+  EXPECT_FALSE(pov.state);
+  EXPECT_FALSE(puv.state);
+  EXPECT_FALSE(cot.state);
+  EXPECT_FALSE(cut.state);
+  EXPECT_FALSE(dot.state);
+  EXPECT_FALSE(dut.state);
+  EXPECT_FALSE(co.state);
+  EXPECT_FALSE(doc.state);
+  EXPECT_FALSE(sc.state);
+  EXPECT_FALSE(ic.state);
+  EXPECT_TRUE(swl.state);
+}
+
 // ── Null sensors do not crash ─────────────────────────────────────────────────
 
 TEST(JbdBmsTest, NullSensorsDoNotCrash) {

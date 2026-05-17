@@ -42,6 +42,55 @@ class JbdBmsBle :
   void set_online_status_binary_sensor(binary_sensor::BinarySensor *online_status_binary_sensor) {
     online_status_binary_sensor_ = online_status_binary_sensor;
   }
+  void set_cell_overvoltage_protection_binary_sensor(
+      binary_sensor::BinarySensor *cell_overvoltage_protection_binary_sensor) {
+    cell_overvoltage_protection_binary_sensor_ = cell_overvoltage_protection_binary_sensor;
+  }
+  void set_cell_undervoltage_protection_binary_sensor(
+      binary_sensor::BinarySensor *cell_undervoltage_protection_binary_sensor) {
+    cell_undervoltage_protection_binary_sensor_ = cell_undervoltage_protection_binary_sensor;
+  }
+  void set_pack_overvoltage_protection_binary_sensor(
+      binary_sensor::BinarySensor *pack_overvoltage_protection_binary_sensor) {
+    pack_overvoltage_protection_binary_sensor_ = pack_overvoltage_protection_binary_sensor;
+  }
+  void set_pack_undervoltage_protection_binary_sensor(
+      binary_sensor::BinarySensor *pack_undervoltage_protection_binary_sensor) {
+    pack_undervoltage_protection_binary_sensor_ = pack_undervoltage_protection_binary_sensor;
+  }
+  void set_charge_overtemperature_protection_binary_sensor(
+      binary_sensor::BinarySensor *charge_overtemperature_protection_binary_sensor) {
+    charge_overtemperature_protection_binary_sensor_ = charge_overtemperature_protection_binary_sensor;
+  }
+  void set_charge_undertemperature_protection_binary_sensor(
+      binary_sensor::BinarySensor *charge_undertemperature_protection_binary_sensor) {
+    charge_undertemperature_protection_binary_sensor_ = charge_undertemperature_protection_binary_sensor;
+  }
+  void set_discharge_overtemperature_protection_binary_sensor(
+      binary_sensor::BinarySensor *discharge_overtemperature_protection_binary_sensor) {
+    discharge_overtemperature_protection_binary_sensor_ = discharge_overtemperature_protection_binary_sensor;
+  }
+  void set_discharge_undertemperature_protection_binary_sensor(
+      binary_sensor::BinarySensor *discharge_undertemperature_protection_binary_sensor) {
+    discharge_undertemperature_protection_binary_sensor_ = discharge_undertemperature_protection_binary_sensor;
+  }
+  void set_charge_overcurrent_protection_binary_sensor(
+      binary_sensor::BinarySensor *charge_overcurrent_protection_binary_sensor) {
+    charge_overcurrent_protection_binary_sensor_ = charge_overcurrent_protection_binary_sensor;
+  }
+  void set_discharge_overcurrent_protection_binary_sensor(
+      binary_sensor::BinarySensor *discharge_overcurrent_protection_binary_sensor) {
+    discharge_overcurrent_protection_binary_sensor_ = discharge_overcurrent_protection_binary_sensor;
+  }
+  void set_short_circuit_protection_binary_sensor(binary_sensor::BinarySensor *short_circuit_protection_binary_sensor) {
+    short_circuit_protection_binary_sensor_ = short_circuit_protection_binary_sensor;
+  }
+  void set_ic_frontend_error_binary_sensor(binary_sensor::BinarySensor *ic_frontend_error_binary_sensor) {
+    ic_frontend_error_binary_sensor_ = ic_frontend_error_binary_sensor;
+  }
+  void set_mosfet_software_lock_binary_sensor(binary_sensor::BinarySensor *mosfet_software_lock_binary_sensor) {
+    mosfet_software_lock_binary_sensor_ = mosfet_software_lock_binary_sensor;
+  }
 
   void set_read_eeprom_register_select(select::Select *read_eeprom_register_select) {
     read_eeprom_register_select_ = read_eeprom_register_select;
@@ -176,6 +225,19 @@ class JbdBmsBle :
   binary_sensor::BinarySensor *charging_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *discharging_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *online_status_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *cell_overvoltage_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *cell_undervoltage_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *pack_overvoltage_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *pack_undervoltage_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *charge_overtemperature_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *charge_undertemperature_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *discharge_overtemperature_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *discharge_undertemperature_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *charge_overcurrent_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *discharge_overcurrent_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *short_circuit_protection_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *ic_frontend_error_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *mosfet_software_lock_binary_sensor_{nullptr};
 
   select::Select *read_eeprom_register_select_{nullptr};
 
@@ -234,7 +296,6 @@ class JbdBmsBle :
   // Cycle life
   // Production date
   // Balance status bitmask (32 Bits)
-  // Protection status bitmask (16 Bits)
   // Version
 
   std::vector<uint8_t> frame_buffer_;

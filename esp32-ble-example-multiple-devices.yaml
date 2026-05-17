@@ -112,6 +112,45 @@ binary_sensor:
     online_status:
       name: "online status"
       device_id: device0
+    cell_overvoltage_protection:
+      name: "cell overvoltage protection"
+      device_id: device0
+    cell_undervoltage_protection:
+      name: "cell undervoltage protection"
+      device_id: device0
+    pack_overvoltage_protection:
+      name: "pack overvoltage protection"
+      device_id: device0
+    pack_undervoltage_protection:
+      name: "pack undervoltage protection"
+      device_id: device0
+    charge_overtemperature_protection:
+      name: "charge overtemperature protection"
+      device_id: device0
+    charge_undertemperature_protection:
+      name: "charge undertemperature protection"
+      device_id: device0
+    discharge_overtemperature_protection:
+      name: "discharge overtemperature protection"
+      device_id: device0
+    discharge_undertemperature_protection:
+      name: "discharge undertemperature protection"
+      device_id: device0
+    charge_overcurrent_protection:
+      name: "charge overcurrent protection"
+      device_id: device0
+    discharge_overcurrent_protection:
+      name: "discharge overcurrent protection"
+      device_id: device0
+    short_circuit_protection:
+      name: "short circuit protection"
+      device_id: device0
+    ic_frontend_error:
+      name: "ic frontend error"
+      device_id: device0
+    mosfet_software_lock:
+      name: "mosfet software lock"
+      device_id: device0
 
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms1
@@ -126,6 +165,45 @@ binary_sensor:
       device_id: device1
     online_status:
       name: "online status"
+      device_id: device1
+    cell_overvoltage_protection:
+      name: "cell overvoltage protection"
+      device_id: device1
+    cell_undervoltage_protection:
+      name: "cell undervoltage protection"
+      device_id: device1
+    pack_overvoltage_protection:
+      name: "pack overvoltage protection"
+      device_id: device1
+    pack_undervoltage_protection:
+      name: "pack undervoltage protection"
+      device_id: device1
+    charge_overtemperature_protection:
+      name: "charge overtemperature protection"
+      device_id: device1
+    charge_undertemperature_protection:
+      name: "charge undertemperature protection"
+      device_id: device1
+    discharge_overtemperature_protection:
+      name: "discharge overtemperature protection"
+      device_id: device1
+    discharge_undertemperature_protection:
+      name: "discharge undertemperature protection"
+      device_id: device1
+    charge_overcurrent_protection:
+      name: "charge overcurrent protection"
+      device_id: device1
+    discharge_overcurrent_protection:
+      name: "discharge overcurrent protection"
+      device_id: device1
+    short_circuit_protection:
+      name: "short circuit protection"
+      device_id: device1
+    ic_frontend_error:
+      name: "ic frontend error"
+      device_id: device1
+    mosfet_software_lock:
+      name: "mosfet software lock"
       device_id: device1
 
 sensor:
