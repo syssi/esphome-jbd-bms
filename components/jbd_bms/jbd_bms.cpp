@@ -315,6 +315,18 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   uint32_t balance_status_bitmask = jbd_get_32bit(12);
   this->publish_state_(this->balancer_status_bitmask_sensor_, (float) balance_status_bitmask);
   this->publish_state_(this->balancing_binary_sensor_, balance_status_bitmask > 0);
+  uint8_t cells = data[21];
+  std::string balancing_cells;
+  for (uint8_t i = 0; i < cells; i++) {
+    if (balance_status_bitmask & (1u << (cells - 1 - i))) {
+      if (!balancing_cells.empty())
+        balancing_cells += ", ";
+      char buf[4];
+      snprintf(buf, sizeof(buf), "%u", i + 1);
+      balancing_cells += buf;
+    }
+  }
+  this->publish_state_(this->balancing_cells_text_sensor_, balancing_cells);
 
   // 16    2   0x00 0x00              Protection Status
   uint16_t errors_bitmask = jbd_get_16bit(16);
@@ -468,6 +480,7 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   LOG_SENSOR("", "Nominal capacity", this->nominal_capacity_sensor_);
   LOG_SENSOR("", "Charging cycles", this->charging_cycles_sensor_);
   LOG_SENSOR("", "Balancer status bitmask", balancer_status_bitmask_sensor_);
+  LOG_TEXT_SENSOR("", "Balancing cells", this->balancing_cells_text_sensor_);
   LOG_SENSOR("", "Capacity remaining", this->capacity_remaining_sensor_);
   LOG_SENSOR("", "Average cell voltage sensor", this->average_cell_voltage_sensor_);
   LOG_SENSOR("", "Delta cell voltage sensor", delta_cell_voltage_sensor_);

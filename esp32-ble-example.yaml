@@ -319,6 +319,8 @@ text_sensor:
       name: "operation status"
     device_model:
       name: "device model"
+    balancing_cells:
+      name: "balancing cells"
 
 # Uncomment this section if you want to update the error count sensors periodically
 #

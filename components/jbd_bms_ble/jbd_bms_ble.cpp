@@ -555,6 +555,18 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   uint32_t balance_status_bitmask = jbd_get_32bit(12);
   this->publish_state_(this->balancer_status_bitmask_sensor_, (float) balance_status_bitmask);
   this->publish_state_(this->balancing_binary_sensor_, balance_status_bitmask > 0);
+  uint8_t cells = data[21];
+  std::string balancing_cells;
+  for (uint8_t i = 0; i < cells; i++) {
+    if (balance_status_bitmask & (1u << (cells - 1 - i))) {
+      if (!balancing_cells.empty())
+        balancing_cells += ", ";
+      char buf[4];
+      snprintf(buf, sizeof(buf), "%u", i + 1);
+      balancing_cells += buf;
+    }
+  }
+  this->publish_state_(this->balancing_cells_text_sensor_, balancing_cells);
 
   // 16    2   0x00 0x00              Protection Status
   uint16_t errors_bitmask = jbd_get_16bit(16);
@@ -794,6 +806,7 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   LOG_TEXT_SENSOR("", "Operation status", this->operation_status_text_sensor_);
   LOG_TEXT_SENSOR("", "Errors", this->errors_text_sensor_);
   LOG_TEXT_SENSOR("", "Device model", this->device_model_text_sensor_);
+  LOG_TEXT_SENSOR("", "Balancing cells", this->balancing_cells_text_sensor_);
 }
 
 void JbdBmsBle::publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state) {

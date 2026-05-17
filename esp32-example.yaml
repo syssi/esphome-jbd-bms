@@ -291,6 +291,8 @@ text_sensor:
       name: "operation status"
     device_model:
       name: "device model"
+    balancing_cells:
+      name: "balancing cells"
 
 select:
   - platform: jbd_bms

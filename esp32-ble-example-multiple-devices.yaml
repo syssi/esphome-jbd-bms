@@ -257,6 +257,9 @@ text_sensor:
     device_model:
       name: "device model"
       device_id: device0
+    balancing_cells:
+      name: "balancing cells"
+      device_id: device0
 
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms1
@@ -268,6 +271,9 @@ text_sensor:
       device_id: device1
     device_model:
       name: "device model"
+      device_id: device1
+    balancing_cells:
+      name: "balancing cells"
       device_id: device1
 
 select:
