@@ -220,7 +220,9 @@ class JbdBmsBle :
 
   bool send_command(uint8_t action, uint8_t function);
   virtual bool write_register(uint8_t address, uint16_t value);
+  virtual bool write_register_byte_(uint8_t address, uint8_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
+  bool change_balancer_status(bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
   void assemble(const uint8_t *data, uint16_t length);
 
@@ -323,6 +325,7 @@ class JbdBmsBle :
   std::string bitmask_to_string_(const char *const messages[], const uint8_t &messages_size, const uint16_t &mask);
 
   std::array<uint8_t, 9> build_frame_(uint8_t command, uint8_t address, uint16_t value) const;
+  std::array<uint8_t, 8> build_frame_byte_(uint8_t command, uint8_t address, uint8_t value) const;
 
   uint16_t chksum_(const uint8_t data[], const uint16_t len) const {
     uint16_t checksum = 0x00;

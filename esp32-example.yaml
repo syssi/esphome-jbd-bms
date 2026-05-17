@@ -310,6 +310,8 @@ switch:
       name: "charging"
     discharging:
       name: "discharging"
+    balancer:
+      name: "balancer"
 
 # Uncomment this section if you want to update the error count sensors periodically
 #

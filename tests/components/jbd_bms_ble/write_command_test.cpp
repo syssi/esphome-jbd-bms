@@ -153,4 +153,54 @@ TEST(MosfetSwitchTest, UnknownStatusReturnsError) {
   EXPECT_FALSE(result);
 }
 
+// ── Balancer enable frame ─────────────────────────────────────────────────────
+
+TEST(JbdBmsBleWriteCommandTest, BalancerEnableFrame) {
+  TestableJbdBmsBle bms;
+  auto frame = bms.build_frame_byte_(0x5A, 0xF4, 0x01);
+  // Expected: DD 5A F4 01 01 FF 0A 77
+  // CRC: 0x10000 - (0xF4 + 0x01 + 0x01) = 0xFF0A
+  EXPECT_EQ(frame[0], 0xDD);
+  EXPECT_EQ(frame[1], 0x5A);
+  EXPECT_EQ(frame[2], 0xF4);
+  EXPECT_EQ(frame[3], 0x01);
+  EXPECT_EQ(frame[4], 0x01);
+  EXPECT_EQ(frame[5], 0xFF);
+  EXPECT_EQ(frame[6], 0x0A);
+  EXPECT_EQ(frame[7], 0x77);
+}
+
+// ── Balancer disable frame ────────────────────────────────────────────────────
+
+TEST(JbdBmsBleWriteCommandTest, BalancerDisableFrame) {
+  TestableJbdBmsBle bms;
+  auto frame = bms.build_frame_byte_(0x5A, 0xF4, 0x00);
+  // Expected: DD 5A F4 01 00 FF 0B 77
+  // CRC: 0x10000 - (0xF4 + 0x01 + 0x00) = 0xFF0B
+  EXPECT_EQ(frame[0], 0xDD);
+  EXPECT_EQ(frame[1], 0x5A);
+  EXPECT_EQ(frame[2], 0xF4);
+  EXPECT_EQ(frame[3], 0x01);
+  EXPECT_EQ(frame[4], 0x00);
+  EXPECT_EQ(frame[5], 0xFF);
+  EXPECT_EQ(frame[6], 0x0B);
+  EXPECT_EQ(frame[7], 0x77);
+}
+
+// ── change_balancer_status dispatches correct register and value ──────────────
+
+TEST(JbdBmsBleWriteCommandTest, BalancerEnableRegister) {
+  TestableJbdBmsBle bms;
+  bms.change_balancer_status(true);
+  EXPECT_EQ(bms.last_written_address, 0xF4);
+  EXPECT_EQ(bms.last_written_value, 0x01);
+}
+
+TEST(JbdBmsBleWriteCommandTest, BalancerDisableRegister) {
+  TestableJbdBmsBle bms;
+  bms.change_balancer_status(false);
+  EXPECT_EQ(bms.last_written_address, 0xF4);
+  EXPECT_EQ(bms.last_written_value, 0x00);
+}
+
 }  // namespace esphome::jbd_bms_ble::testing

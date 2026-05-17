@@ -309,6 +309,8 @@ switch:
       name: "charging"
     discharging:
       name: "discharging"
+    balancer:
+      name: "balancer"
 
 text_sensor:
   - platform: jbd_bms_ble

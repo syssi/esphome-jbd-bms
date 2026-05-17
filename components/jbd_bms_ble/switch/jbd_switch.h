@@ -23,4 +23,16 @@ class JbdSwitch : public switch_::Switch, public Component {
   uint8_t bitmask_;
 };
 
+class JbdBalancerSwitch : public switch_::Switch, public Component {
+ public:
+  void set_parent(JbdBmsBle *parent) { this->parent_ = parent; };
+  void dump_config() override;
+  void loop() override {}
+  float get_setup_priority() const override { return setup_priority::DATA; }
+
+ protected:
+  void write_state(bool state) override;
+  JbdBmsBle *parent_;
+};
+
 }  // namespace esphome::jbd_bms_ble

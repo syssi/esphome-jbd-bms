@@ -17,9 +17,17 @@ class TestableJbdBms : public JbdBms {
     last_write_value = value;
     return true;
   }
+  bool write_register_byte_(uint8_t address, uint8_t value) override {
+    last_written_address = address;
+    last_written_value = value;
+    return true;
+  }
   using JbdBms::build_frame_;
+  using JbdBms::build_frame_byte_;
   uint8_t last_write_address{0};
   uint16_t last_write_value{0};
+  uint8_t last_written_address{0};
+  uint8_t last_written_value{0};
 };
 
 class TestableSwitch : public switch_::Switch {

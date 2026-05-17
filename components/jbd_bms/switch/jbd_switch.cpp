@@ -16,4 +16,11 @@ void JbdSwitch::write_state(bool state) {
   // this->parent_->write_register(0x01, 0x0000);
 }
 
+void JbdBalancerSwitch::dump_config() { LOG_SWITCH("", "JbdBms Balancer Switch", this); }
+void JbdBalancerSwitch::write_state(bool state) {
+  if (this->parent_->change_balancer_status(state)) {
+    this->publish_state(state);
+  }
+}
+
 }  // namespace esphome::jbd_bms

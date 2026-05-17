@@ -20,10 +20,10 @@ ICON_BUZZER = "mdi:volume-high"
 SWITCHES = {
     CONF_DISCHARGING: [0xE1, 1],
     CONF_CHARGING: [0xE1, 0],
-    CONF_BALANCER: [0x2D, 3],
 }
 
 JbdSwitch = jbd_bms_ble_ns.class_("JbdSwitch", switch.Switch, cg.Component)
+JbdBalancerSwitch = jbd_bms_ble_ns.class_("JbdBalancerSwitch", switch.Switch, cg.Component)
 
 CONFIG_SCHEMA = JBD_BMS_BLE_COMPONENT_SCHEMA.extend(
     {
@@ -35,10 +35,10 @@ CONFIG_SCHEMA = JBD_BMS_BLE_COMPONENT_SCHEMA.extend(
             JbdSwitch,
             icon=ICON_CHARGING,
         ),
-        # cv.Optional(CONF_BALANCER): switch.switch_schema(
-        #     JbdSwitch,
-        #     icon=ICON_BALANCER,
-        # ),
+        cv.Optional(CONF_BALANCER): switch.switch_schema(
+            JbdBalancerSwitch,
+            icon=ICON_BALANCER,
+        ),
     }
 )
 
@@ -54,3 +54,9 @@ async def to_code(config):
             cg.add(var.set_parent(hub))
             cg.add(var.set_holding_register(address[0]))
             cg.add(var.set_bitmask(address[1]))
+    if CONF_BALANCER in config:
+        conf = config[CONF_BALANCER]
+        var = await switch.new_switch(conf)
+        await cg.register_component(var, conf)
+        cg.add(hub.set_balancer_switch(var))
+        cg.add(var.set_parent(hub))

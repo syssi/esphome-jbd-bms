@@ -24,7 +24,7 @@ static const uint8_t JBD_CMD_FORCE_SOC_RESET = 0x0A;
 static const uint8_t JBD_CMD_ERROR_COUNTS = 0xAA;
 static const uint8_t JBD_CMD_CAP_REM = 0xE0;   // Set remaining capacity
 static const uint8_t JBD_CMD_MOS = 0xE1;       // Set charging/discharging bitmask
-static const uint8_t JBD_CMD_BALANCER = 0xE2;  // Enable/disable balancer
+static const uint8_t JBD_CMD_BALANCER = 0xF4;  // Enable/disable balancer
 
 static const uint8_t JBD_MOS_CHARGE = 0x01;
 static const uint8_t JBD_MOS_DISCHARGE = 0x02;
@@ -609,6 +609,39 @@ std::array<uint8_t, 9> JbdBms::build_frame_(uint8_t command, uint8_t address, ui
   frame[7] = crc >> 0;
   frame[8] = JBD_PKT_END;
   return frame;
+}
+
+std::array<uint8_t, 8> JbdBms::build_frame_byte_(uint8_t command, uint8_t address, uint8_t value) const {
+  std::array<uint8_t, 8> frame{};
+  frame[0] = JBD_PKT_START;
+  frame[1] = command;
+  frame[2] = address;
+  frame[3] = 0x01;
+  frame[4] = value;
+  auto crc = chksum_(frame.data() + 2, 3);
+  frame[5] = crc >> 8;
+  frame[6] = crc >> 0;
+  frame[7] = JBD_PKT_END;
+  return frame;
+}
+
+bool JbdBms::write_register_byte_(uint8_t address, uint8_t value) {
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(true);
+
+  auto frame = build_frame_byte_(JBD_CMD_WRITE, address, value);
+  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
+  this->write_array(frame.data(), frame.size());
+  this->flush();
+
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(false);
+
+  return true;
+}
+
+bool JbdBms::change_balancer_status(bool state) {
+  return this->write_register_byte_(JBD_CMD_BALANCER, state ? 0x01 : 0x00);
 }
 
 bool JbdBms::write_register(uint8_t address, uint16_t value) {
