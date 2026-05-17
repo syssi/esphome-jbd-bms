@@ -560,7 +560,9 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
     if (balance_status_bitmask & (1 << i)) {
       if (!balancing_cells.empty())
         balancing_cells += ", ";
-      balancing_cells += std::to_string(i + 1);
+      char buf[4];
+      snprintf(buf, sizeof(buf), "%u", i + 1);
+      balancing_cells += buf;
     }
   }
   this->publish_state_(this->balancing_cells_text_sensor_, balancing_cells);
