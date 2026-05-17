@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "esphome/core/component.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/select/select.h"
@@ -202,7 +203,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
   void set_flow_control_pin(GPIOPin *flow_control_pin) { this->flow_control_pin_ = flow_control_pin; }
   virtual void send_command(uint8_t action, uint8_t function);
-  bool write_register(uint8_t address, uint16_t value);
+  virtual bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
 
@@ -306,7 +307,9 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void track_online_status_();
   std::string bitmask_to_string_(const char *const messages[], const uint8_t &messages_size, const uint16_t &mask);
 
-  uint16_t chksum_(const uint8_t data[], const uint16_t len) {
+  std::array<uint8_t, 9> build_frame_(uint8_t command, uint8_t address, uint16_t value) const;
+
+  uint16_t chksum_(const uint8_t data[], const uint16_t len) const {
     uint16_t checksum = 0x00;
     for (uint16_t i = 0; i < len; i++) {
       checksum = checksum - data[i];

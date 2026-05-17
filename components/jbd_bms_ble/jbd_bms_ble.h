@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "esphome/core/component.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/select/select.h"
@@ -218,7 +219,7 @@ class JbdBmsBle :
   void set_authentication_timeout(uint32_t timeout_ms) { auth_timeout_ms_ = timeout_ms; }
 
   bool send_command(uint8_t action, uint8_t function);
-  bool write_register(uint8_t address, uint16_t value);
+  virtual bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
   void assemble(const uint8_t *data, uint16_t length);
@@ -321,7 +322,9 @@ class JbdBmsBle :
   void track_online_status_();
   std::string bitmask_to_string_(const char *const messages[], const uint8_t &messages_size, const uint16_t &mask);
 
-  uint16_t chksum_(const uint8_t data[], const uint16_t len) {
+  std::array<uint8_t, 9> build_frame_(uint8_t command, uint8_t address, uint16_t value) const;
+
+  uint16_t chksum_(const uint8_t data[], const uint16_t len) const {
     uint16_t checksum = 0x00;
     for (uint16_t i = 0; i < len; i++) {
       checksum = checksum - data[i];
