@@ -838,7 +838,21 @@ void JbdBmsBle::publish_state_(text_sensor::TextSensor *text_sensor, const std::
   text_sensor->publish_state(state);
 }
 
-#ifdef USE_ESP32
+std::array<uint8_t, 9> JbdBmsBle::build_frame_(uint8_t command, uint8_t address, uint16_t value) const {
+  std::array<uint8_t, 9> frame{};
+  frame[0] = JBD_PKT_START;
+  frame[1] = command;
+  frame[2] = address;
+  frame[3] = 0x02;
+  frame[4] = value >> 8;
+  frame[5] = value >> 0;
+  auto crc = chksum_(frame.data() + 2, 4);
+  frame[6] = crc >> 8;
+  frame[7] = crc >> 0;
+  frame[8] = JBD_PKT_END;
+  return frame;
+}
+
 bool JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
   if (this->mosfet_status_ == 255) {
     ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
@@ -855,21 +869,7 @@ bool JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool stat
   return this->write_register(address, value);
 }
 
-std::array<uint8_t, 9> JbdBmsBle::build_frame_(uint8_t command, uint8_t address, uint16_t value) const {
-  std::array<uint8_t, 9> frame{};
-  frame[0] = JBD_PKT_START;
-  frame[1] = command;
-  frame[2] = address;
-  frame[3] = 0x02;
-  frame[4] = value >> 8;
-  frame[5] = value >> 0;
-  auto crc = chksum_(frame.data() + 2, 4);
-  frame[6] = crc >> 8;
-  frame[7] = crc >> 0;
-  frame[8] = JBD_PKT_END;
-  return frame;
-}
-
+#ifdef USE_ESP32
 bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
   auto frame = build_frame_(JBD_CMD_WRITE, address, value);
   ESP_LOGV(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
@@ -911,6 +911,7 @@ bool JbdBmsBle::send_command(uint8_t action, uint8_t function) {
   return (status == 0);
 }
 #else
+bool JbdBmsBle::write_register(uint8_t address, uint16_t value) { return false; }
 bool JbdBmsBle::send_command(uint8_t action, uint8_t function) { return false; }
 #endif  // USE_ESP32
 
