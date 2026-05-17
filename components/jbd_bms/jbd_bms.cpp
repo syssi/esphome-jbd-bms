@@ -315,9 +315,10 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   uint32_t balance_status_bitmask = jbd_get_32bit(12);
   this->publish_state_(this->balancer_status_bitmask_sensor_, (float) balance_status_bitmask);
   this->publish_state_(this->balancing_binary_sensor_, balance_status_bitmask > 0);
+  uint8_t battery_strings = data[21];
   std::string balancing_cells;
-  for (uint8_t i = 0; i < 32; i++) {
-    if (balance_status_bitmask & (1 << i)) {
+  for (uint8_t i = 0; i < battery_strings; i++) {
+    if (balance_status_bitmask & (1u << (battery_strings - 1 - i))) {
       if (!balancing_cells.empty())
         balancing_cells += ", ";
       char buf[4];
