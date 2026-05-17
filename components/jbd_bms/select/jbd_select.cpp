@@ -21,7 +21,7 @@ void JbdSelect::control(const std::string &value) {
   if (idx.has_value()) {
     uint8_t mapping = this->mappings_.at(idx.value());
     ESP_LOGV(TAG, "Reading register to %u", mapping);
-    this->parent_->send_command(JBD_CMD_READ, mapping);
+    this->parent_->send_command(JBD_CMD_READ, mapping, nullptr, 0);
     return;
   }
 

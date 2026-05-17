@@ -65,7 +65,7 @@ void JbdBms::setup() {
   if (this->flow_control_pin_ != nullptr) {
     this->flow_control_pin_->setup();
   }
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO, nullptr, 0);
 }
 
 void JbdBms::loop() {
@@ -93,7 +93,7 @@ void JbdBms::loop() {
 
 void JbdBms::update() {
   this->track_online_status_();
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO, nullptr, 0);
 }
 
 bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
@@ -176,7 +176,7 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
   switch (function) {
     case JBD_CMD_HWINFO:
       this->on_hardware_info_data_(data);
-      this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
+      this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO, nullptr, 0);
       break;
     case JBD_CMD_CELLINFO:
       this->on_cell_info_data_(data);
@@ -596,53 +596,35 @@ bool JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) 
   return this->write_register(address, value);
 }
 
-std::array<uint8_t, 9> JbdBms::build_frame_(uint8_t command, uint8_t address, uint16_t value) const {
-  std::array<uint8_t, 9> frame{};
+std::vector<uint8_t> JbdBms::build_frame_(uint8_t command, uint8_t address, const uint8_t *data,
+                                          uint8_t data_len) const {
+  std::vector<uint8_t> frame(data_len + 7);
   frame[0] = JBD_PKT_START;
   frame[1] = command;
   frame[2] = address;
-  frame[3] = 0x02;
-  frame[4] = value >> 8;
-  frame[5] = value >> 0;
-  auto crc = chksum_(frame.data() + 2, 4);
-  frame[6] = crc >> 8;
-  frame[7] = crc >> 0;
-  frame[8] = JBD_PKT_END;
+  frame[3] = data_len;
+  for (uint8_t i = 0; i < data_len; i++)
+    frame[4 + i] = data[i];
+  auto crc = chksum_(frame.data() + 2, data_len + 2);
+  frame[4 + data_len] = crc >> 8;
+  frame[5 + data_len] = crc >> 0;
+  frame[6 + data_len] = JBD_PKT_END;
   return frame;
 }
 
 bool JbdBms::write_register(uint8_t address, uint16_t value) {
-  if (this->flow_control_pin_ != nullptr)
-    this->flow_control_pin_->digital_write(true);
-
-  auto frame = build_frame_(JBD_CMD_WRITE, address, value);
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
-  this->write_array(frame.data(), frame.size());
-  this->flush();
-
-  if (this->flow_control_pin_ != nullptr)
-    this->flow_control_pin_->digital_write(false);
-
+  uint8_t data[2] = {(uint8_t) (value >> 8), (uint8_t) (value)};
+  this->send_command(JBD_CMD_WRITE, address, data, 2);
   return true;
 }
 
-void JbdBms::send_command(uint8_t action, uint8_t function) {
+void JbdBms::send_command(uint8_t command, uint8_t address, const uint8_t *data, uint8_t data_len) {
   if (this->flow_control_pin_ != nullptr)
     this->flow_control_pin_->digital_write(true);
 
-  uint8_t frame[7];
-  uint8_t data_len = 0;
-
-  frame[0] = JBD_PKT_START;
-  frame[1] = action;
-  frame[2] = function;
-  frame[3] = data_len;
-  auto crc = chksum_(frame + 2, data_len + 2);
-  frame[4] = crc >> 8;
-  frame[5] = crc >> 0;
-  frame[6] = JBD_PKT_END;
-
-  this->write_array(frame, 7);
+  auto frame = build_frame_(command, address, data, data_len);
+  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
+  this->write_array(frame.data(), frame.size());
   this->flush();
 
   if (this->flow_control_pin_ != nullptr)

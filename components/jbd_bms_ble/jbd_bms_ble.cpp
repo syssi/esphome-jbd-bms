@@ -1,5 +1,4 @@
 #include "jbd_bms_ble.h"
-#include <array>
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 #include "esphome/core/version.h"
@@ -838,18 +837,19 @@ void JbdBmsBle::publish_state_(text_sensor::TextSensor *text_sensor, const std::
   text_sensor->publish_state(state);
 }
 
-std::array<uint8_t, 9> JbdBmsBle::build_frame_(uint8_t command, uint8_t address, uint16_t value) const {
-  std::array<uint8_t, 9> frame{};
+std::vector<uint8_t> JbdBmsBle::build_frame_(uint8_t command, uint8_t address, const uint8_t *data,
+                                             uint8_t data_len) const {
+  std::vector<uint8_t> frame(data_len + 7);
   frame[0] = JBD_PKT_START;
   frame[1] = command;
   frame[2] = address;
-  frame[3] = 0x02;
-  frame[4] = value >> 8;
-  frame[5] = value >> 0;
-  auto crc = chksum_(frame.data() + 2, 4);
-  frame[6] = crc >> 8;
-  frame[7] = crc >> 0;
-  frame[8] = JBD_PKT_END;
+  frame[3] = data_len;
+  for (uint8_t i = 0; i < data_len; i++)
+    frame[4 + i] = data[i];
+  auto crc = chksum_(frame.data() + 2, data_len + 2);
+  frame[4 + data_len] = crc >> 8;
+  frame[5 + data_len] = crc >> 0;
+  frame[6 + data_len] = JBD_PKT_END;
   return frame;
 }
 
@@ -870,8 +870,8 @@ bool JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool stat
 }
 
 #ifdef USE_ESP32
-bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
-  auto frame = build_frame_(JBD_CMD_WRITE, address, value);
+bool JbdBmsBle::send_command(uint8_t command, uint8_t address, const uint8_t *data, uint8_t data_len) {
+  auto frame = build_frame_(command, address, data, data_len);
   ESP_LOGV(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
            format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
   auto status =
@@ -884,36 +884,14 @@ bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
 
   return (status == 0);
 }
-
-bool JbdBmsBle::send_command(uint8_t action, uint8_t function) {
-  uint8_t frame[7];
-  uint8_t data_len = 0;
-
-  frame[0] = JBD_PKT_START;
-  frame[1] = action;
-  frame[2] = function;
-  frame[3] = data_len;
-  auto crc = chksum_(frame + 2, data_len + 2);
-  frame[4] = crc >> 8;
-  frame[5] = crc >> 0;
-  frame[6] = JBD_PKT_END;
-
-  ESP_LOGV(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
-           format_hex_pretty(frame, sizeof(frame)).c_str());  // NOLINT
-  auto status =
-      esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
-                               sizeof(frame), frame, ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
-
-  if (status) {
-    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", ADDR_STR(this->parent_->address_str()), status);
-  }
-
-  return (status == 0);
-}
 #else
-bool JbdBmsBle::write_register(uint8_t address, uint16_t value) { return false; }
-bool JbdBmsBle::send_command(uint8_t action, uint8_t function) { return false; }
+bool JbdBmsBle::send_command(uint8_t command, uint8_t address, const uint8_t *data, uint8_t data_len) { return false; }
 #endif  // USE_ESP32
+
+bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
+  uint8_t data[2] = {(uint8_t) (value >> 8), (uint8_t) (value)};
+  return this->send_command(JBD_CMD_WRITE, address, data, 2);
+}
 
 std::string JbdBmsBle::bitmask_to_string_(const char *const messages[], const uint8_t &messages_size,
                                           const uint16_t &mask) {

@@ -52,5 +52,5 @@ async def to_code(config):
             await cg.register_component(var, conf)
             cg.add(getattr(hub, f"set_{key}_switch")(var))
             cg.add(var.set_parent(hub))
-            cg.add(var.set_holding_register(address[0]))
+            cg.add(var.set_address(address[0]))
             cg.add(var.set_bitmask(address[1]))
