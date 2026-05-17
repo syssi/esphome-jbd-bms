@@ -299,7 +299,6 @@ class JbdBmsBle :
   //
   // Cycle life
   // Production date
-  // Balance status bitmask (32 Bits)
   // Version
 
   std::vector<uint8_t> frame_buffer_;

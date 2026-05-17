@@ -282,7 +282,6 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   //
   // Cycle life
   // Production date
-  // Balance status bitmask (32 Bits)
   // Version
 
   std::string device_model_{};
