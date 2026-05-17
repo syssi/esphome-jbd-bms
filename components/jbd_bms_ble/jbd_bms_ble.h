@@ -1,6 +1,6 @@
 #pragma once
 
-#include <array>
+#include <vector>
 #include "esphome/core/component.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/select/select.h"
@@ -218,7 +218,7 @@ class JbdBmsBle :
   }
   void set_authentication_timeout(uint32_t timeout_ms) { auth_timeout_ms_ = timeout_ms; }
 
-  bool send_command(uint8_t action, uint8_t function);
+  bool send_command(uint8_t command, uint8_t address, const uint8_t *data = nullptr, uint8_t data_len = 0);
   virtual bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
@@ -322,7 +322,7 @@ class JbdBmsBle :
   void track_online_status_();
   std::string bitmask_to_string_(const char *const messages[], const uint8_t &messages_size, const uint16_t &mask);
 
-  std::array<uint8_t, 9> build_frame_(uint8_t command, uint8_t address, uint16_t value) const;
+  std::vector<uint8_t> build_frame_(uint8_t command, uint8_t address, const uint8_t *data, uint8_t data_len) const;
 
   uint16_t chksum_(const uint8_t data[], const uint16_t len) const {
     uint16_t checksum = 0x00;

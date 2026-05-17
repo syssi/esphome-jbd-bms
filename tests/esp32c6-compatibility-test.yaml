@@ -58,6 +58,33 @@ jbd_bms:
     rx_timeout: 150ms
     # flow_control_pin: GPIO12
 
+button:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    retrieve_hardware_version:
+      name: "${bms0} retrieve hardware version"
+    retrieve_error_counts:
+      name: "${bms0} retrieve error counts"
+    force_soc_reset:
+      name: "${bms0} force soc reset"
+    automatic_balancing:
+      name: "${bms0} automatic balancing"
+    clear_alarm:
+      name: "${bms0} clear alarm"
+
+  - platform: jbd_bms
+    jbd_bms_id: bms1
+    retrieve_hardware_version:
+      name: "${bms1} retrieve hardware version"
+    retrieve_error_counts:
+      name: "${bms1} retrieve error counts"
+    force_soc_reset:
+      name: "${bms1} force soc reset"
+    automatic_balancing:
+      name: "${bms1} automatic balancing"
+    clear_alarm:
+      name: "${bms1} clear alarm"
+
 sensor:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0

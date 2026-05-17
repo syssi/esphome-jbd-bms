@@ -84,6 +84,12 @@ button:
     force_soc_reset:
       name: "force soc reset"
       device_id: device0
+    automatic_balancing:
+      name: "automatic balancing"
+      device_id: device0
+    clear_alarm:
+      name: "clear alarm"
+      device_id: device0
 
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms1
@@ -95,6 +101,12 @@ button:
       device_id: device1
     force_soc_reset:
       name: "force soc reset"
+      device_id: device1
+    automatic_balancing:
+      name: "automatic balancing"
+      device_id: device1
+    clear_alarm:
+      name: "clear alarm"
       device_id: device1
 
 binary_sensor:

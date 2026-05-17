@@ -92,6 +92,10 @@ button:
       name: "retrieve error counts"
     force_soc_reset:
       name: "force soc reset"
+    automatic_balancing:
+      name: "automatic balancing"
+    clear_alarm:
+      name: "clear alarm"
 
 binary_sensor:
   - platform: jbd_bms_ble
