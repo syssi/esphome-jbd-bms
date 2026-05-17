@@ -129,7 +129,7 @@ binary_sensor:
     ic_frontend_error:
       name: "ic frontend error"
     mosfet_software_lock:
-      name: "Mosfet Software Lock"
+      name: "mosfet software lock"
 
 sensor:
   - platform: jbd_bms_ble
