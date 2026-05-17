@@ -196,6 +196,9 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void set_device_model_text_sensor(text_sensor::TextSensor *device_model_text_sensor) {
     device_model_text_sensor_ = device_model_text_sensor;
   }
+  void set_balancing_cells_text_sensor(text_sensor::TextSensor *balancing_cells_text_sensor) {
+    balancing_cells_text_sensor_ = balancing_cells_text_sensor;
+  }
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
   void set_flow_control_pin(GPIOPin *flow_control_pin) { this->flow_control_pin_ = flow_control_pin; }
   virtual void send_command(uint8_t action, uint8_t function);
@@ -264,6 +267,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
 
   text_sensor::TextSensor *operation_status_text_sensor_{nullptr};
   text_sensor::TextSensor *errors_text_sensor_{nullptr};
+  text_sensor::TextSensor *balancing_cells_text_sensor_{nullptr};
   text_sensor::TextSensor *device_model_text_sensor_{nullptr};
 
   struct Cell {

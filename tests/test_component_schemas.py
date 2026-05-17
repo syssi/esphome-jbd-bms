@@ -120,11 +120,13 @@ class TestTextSensorConstants:
         assert text_sensor.CONF_ERRORS in text_sensor.TEXT_SENSORS
         assert text_sensor.CONF_OPERATION_STATUS in text_sensor.TEXT_SENSORS
         assert text_sensor.CONF_DEVICE_MODEL in text_sensor.TEXT_SENSORS
-        assert len(text_sensor.TEXT_SENSORS) == 3
+        assert text_sensor.CONF_BALANCING_CELLS in text_sensor.TEXT_SENSORS
+        assert len(text_sensor.TEXT_SENSORS) == 4
 
     def test_ble_text_sensors_list(self):
         assert ble_text_sensor.CONF_ERRORS in ble_text_sensor.TEXT_SENSORS
-        assert len(ble_text_sensor.TEXT_SENSORS) == 3
+        assert ble_text_sensor.CONF_BALANCING_CELLS in ble_text_sensor.TEXT_SENSORS
+        assert len(ble_text_sensor.TEXT_SENSORS) == 4
 
 
 class TestSwitchConstants:

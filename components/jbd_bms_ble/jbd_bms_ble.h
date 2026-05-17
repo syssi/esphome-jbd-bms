@@ -208,6 +208,9 @@ class JbdBmsBle :
   void set_device_model_text_sensor(text_sensor::TextSensor *device_model_text_sensor) {
     device_model_text_sensor_ = device_model_text_sensor;
   }
+  void set_balancing_cells_text_sensor(text_sensor::TextSensor *balancing_cells_text_sensor) {
+    balancing_cells_text_sensor_ = balancing_cells_text_sensor;
+  }
   void set_password(const std::string &password) {
     password_ = password;
     enable_authentication_ = !password.empty();
@@ -282,6 +285,7 @@ class JbdBmsBle :
   text_sensor::TextSensor *operation_status_text_sensor_{nullptr};
   text_sensor::TextSensor *errors_text_sensor_{nullptr};
   text_sensor::TextSensor *device_model_text_sensor_{nullptr};
+  text_sensor::TextSensor *balancing_cells_text_sensor_{nullptr};
 
   struct Cell {
     sensor::Sensor *cell_voltage_sensor_{nullptr};

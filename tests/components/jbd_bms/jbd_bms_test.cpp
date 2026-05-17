@@ -385,6 +385,28 @@ TEST(JbdBmsHwInfoTest, ProtectionBinarySensorsByteOrder) {
   EXPECT_TRUE(swl.state);
 }
 
+// ── Balancing cells text sensor ───────────────────────────────────────────────
+
+TEST(JbdBmsHwInfoTest, BalancingCellsEmpty) {
+  TestableJbdBms bms;
+  text_sensor::TextSensor balancing_cells;
+  bms.set_balancing_cells_text_sensor(&balancing_cells);
+
+  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+
+  EXPECT_EQ(balancing_cells.state, "");
+}
+
+TEST(JbdBmsHwInfoTest, BalancingCellsActive) {
+  TestableJbdBms bms;
+  text_sensor::TextSensor balancing_cells;
+  bms.set_balancing_cells_text_sensor(&balancing_cells);
+
+  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_BALANCING_CELLS_1_3);
+
+  EXPECT_EQ(balancing_cells.state, "1, 3");
+}
+
 // ── Null sensors do not crash ─────────────────────────────────────────────────
 
 TEST(JbdBmsTest, NullSensorsDoNotCrash) {
