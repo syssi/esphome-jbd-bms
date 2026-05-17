@@ -1,4 +1,5 @@
 #include "jbd_bms.h"
+#include <array>
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 
@@ -595,26 +596,28 @@ bool JbdBms::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) 
   return this->write_register(address, value);
 }
 
+std::array<uint8_t, 9> JbdBms::build_frame_(uint8_t command, uint8_t address, uint16_t value) const {
+  std::array<uint8_t, 9> frame{};
+  frame[0] = JBD_PKT_START;
+  frame[1] = command;
+  frame[2] = address;
+  frame[3] = 0x02;
+  frame[4] = value >> 8;
+  frame[5] = value >> 0;
+  auto crc = chksum_(frame.data() + 2, 4);
+  frame[6] = crc >> 8;
+  frame[7] = crc >> 0;
+  frame[8] = JBD_PKT_END;
+  return frame;
+}
+
 bool JbdBms::write_register(uint8_t address, uint16_t value) {
   if (this->flow_control_pin_ != nullptr)
     this->flow_control_pin_->digital_write(true);
 
-  uint8_t frame[9];
-  uint8_t data_len = 2;
-
-  frame[0] = JBD_PKT_START;
-  frame[1] = JBD_CMD_WRITE;
-  frame[2] = address;
-  frame[3] = data_len;
-  frame[4] = value >> 8;
-  frame[5] = value >> 0;
-  auto crc = chksum_(frame + 2, data_len + 2);
-  frame[6] = crc >> 8;
-  frame[7] = crc >> 0;
-  frame[8] = JBD_PKT_END;
-
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame, sizeof(frame)).c_str());  // NOLINT
-  this->write_array(frame, 9);
+  auto frame = build_frame_(JBD_CMD_WRITE, address, value);
+  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
+  this->write_array(frame.data(), frame.size());
   this->flush();
 
   if (this->flow_control_pin_ != nullptr)
