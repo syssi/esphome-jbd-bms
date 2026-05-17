@@ -560,6 +560,19 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   uint16_t errors_bitmask = jbd_get_16bit(16);
   this->publish_state_(this->errors_bitmask_sensor_, (float) errors_bitmask);
   this->publish_state_(this->errors_text_sensor_, this->bitmask_to_string_(ERRORS, ERRORS_SIZE, errors_bitmask));
+  this->publish_state_(this->cell_overvoltage_protection_binary_sensor_, errors_bitmask & (1 << 0));
+  this->publish_state_(this->cell_undervoltage_protection_binary_sensor_, errors_bitmask & (1 << 1));
+  this->publish_state_(this->pack_overvoltage_protection_binary_sensor_, errors_bitmask & (1 << 2));
+  this->publish_state_(this->pack_undervoltage_protection_binary_sensor_, errors_bitmask & (1 << 3));
+  this->publish_state_(this->charge_overtemperature_protection_binary_sensor_, errors_bitmask & (1 << 4));
+  this->publish_state_(this->charge_undertemperature_protection_binary_sensor_, errors_bitmask & (1 << 5));
+  this->publish_state_(this->discharge_overtemperature_protection_binary_sensor_, errors_bitmask & (1 << 6));
+  this->publish_state_(this->discharge_undertemperature_protection_binary_sensor_, errors_bitmask & (1 << 7));
+  this->publish_state_(this->charge_overcurrent_protection_binary_sensor_, errors_bitmask & (1 << 8));
+  this->publish_state_(this->discharge_overcurrent_protection_binary_sensor_, errors_bitmask & (1 << 9));
+  this->publish_state_(this->short_circuit_protection_binary_sensor_, errors_bitmask & (1 << 10));
+  this->publish_state_(this->ic_frontend_error_binary_sensor_, errors_bitmask & (1 << 11));
+  this->publish_state_(this->mosfet_software_lock_binary_sensor_, errors_bitmask & (1 << 12));
 
   // 18    1   0x80                   Version                                      0x10 = 1.0, 0x80 = 8.0
   this->publish_state_(this->software_version_sensor_, (data[18] >> 4) + ((data[18] & 0x0f) * 0.1f));
@@ -691,6 +704,21 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Discharging", this->discharging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Online status", this->online_status_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Cell overvoltage protection", this->cell_overvoltage_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Cell undervoltage protection", this->cell_undervoltage_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Pack overvoltage protection", this->pack_overvoltage_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Pack undervoltage protection", this->pack_undervoltage_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Charge overtemperature protection", this->charge_overtemperature_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Charge undertemperature protection", this->charge_undertemperature_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Discharge overtemperature protection",
+                    this->discharge_overtemperature_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Discharge undertemperature protection",
+                    this->discharge_undertemperature_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Charge overcurrent protection", this->charge_overcurrent_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Discharge overcurrent protection", this->discharge_overcurrent_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Short circuit protection", this->short_circuit_protection_binary_sensor_);
+  LOG_BINARY_SENSOR("", "IC front-end error", this->ic_frontend_error_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Mosfet Software Lock", this->mosfet_software_lock_binary_sensor_);
 
   LOG_SENSOR("", "Total voltage", this->total_voltage_sensor_);
   LOG_SENSOR("", "Battery strings", this->battery_strings_sensor_);
