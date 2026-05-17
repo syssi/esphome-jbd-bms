@@ -65,7 +65,7 @@ void JbdBms::setup() {
   if (this->flow_control_pin_ != nullptr) {
     this->flow_control_pin_->setup();
   }
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO, nullptr, 0);
 }
 
 void JbdBms::loop() {
@@ -93,7 +93,7 @@ void JbdBms::loop() {
 
 void JbdBms::update() {
   this->track_online_status_();
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO, nullptr, 0);
 }
 
 bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
@@ -176,7 +176,7 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
   switch (function) {
     case JBD_CMD_HWINFO:
       this->on_hardware_info_data_(data);
-      this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
+      this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO, nullptr, 0);
       break;
     case JBD_CMD_CELLINFO:
       this->on_cell_info_data_(data);
