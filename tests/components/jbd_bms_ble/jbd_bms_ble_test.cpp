@@ -249,7 +249,7 @@ TEST(JbdBmsBleErrorCountsTest, ErrorCounts) {
 
 // ── Protection binary sensors ─────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensors_NoneActive) {
+TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsNoneActive) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
@@ -283,7 +283,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensors_NoneActive) {
   EXPECT_FALSE(swl.state);
 }
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensors_CellOvervoltage) {
+TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsCellOvervoltage) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
@@ -317,7 +317,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensors_CellOvervoltage) {
   EXPECT_FALSE(swl.state);
 }
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensors_AllActive) {
+TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsAllActive) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
@@ -351,7 +351,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensors_AllActive) {
   EXPECT_TRUE(swl.state);
 }
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensors_ByteOrder) {
+TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsByteOrder) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
