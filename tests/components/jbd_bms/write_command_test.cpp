@@ -167,38 +167,32 @@ TEST(MosfetSwitchTest, UnknownStatusReturnsError) {
   EXPECT_FALSE(result);
 }
 
-// ── Balancer enable frame ─────────────────────────────────────────────────────
+// ── Balancer frame (register 0xF4, 2-byte payload) ───────────────────────────
+//
+// Derived from BMSBalanceCMDEntity in Xiaoxiang app:
+//   intStrToBytes("01") → [0x00, 0x01]   intStrToBytes("00") → [0x00, 0x00]
+//
+//   Enable:  DD 5A F4 02 00 01 FF 09 77   CRC: 0x10000-(0xF4+0x02+0x00+0x01)=0xFF09
+//   Disable: DD 5A F4 02 00 00 FF 0A 77   CRC: 0x10000-(0xF4+0x02+0x00+0x00)=0xFF0A
 
 TEST(JbdBmsWriteCommandTest, BalancerEnableFrame) {
   TestableJbdBms bms;
-  auto frame = bms.build_frame_byte_(0x5A, 0xF4, 0x01);
-  // Expected: DD 5A F4 01 01 FF 0A 77
-  // CRC: 0x10000 - (0xF4 + 0x01 + 0x01) = 0xFF0A
-  EXPECT_EQ(frame[0], 0xDD);
-  EXPECT_EQ(frame[1], 0x5A);
-  EXPECT_EQ(frame[2], 0xF4);
-  EXPECT_EQ(frame[3], 0x01);
-  EXPECT_EQ(frame[4], 0x01);
-  EXPECT_EQ(frame[5], 0xFF);
-  EXPECT_EQ(frame[6], 0x0A);
-  EXPECT_EQ(frame[7], 0x77);
+  // clang-format off
+  const std::array<uint8_t, 9> expected = {
+      0xDD, 0x5A, 0xF4, 0x02, 0x00, 0x01, 0xFF, 0x09, 0x77,
+  };
+  // clang-format on
+  EXPECT_EQ(bms.build_frame_(0x5A, 0xF4, 0x0001), expected);
 }
-
-// ── Balancer disable frame ────────────────────────────────────────────────────
 
 TEST(JbdBmsWriteCommandTest, BalancerDisableFrame) {
   TestableJbdBms bms;
-  auto frame = bms.build_frame_byte_(0x5A, 0xF4, 0x00);
-  // Expected: DD 5A F4 01 00 FF 0B 77
-  // CRC: 0x10000 - (0xF4 + 0x01 + 0x00) = 0xFF0B
-  EXPECT_EQ(frame[0], 0xDD);
-  EXPECT_EQ(frame[1], 0x5A);
-  EXPECT_EQ(frame[2], 0xF4);
-  EXPECT_EQ(frame[3], 0x01);
-  EXPECT_EQ(frame[4], 0x00);
-  EXPECT_EQ(frame[5], 0xFF);
-  EXPECT_EQ(frame[6], 0x0B);
-  EXPECT_EQ(frame[7], 0x77);
+  // clang-format off
+  const std::array<uint8_t, 9> expected = {
+      0xDD, 0x5A, 0xF4, 0x02, 0x00, 0x00, 0xFF, 0x0A, 0x77,
+  };
+  // clang-format on
+  EXPECT_EQ(bms.build_frame_(0x5A, 0xF4, 0x0000), expected);
 }
 
 // ── change_balancer_status dispatches correct register and value ──────────────
@@ -206,15 +200,15 @@ TEST(JbdBmsWriteCommandTest, BalancerDisableFrame) {
 TEST(JbdBmsWriteCommandTest, BalancerEnableRegister) {
   TestableJbdBms bms;
   bms.change_balancer_status(true);
-  EXPECT_EQ(bms.last_written_address, 0xF4);
-  EXPECT_EQ(bms.last_written_value, 0x01);
+  EXPECT_EQ(bms.last_write_address, 0xF4);
+  EXPECT_EQ(bms.last_write_value, 0x0001);
 }
 
 TEST(JbdBmsWriteCommandTest, BalancerDisableRegister) {
   TestableJbdBms bms;
   bms.change_balancer_status(false);
-  EXPECT_EQ(bms.last_written_address, 0xF4);
-  EXPECT_EQ(bms.last_written_value, 0x00);
+  EXPECT_EQ(bms.last_write_address, 0xF4);
+  EXPECT_EQ(bms.last_write_value, 0x0000);
 }
 
 }  // namespace esphome::jbd_bms::testing

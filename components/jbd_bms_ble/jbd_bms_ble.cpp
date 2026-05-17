@@ -853,20 +853,6 @@ std::array<uint8_t, 9> JbdBmsBle::build_frame_(uint8_t command, uint8_t address,
   return frame;
 }
 
-std::array<uint8_t, 8> JbdBmsBle::build_frame_byte_(uint8_t command, uint8_t address, uint8_t value) const {
-  std::array<uint8_t, 8> frame{};
-  frame[0] = JBD_PKT_START;
-  frame[1] = command;
-  frame[2] = address;
-  frame[3] = 0x01;
-  frame[4] = value;
-  auto crc = chksum_(frame.data() + 2, 3);
-  frame[5] = crc >> 8;
-  frame[6] = crc >> 0;
-  frame[7] = JBD_PKT_END;
-  return frame;
-}
-
 bool JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool state) {
   if (this->mosfet_status_ == 255) {
     ESP_LOGE(TAG, "Unable to change the Mosfet status because it's unknown");
@@ -884,25 +870,10 @@ bool JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool stat
 }
 
 bool JbdBmsBle::change_balancer_status(bool state) {
-  return this->write_register_byte_(JBD_CMD_BALANCER, state ? 0x01 : 0x00);
+  return this->write_register(JBD_CMD_BALANCER, state ? 0x0001 : 0x0000);
 }
 
 #ifdef USE_ESP32
-bool JbdBmsBle::write_register_byte_(uint8_t address, uint8_t value) {
-  auto frame = build_frame_byte_(JBD_CMD_WRITE, address, value);
-  ESP_LOGV(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
-           format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
-  auto status =
-      esp_ble_gattc_write_char(this->parent_->get_gattc_if(), this->parent_->get_conn_id(), this->char_command_handle_,
-                               frame.size(), frame.data(), ESP_GATT_WRITE_TYPE_NO_RSP, ESP_GATT_AUTH_REQ_NONE);
-
-  if (status) {
-    ESP_LOGW(TAG, "[%s] esp_ble_gattc_write_char failed, status=%d", ADDR_STR(this->parent_->address_str()), status);
-  }
-
-  return (status == 0);
-}
-
 bool JbdBmsBle::write_register(uint8_t address, uint16_t value) {
   auto frame = build_frame_(JBD_CMD_WRITE, address, value);
   ESP_LOGV(TAG, "Send command (handle 0x%02X): %s", this->char_command_handle_,
@@ -944,7 +915,6 @@ bool JbdBmsBle::send_command(uint8_t action, uint8_t function) {
   return (status == 0);
 }
 #else
-bool JbdBmsBle::write_register_byte_(uint8_t address, uint8_t value) { return false; }
 bool JbdBmsBle::write_register(uint8_t address, uint16_t value) { return false; }
 bool JbdBmsBle::send_command(uint8_t action, uint8_t function) { return false; }
 #endif  // USE_ESP32
