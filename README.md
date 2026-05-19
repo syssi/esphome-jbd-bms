@@ -112,11 +112,20 @@ wifi_password: MY_WIFI_PASSWORD
 mqtt_host: MY_MQTT_HOST
 mqtt_username: MY_MQTT_USERNAME
 mqtt_password: MY_MQTT_PASSWORD
+
+# Required for the BLE examples only. Use the MAC address of your BMS.
+# The esp32-ble-example-multiple-devices.yaml additionally expects a bms1_mac_address.
+bms0_mac_address: 70:3e:97:07:c0:3e
+bms1_mac_address: 70:3e:97:07:c0:3f
 EOF
 
 # Validate the configuration, create a binary, upload it, and start logs
-# If you use a esp8266 run the esp8266-examle.yaml
+# If you use an esp8266 run the esp8266-example.yaml
 esphome run esp32-example.yaml
+
+# To monitor a JBD-BMS via Bluetooth Low Energy run the esp32-ble-example.yaml
+# instead. Set bms0_mac_address in your secrets.yaml to your BMS' MAC address.
+esphome run esp32-ble-example.yaml
 
 ```
 

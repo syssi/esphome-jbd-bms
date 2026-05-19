@@ -37,7 +37,7 @@
 
 ble_client:
   - id: client0
-    mac_address: "10:a5:62:32:75:36"
+    mac_address: !secret bms0_mac_address
 
 jbd_bms_ble:
   - id: bms0
