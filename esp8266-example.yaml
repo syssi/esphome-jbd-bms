@@ -12,7 +12,7 @@ esphome:
   comment: ${device_description}
   project:
     name: "syssi.esphome-jbd-bms"
-    version: 2.4.0
+    version: 2.5.0
 
 esp8266:
   board: d1_mini
