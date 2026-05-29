@@ -570,7 +570,7 @@ jobs:
       - name: Run C++ unit tests
         run: |
           . venv/bin/activate
-          script/cpp_unit_test.py jbd_bms jbd_bms_ble
+          script/cpp_unit_test.py jbd_bms jbd_bms_ble jbd_bms_up jbd_bms_up_pack
         env:
           PLATFORMIO_LIBDEPS_DIR: ~/.platformio/libdeps
           ASAN_OPTIONS: detect_leaks=0
