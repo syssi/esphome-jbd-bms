@@ -194,6 +194,7 @@ SENSOR_DEFS = {
         "icon": ICON_OPERATION_STATUS_BITMASK,
         "accuracy_decimals": 0,
         "device_class": DEVICE_CLASS_EMPTY,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     CONF_ERRORS_BITMASK: {
@@ -201,6 +202,7 @@ SENSOR_DEFS = {
         "icon": ICON_ERRORS_BITMASK,
         "accuracy_decimals": 0,
         "device_class": DEVICE_CLASS_EMPTY,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     CONF_BALANCER_STATUS_BITMASK: {
@@ -208,6 +210,7 @@ SENSOR_DEFS = {
         "icon": ICON_BALANCER_STATUS_BITMASK,
         "accuracy_decimals": 0,
         "device_class": DEVICE_CLASS_EMPTY,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     CONF_BATTERY_STRINGS: {
@@ -216,6 +219,7 @@ SENSOR_DEFS = {
         "accuracy_decimals": 0,
         "device_class": DEVICE_CLASS_EMPTY,
         "state_class": STATE_CLASS_MEASUREMENT,
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     CONF_SOFTWARE_VERSION: {
         "unit_of_measurement": UNIT_EMPTY,
