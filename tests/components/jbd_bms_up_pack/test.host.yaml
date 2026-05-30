@@ -1,0 +1,22 @@
+uart:
+  - id: uart_bus
+    baud_rate: 9600
+
+jbd_bms_up:
+  - id: test_bus
+    uart_id: uart_bus
+    rx_timeout: 150ms
+
+jbd_bms_up_pack:
+  - id: test_pack
+    jbd_bms_up_id: test_bus
+    address: 1
+    update_interval: 5s
+
+switch:
+  - platform: jbd_bms_up_pack
+    jbd_bms_up_pack_id: test_pack
+    charging:
+      name: "Test Charging"
+    discharging:
+      name: "Test Discharging"

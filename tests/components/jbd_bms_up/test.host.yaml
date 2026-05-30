@@ -1,0 +1,8 @@
+uart:
+  - id: uart_bus
+    baud_rate: 9600
+
+jbd_bms_up:
+  - id: test_bus
+    uart_id: uart_bus
+    rx_timeout: 150ms
