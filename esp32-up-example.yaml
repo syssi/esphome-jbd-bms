@@ -1,7 +1,7 @@
 substitutions:
   name: jbd-bms-up
   device_description: "Monitor a JBD UP16S010 BMS via RS485 (UP protocol)"
-  external_components_source: github://syssi/esphome-jbd-bms@add-jbd-bms-up-component
+  external_components_source: github://syssi/esphome-jbd-bms@main
   tx_pin: GPIO16
   rx_pin: GPIO17
   rx_timeout: 150ms
