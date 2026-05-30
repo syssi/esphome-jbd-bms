@@ -513,7 +513,7 @@ jobs:
         run: |
           . venv/bin/activate
           echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password\nbms0_mac_address: 70:3e:97:07:c0:3e\nbms1_mac_address: 70:3e:97:07:c0:3f" > secrets.yaml
-          for YAML in esp*faker.yaml esp32-ble-example-multiple-devices.yaml; do
+          for YAML in esp*faker*.yaml esp32-ble-example-multiple-devices.yaml; do
             esphome -s external_components_source components compile $YAML
           done
         env:
