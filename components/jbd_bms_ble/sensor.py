@@ -75,8 +75,6 @@ ICON_ERRORS_BITMASK = "mdi:alert-circle-outline"
 ICON_BALANCER_STATUS_BITMASK = "mdi:seesaw"
 ICON_SOFTWARE_VERSION = "mdi:numeric"
 
-UNIT_SECONDS = "s"
-UNIT_HOURS = "h"
 UNIT_AMPERE_HOURS = "Ah"
 
 CELLS = [f"cell_voltage_{i}" for i in range(1, 33)]
