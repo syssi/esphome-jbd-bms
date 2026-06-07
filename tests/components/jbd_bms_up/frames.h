@@ -133,7 +133,8 @@ static const std::vector<uint8_t> PACK_STATUS_RESPONSE_ADDR2 = {
 };
 // clang-format on
 
-static const std::vector<uint8_t> PACK_STATUS_FRAME_ADDR2(PACK_STATUS_RESPONSE_ADDR2.begin() + 8, PACK_STATUS_RESPONSE_ADDR2.end() - 2);
+static const std::vector<uint8_t> PACK_STATUS_FRAME_ADDR2(PACK_STATUS_RESPONSE_ADDR2.begin() + 8,
+                                                          PACK_STATUS_RESPONSE_ADDR2.end() - 2);
 
 #endif  // JBD_BMS_PACK_STATUS_FRAMES_DEFINED
 

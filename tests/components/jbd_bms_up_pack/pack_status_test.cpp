@@ -188,10 +188,10 @@ TEST(PackStatusTest, CellVoltageStats) {
   pack.set_delta_cell_voltage_sensor(&delta);
   pack.on_pack_status_(PACK_STATUS_FRAME);
   EXPECT_NEAR(max_v.state, 3.331f, 0.001f);
-  EXPECT_FLOAT_EQ(max_cell.state, 3.0f);   // 1-indexed cell 3
+  EXPECT_FLOAT_EQ(max_cell.state, 3.0f);  // 1-indexed cell 3
   EXPECT_NEAR(avg.state, 3.323f, 0.001f);
   EXPECT_NEAR(min_v.state, 3.317f, 0.001f);
-  EXPECT_FLOAT_EQ(min_cell.state, 8.0f);   // 1-indexed cell 8
+  EXPECT_FLOAT_EQ(min_cell.state, 8.0f);  // 1-indexed cell 8
   EXPECT_NEAR(delta.state, 0.014f, 0.001f);
 }
 
@@ -269,10 +269,10 @@ TEST(PackStatusTest, Addr2CellVoltageStats) {
   pack.set_delta_cell_voltage_sensor(&delta);
   pack.on_pack_status_(PACK_STATUS_FRAME_ADDR2);
   EXPECT_NEAR(max_v.state, 3.329f, 0.001f);
-  EXPECT_FLOAT_EQ(max_cell.state, 4.0f);   // 1-indexed cell 4
+  EXPECT_FLOAT_EQ(max_cell.state, 4.0f);  // 1-indexed cell 4
   EXPECT_NEAR(avg.state, 3.325f, 0.001f);
   EXPECT_NEAR(min_v.state, 3.322f, 0.001f);
-  EXPECT_FLOAT_EQ(min_cell.state, 1.0f);   // 1-indexed cell 1
+  EXPECT_FLOAT_EQ(min_cell.state, 1.0f);  // 1-indexed cell 1
   EXPECT_NEAR(delta.state, 0.007f, 0.001f);
 }
 
