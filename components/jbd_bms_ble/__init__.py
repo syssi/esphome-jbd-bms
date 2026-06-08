@@ -1,10 +1,9 @@
 import esphome.codegen as cg
 from esphome.components import ble_client
 import esphome.config_validation as cv
-from esphome.const import CONF_ID, CONF_PASSWORD
+from esphome.const import CONF_ID, CONF_PASSWORD, CONF_SERVICE_UUID
 
 CONF_AUTH_TIMEOUT = "auth_timeout"
-CONF_SERVICE_UUID = "service_uuid"
 CONF_NOTIFY_CHARACTERISTIC_UUID = "notify_characteristic_uuid"
 CONF_CONTROL_CHARACTERISTIC_UUID = "control_characteristic_uuid"
 
