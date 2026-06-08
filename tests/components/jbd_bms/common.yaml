@@ -1,0 +1,220 @@
+jbd_bms:
+  id: test_bms
+  uart_id: uart_bus
+  update_interval: 5s
+
+sensor:
+  - platform: jbd_bms
+    jbd_bms_id: test_bms
+    total_voltage:
+      name: Total Voltage
+    current:
+      name: Current
+    power:
+      name: Power
+    charging_power:
+      name: Charging Power
+    discharging_power:
+      name: Discharging Power
+    state_of_charge:
+      name: State of Charge
+    nominal_capacity:
+      name: Nominal Capacity
+    charging_cycles:
+      name: Charging Cycles
+    capacity_remaining:
+      name: Capacity Remaining
+    battery_cycle_capacity:
+      name: Battery Cycle Capacity
+    min_cell_voltage:
+      name: Min Cell Voltage
+    max_cell_voltage:
+      name: Max Cell Voltage
+    min_voltage_cell:
+      name: Min Voltage Cell
+    max_voltage_cell:
+      name: Max Voltage Cell
+    delta_cell_voltage:
+      name: Delta Cell Voltage
+    average_cell_voltage:
+      name: Average Cell Voltage
+    operation_status_bitmask:
+      name: Operation Status Bitmask
+    errors_bitmask:
+      name: Errors Bitmask
+    balancer_status_bitmask:
+      name: Balancer Status Bitmask
+    battery_strings:
+      name: Battery Strings
+    software_version:
+      name: Software Version
+    short_circuit_error_count:
+      name: Short Circuit Error Count
+    charge_overcurrent_error_count:
+      name: Charge Overcurrent Error Count
+    discharge_overcurrent_error_count:
+      name: Discharge Overcurrent Error Count
+    cell_overvoltage_error_count:
+      name: Cell Overvoltage Error Count
+    cell_undervoltage_error_count:
+      name: Cell Undervoltage Error Count
+    charge_overtemperature_error_count:
+      name: Charge Overtemperature Error Count
+    charge_undertemperature_error_count:
+      name: Charge Undertemperature Error Count
+    discharge_overtemperature_error_count:
+      name: Discharge Overtemperature Error Count
+    discharge_undertemperature_error_count:
+      name: Discharge Undertemperature Error Count
+    battery_overvoltage_error_count:
+      name: Battery Overvoltage Error Count
+    battery_undervoltage_error_count:
+      name: Battery Undervoltage Error Count
+    cell_voltage_1:
+      name: Cell Voltage 1
+    cell_voltage_2:
+      name: Cell Voltage 2
+    cell_voltage_3:
+      name: Cell Voltage 3
+    cell_voltage_4:
+      name: Cell Voltage 4
+    cell_voltage_5:
+      name: Cell Voltage 5
+    cell_voltage_6:
+      name: Cell Voltage 6
+    cell_voltage_7:
+      name: Cell Voltage 7
+    cell_voltage_8:
+      name: Cell Voltage 8
+    cell_voltage_9:
+      name: Cell Voltage 9
+    cell_voltage_10:
+      name: Cell Voltage 10
+    cell_voltage_11:
+      name: Cell Voltage 11
+    cell_voltage_12:
+      name: Cell Voltage 12
+    cell_voltage_13:
+      name: Cell Voltage 13
+    cell_voltage_14:
+      name: Cell Voltage 14
+    cell_voltage_15:
+      name: Cell Voltage 15
+    cell_voltage_16:
+      name: Cell Voltage 16
+    cell_voltage_17:
+      name: Cell Voltage 17
+    cell_voltage_18:
+      name: Cell Voltage 18
+    cell_voltage_19:
+      name: Cell Voltage 19
+    cell_voltage_20:
+      name: Cell Voltage 20
+    cell_voltage_21:
+      name: Cell Voltage 21
+    cell_voltage_22:
+      name: Cell Voltage 22
+    cell_voltage_23:
+      name: Cell Voltage 23
+    cell_voltage_24:
+      name: Cell Voltage 24
+    cell_voltage_25:
+      name: Cell Voltage 25
+    cell_voltage_26:
+      name: Cell Voltage 26
+    cell_voltage_27:
+      name: Cell Voltage 27
+    cell_voltage_28:
+      name: Cell Voltage 28
+    cell_voltage_29:
+      name: Cell Voltage 29
+    cell_voltage_30:
+      name: Cell Voltage 30
+    cell_voltage_31:
+      name: Cell Voltage 31
+    cell_voltage_32:
+      name: Cell Voltage 32
+    temperature_1:
+      name: Temperature 1
+    temperature_2:
+      name: Temperature 2
+    temperature_3:
+      name: Temperature 3
+    temperature_4:
+      name: Temperature 4
+    temperature_5:
+      name: Temperature 5
+    temperature_6:
+      name: Temperature 6
+
+binary_sensor:
+  - platform: jbd_bms
+    jbd_bms_id: test_bms
+    charging:
+      name: Charging
+    discharging:
+      name: Discharging
+    balancing:
+      name: Balancing
+    online_status:
+      name: Online Status
+    cell_overvoltage_protection:
+      name: Cell Overvoltage Protection
+    cell_undervoltage_protection:
+      name: Cell Undervoltage Protection
+    pack_overvoltage_protection:
+      name: Pack Overvoltage Protection
+    pack_undervoltage_protection:
+      name: Pack Undervoltage Protection
+    charge_overtemperature_protection:
+      name: Charge Overtemperature Protection
+    charge_undertemperature_protection:
+      name: Charge Undertemperature Protection
+    discharge_overtemperature_protection:
+      name: Discharge Overtemperature Protection
+    discharge_undertemperature_protection:
+      name: Discharge Undertemperature Protection
+    charge_overcurrent_protection:
+      name: Charge Overcurrent Protection
+    discharge_overcurrent_protection:
+      name: Discharge Overcurrent Protection
+    short_circuit_protection:
+      name: Short Circuit Protection
+    ic_frontend_error:
+      name: IC Frontend Error
+    mosfet_software_lock:
+      name: MOSFET Software Lock
+
+text_sensor:
+  - platform: jbd_bms
+    jbd_bms_id: test_bms
+    errors:
+      name: Errors
+    operation_status:
+      name: Operation Status
+    device_model:
+      name: Device Model
+    balancing_cells:
+      name: Balancing Cells
+
+switch:
+  - platform: jbd_bms
+    jbd_bms_id: test_bms
+    charging:
+      name: Charging Switch
+    discharging:
+      name: Discharging Switch
+
+button:
+  - platform: jbd_bms
+    jbd_bms_id: test_bms
+    retrieve_hardware_version:
+      name: Retrieve Hardware Version
+    retrieve_error_counts:
+      name: Retrieve Error Counts
+    force_soc_reset:
+      name: Force SOC Reset
+    automatic_balancing:
+      name: Automatic Balancing
+    clear_alarm:
+      name: Clear Alarm
