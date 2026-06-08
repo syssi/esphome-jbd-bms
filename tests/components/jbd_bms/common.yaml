@@ -70,8 +70,8 @@ sensor:
       name: Battery Overvoltage Error Count
     battery_undervoltage_error_count:
       name: Battery Undervoltage Error Count
-    this_sensor_does_not_exist:
-      name: Intentional Error To Prove CI Reads This File
+    battery_cycle_capacity:
+      name: Battery Cycle Capacity
     cell_voltage_1:
       name: Cell Voltage 1
     cell_voltage_2:
