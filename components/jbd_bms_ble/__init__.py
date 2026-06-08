@@ -4,6 +4,9 @@ import esphome.config_validation as cv
 from esphome.const import CONF_ID, CONF_PASSWORD
 
 CONF_AUTH_TIMEOUT = "auth_timeout"
+CONF_SERVICE_UUID = "service_uuid"
+CONF_NOTIFY_CHARACTERISTIC_UUID = "notify_characteristic_uuid"
+CONF_CONTROL_CHARACTERISTIC_UUID = "control_characteristic_uuid"
 
 CODEOWNERS = ["@syssi"]
 DEPENDENCIES = ["ble_client"]
@@ -49,6 +52,15 @@ CONFIG_SCHEMA = cv.All(
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(JbdBmsBle),
+            cv.Optional(CONF_SERVICE_UUID, default=0xFF00): cv.int_range(
+                min=0, max=0xFFFF
+            ),
+            cv.Optional(CONF_NOTIFY_CHARACTERISTIC_UUID, default=0xFF01): cv.int_range(
+                min=0, max=0xFFFF
+            ),
+            cv.Optional(CONF_CONTROL_CHARACTERISTIC_UUID, default=0xFF02): cv.int_range(
+                min=0, max=0xFFFF
+            ),
             cv.Optional(CONF_PASSWORD, default=""): cv.All(
                 cv.string_strict, validate_password
             ),
@@ -66,6 +78,12 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     await ble_client.register_ble_node(var, config)
+
+    cg.add(var.set_service_uuid(config[CONF_SERVICE_UUID]))
+    cg.add(var.set_notify_characteristic_uuid(config[CONF_NOTIFY_CHARACTERISTIC_UUID]))
+    cg.add(
+        var.set_control_characteristic_uuid(config[CONF_CONTROL_CHARACTERISTIC_UUID])
+    )
 
     if CONF_PASSWORD in config and config[CONF_PASSWORD]:
         cg.add(var.set_password(config[CONF_PASSWORD]))

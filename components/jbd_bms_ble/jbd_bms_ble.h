@@ -212,6 +212,9 @@ class JbdBmsBle :
   void set_balancing_cells_text_sensor(text_sensor::TextSensor *balancing_cells_text_sensor) {
     balancing_cells_text_sensor_ = balancing_cells_text_sensor;
   }
+  void set_service_uuid(uint16_t uuid) { service_uuid_ = uuid; }
+  void set_notify_characteristic_uuid(uint16_t uuid) { notify_char_uuid_ = uuid; }
+  void set_control_characteristic_uuid(uint16_t uuid) { control_char_uuid_ = uuid; }
   void set_password(const std::string &password) {
     password_ = password;
     enable_authentication_ = !password.empty();
@@ -301,6 +304,10 @@ class JbdBmsBle :
   // Cycle life
   // Production date
   // Version
+
+  uint16_t service_uuid_{0xFF00};
+  uint16_t notify_char_uuid_{0xFF01};
+  uint16_t control_char_uuid_{0xFF02};
 
   std::vector<uint8_t> frame_buffer_;
   std::string device_model_{};

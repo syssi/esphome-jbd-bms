@@ -15,10 +15,6 @@ static const char *const TAG = "jbd_bms_ble";
 
 static const uint8_t MAX_NO_RESPONSE_COUNT = 10;
 
-static const uint16_t JBD_BMS_SERVICE_UUID = 0xFF00;
-static const uint16_t JBD_BMS_NOTIFY_CHARACTERISTIC_UUID = 0xFF01;
-static const uint16_t JBD_BMS_CONTROL_CHARACTERISTIC_UUID = 0xFF02;
-
 static const uint16_t MAX_RESPONSE_SIZE = 41;
 
 static const uint8_t JBD_PKT_START = 0xDD;
@@ -114,7 +110,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       break;
     }
     case ESP_GATTC_SEARCH_CMPL_EVT: {
-      auto *char_notify = this->parent_->get_characteristic(JBD_BMS_SERVICE_UUID, JBD_BMS_NOTIFY_CHARACTERISTIC_UUID);
+      auto *char_notify = this->parent_->get_characteristic(this->service_uuid_, this->notify_char_uuid_);
       if (char_notify == nullptr) {
         ESP_LOGE(TAG, "[%s] No notify service found at device, not an JBD BMS..?",
                  ADDR_STR(this->parent_->address_str()));
@@ -128,7 +124,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
         ESP_LOGW(TAG, "esp_ble_gattc_register_for_notify failed, status=%d", status);
       }
 
-      auto *char_command = this->parent_->get_characteristic(JBD_BMS_SERVICE_UUID, JBD_BMS_CONTROL_CHARACTERISTIC_UUID);
+      auto *char_command = this->parent_->get_characteristic(this->service_uuid_, this->control_char_uuid_);
       if (char_command == nullptr) {
         ESP_LOGE(TAG, "[%s] No control service found at device, not an JBD BMS..?",
                  ADDR_STR(this->parent_->address_str()));
@@ -711,6 +707,9 @@ void JbdBmsBle::publish_device_unavailable_() {
 
 void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   ESP_LOGCONFIG(TAG, "JbdBmsBle:");
+  ESP_LOGCONFIG(TAG, "  Service UUID: 0x%04X", this->service_uuid_);
+  ESP_LOGCONFIG(TAG, "  Notify Characteristic UUID: 0x%04X", this->notify_char_uuid_);
+  ESP_LOGCONFIG(TAG, "  Control Characteristic UUID: 0x%04X", this->control_char_uuid_);
 
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
