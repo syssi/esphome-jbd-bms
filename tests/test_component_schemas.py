@@ -21,6 +21,11 @@ from components.jbd_bms_ble import (  # noqa: E402
     switch as ble_switch,  # noqa: E402
     text_sensor as ble_text_sensor,
 )
+from components.jbd_bms_up_pack import (  # noqa: E402
+    binary_sensor as up_pack_binary_sensor,
+    sensor as up_pack_sensor,
+    text_sensor as up_pack_text_sensor,
+)
 
 
 class TestHubConstants:
@@ -205,3 +210,89 @@ class TestButtonConstants:
             0x05,
             [],
         )
+
+
+class TestJbdBmsUpPackSensorLists:
+    def test_cells_count(self):
+        assert len(up_pack_sensor.CELLS) == 32
+
+    def test_temperatures_count(self):
+        assert len(up_pack_sensor.TEMPERATURES) == 6
+
+    def test_sensor_defs_count(self):
+        assert len(up_pack_sensor.SENSOR_DEFS) == 31
+
+    def test_sensor_defs_original_keys(self):
+        for key in [
+            "total_voltage",
+            "current",
+            "power",
+            "charging_power",
+            "discharging_power",
+            "state_of_charge",
+            "capacity_remaining",
+            "nominal_capacity",
+            "mosfet_temperature",
+            "ambient_temperature",
+            "state_of_health",
+            "operation_status_bitmask",
+            "errors_bitmask",
+            "protect_bitmask",
+            "charging_cycles",
+            "min_cell_voltage",
+            "max_cell_voltage",
+            "min_voltage_cell",
+            "max_voltage_cell",
+            "delta_cell_voltage",
+            "average_cell_voltage",
+            "battery_strings",
+        ]:
+            assert key in up_pack_sensor.SENSOR_DEFS, f"{key} missing from SENSOR_DEFS"
+
+    def test_sensor_defs_new_keys(self):
+        assert up_pack_sensor.CONF_RATED_CAPACITY in up_pack_sensor.SENSOR_DEFS
+        assert "max_temperature" in up_pack_sensor.SENSOR_DEFS
+        assert "min_temperature" in up_pack_sensor.SENSOR_DEFS
+        assert up_pack_sensor.CONF_AVERAGE_TEMPERATURE in up_pack_sensor.SENSOR_DEFS
+        assert up_pack_sensor.CONF_CHARGE_VOLTAGE_LIMIT in up_pack_sensor.SENSOR_DEFS
+        assert up_pack_sensor.CONF_CHARGE_CURRENT_LIMIT in up_pack_sensor.SENSOR_DEFS
+        assert up_pack_sensor.CONF_DISCHARGE_VOLTAGE_LIMIT in up_pack_sensor.SENSOR_DEFS
+        assert up_pack_sensor.CONF_DISCHARGE_CURRENT_LIMIT in up_pack_sensor.SENSOR_DEFS
+        assert up_pack_sensor.CONF_BALANCING_BITMASK in up_pack_sensor.SENSOR_DEFS
+
+    def test_no_cell_or_temperature_keys_in_sensor_defs(self):
+        for key in up_pack_sensor.SENSOR_DEFS:
+            assert key not in up_pack_sensor.CELLS
+            assert key not in up_pack_sensor.TEMPERATURES
+
+
+class TestJbdBmsUpPackBinarySensorDefs:
+    def test_binary_sensor_defs_count(self):
+        assert len(up_pack_binary_sensor.BINARY_SENSOR_DEFS) == 7
+
+    def test_binary_sensor_defs_keys(self):
+        for key in [
+            up_pack_binary_sensor.CONF_BALANCING,
+            up_pack_binary_sensor.CONF_CHARGING,
+            up_pack_binary_sensor.CONF_DISCHARGING,
+            up_pack_binary_sensor.CONF_PRECHARGING,
+            up_pack_binary_sensor.CONF_HEAT,
+            up_pack_binary_sensor.CONF_FAN,
+            up_pack_binary_sensor.CONF_ONLINE_STATUS,
+        ]:
+            assert key in up_pack_binary_sensor.BINARY_SENSOR_DEFS
+
+
+class TestJbdBmsUpPackTextSensorDefs:
+    def test_text_sensor_defs_count(self):
+        assert len(up_pack_text_sensor.TEXT_SENSOR_DEFS) == 5
+
+    def test_text_sensor_defs_keys(self):
+        for key in [
+            up_pack_text_sensor.CONF_FIRMWARE_VERSION,
+            up_pack_text_sensor.CONF_OPERATION_STATUS,
+            up_pack_text_sensor.CONF_ERRORS,
+            up_pack_text_sensor.CONF_PROTECT,
+            up_pack_text_sensor.CONF_DEVICE_MODEL,
+        ]:
+            assert key in up_pack_text_sensor.TEXT_SENSOR_DEFS
