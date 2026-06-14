@@ -24,6 +24,8 @@ def deprecated_renames(renames: dict[str, str]):
         return config
 
     return validator
+
+
 CONF_NOTIFY_CHARACTERISTIC_UUID = "notify_characteristic_uuid"
 CONF_CONTROL_CHARACTERISTIC_UUID = "control_characteristic_uuid"
 

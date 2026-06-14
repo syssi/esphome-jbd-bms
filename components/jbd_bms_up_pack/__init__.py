@@ -17,6 +17,7 @@ AUTO_LOAD = [
 CODEOWNERS = ["@syssi"]
 MULTI_CONF = True
 
+
 def deprecated_renames(renames: dict[str, str]):
     def validator(config):
         config = config.copy()

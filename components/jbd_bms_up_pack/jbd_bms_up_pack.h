@@ -75,9 +75,7 @@ class JbdBmsUpPack : public PollingComponent, public jbd_bms_up::JbdBmsUpDevice 
   void set_average_cell_voltage_sensor(sensor::Sensor *average_cell_voltage_sensor) {
     average_cell_voltage_sensor_ = average_cell_voltage_sensor;
   }
-  void set_cell_count_sensor(sensor::Sensor *cell_count_sensor) {
-    cell_count_sensor_ = cell_count_sensor;
-  }
+  void set_cell_count_sensor(sensor::Sensor *cell_count_sensor) { cell_count_sensor_ = cell_count_sensor; }
 
   void set_cell_voltage_sensor(uint8_t cell, sensor::Sensor *sensor) { cell_voltage_sensors_[cell] = sensor; }
   void set_temperature_sensor(uint8_t index, sensor::Sensor *sensor) { temperature_sensors_[index] = sensor; }

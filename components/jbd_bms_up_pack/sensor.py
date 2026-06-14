@@ -24,7 +24,11 @@ from esphome.const import (
     UNIT_WATT,
 )
 
-from . import CONF_JBD_BMS_UP_PACK_ID, JBD_BMS_UP_PACK_COMPONENT_SCHEMA, deprecated_renames
+from . import (
+    CONF_JBD_BMS_UP_PACK_ID,
+    JBD_BMS_UP_PACK_COMPONENT_SCHEMA,
+    deprecated_renames,
+)
 
 DEPENDENCIES = ["jbd_bms_up_pack"]
 

@@ -27,6 +27,7 @@ def deprecated_renames(renames: dict[str, str]):
 
     return validator
 
+
 DEPENDENCIES = ["uart"]
 AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
 MULTI_CONF = True
