@@ -205,22 +205,18 @@ void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
   for (uint8_t i = 0; i < temperature_sensor_publish_count; i++) {
     this->publish_state_(temperature_sensors_[i], (jbd_get_16bit(offset + 2 * i) - 500) * 0.1f);
   }
-  offset = offset + 2 * temperature_sensor_count;
+  offset = offset + 2 * temperature_sensor_count + 6;
 
-  if (data.size() >= offset + 6) {
-    uint16_t balance_status = jbd_get_16bit(offset + 2);
+  if (data.size() >= offset + 30) {
+    uint16_t balance_status = jbd_get_16bit(offset - 4);
     this->publish_state_(balancing_bitmask_sensor_, (float) balance_status);
     this->publish_state_(balancing_binary_sensor_, balance_status != 0);
-    uint16_t firmware_version_raw = jbd_get_16bit(offset + 4);
+    uint16_t firmware_version_raw = jbd_get_16bit(offset - 2);
     uint8_t version_major = firmware_version_raw >> 8;
     uint8_t version_minor = firmware_version_raw & 0xFF;
     char version_str[8];
     snprintf(version_str, sizeof(version_str), "%d.%d", version_major, version_minor);
     this->publish_state_(firmware_version_text_sensor_, std::string(version_str));
-  }
-  offset += 6;
-
-  if (data.size() >= offset + 30) {
     std::string model(data.begin() + offset, data.begin() + offset + 30);
     auto null_pos = model.find('\0');
     if (null_pos != std::string::npos) {
