@@ -6,6 +6,7 @@ namespace esphome::jbd_bms_up_pack::testing {
 
 using esphome::jbd_bms_up::testing::PACK_STATUS_FRAME;
 using esphome::jbd_bms_up::testing::PACK_STATUS_FRAME_ADDR2;
+using esphome::jbd_bms_up::testing::make_pack_status_balancing;
 using esphome::jbd_bms_up::testing::make_pack_status_charging;
 using esphome::jbd_bms_up::testing::make_pack_status_with_errors;
 
@@ -222,6 +223,122 @@ TEST(PackStatusTest, CellVoltages) {
   }
 }
 
+// ── Rated capacity ────────────────────────────────────────────────────────────
+
+TEST(PackStatusTest, RatedCapacity) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor rated;
+  pack.set_rated_capacity_sensor(&rated);
+  pack.on_pack_status_(PACK_STATUS_FRAME);
+  EXPECT_NEAR(rated.state, 100.00f, 0.01f);
+}
+
+TEST(PackStatusTest, Addr2RatedCapacity) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor rated;
+  pack.set_rated_capacity_sensor(&rated);
+  pack.on_pack_status_(PACK_STATUS_FRAME_ADDR2);
+  EXPECT_NEAR(rated.state, 100.00f, 0.01f);
+}
+
+// ── Temperature aggregates ────────────────────────────────────────────────────
+
+TEST(PackStatusTest, TemperatureAggregates) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor max_t, min_t, avg_t;
+  pack.set_max_temperature_sensor(&max_t);
+  pack.set_min_temperature_sensor(&min_t);
+  pack.set_average_temperature_sensor(&avg_t);
+  pack.on_pack_status_(PACK_STATUS_FRAME);
+  EXPECT_NEAR(max_t.state, 21.2f, 0.1f);
+  EXPECT_NEAR(min_t.state, 20.4f, 0.1f);
+  EXPECT_NEAR(avg_t.state, 20.8f, 0.1f);
+}
+
+TEST(PackStatusTest, Addr2TemperatureAggregates) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor max_t, min_t, avg_t;
+  pack.set_max_temperature_sensor(&max_t);
+  pack.set_min_temperature_sensor(&min_t);
+  pack.set_average_temperature_sensor(&avg_t);
+  pack.on_pack_status_(PACK_STATUS_FRAME_ADDR2);
+  EXPECT_NEAR(max_t.state, 22.0f, 0.1f);
+  EXPECT_NEAR(min_t.state, 21.3f, 0.1f);
+  EXPECT_NEAR(avg_t.state, 21.6f, 0.1f);
+}
+
+// ── Charge/discharge limits ───────────────────────────────────────────────────
+
+TEST(PackStatusTest, ChargeDischargeLimits) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor cvl, ccl, dvl, dcl;
+  pack.set_charge_voltage_limit_sensor(&cvl);
+  pack.set_charge_current_limit_sensor(&ccl);
+  pack.set_discharge_voltage_limit_sensor(&dvl);
+  pack.set_discharge_current_limit_sensor(&dcl);
+  pack.on_pack_status_(PACK_STATUS_FRAME);
+  EXPECT_NEAR(cvl.state, 58.4f, 0.1f);
+  EXPECT_NEAR(ccl.state, 200.0f, 0.1f);
+  EXPECT_NEAR(dvl.state, 44.8f, 0.1f);
+  EXPECT_NEAR(dcl.state, 200.0f, 0.1f);
+}
+
+TEST(PackStatusTest, Addr2ChargeDischargeLimits) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor cvl, ccl, dvl, dcl;
+  pack.set_charge_voltage_limit_sensor(&cvl);
+  pack.set_charge_current_limit_sensor(&ccl);
+  pack.set_discharge_voltage_limit_sensor(&dvl);
+  pack.set_discharge_current_limit_sensor(&dcl);
+  pack.on_pack_status_(PACK_STATUS_FRAME_ADDR2);
+  EXPECT_NEAR(cvl.state, 58.4f, 0.1f);
+  EXPECT_NEAR(ccl.state, 100.0f, 0.1f);
+  EXPECT_NEAR(dvl.state, 44.8f, 0.1f);
+  EXPECT_NEAR(dcl.state, 100.0f, 0.1f);
+}
+
+// ── Balancing ─────────────────────────────────────────────────────────────────
+
+TEST(PackStatusTest, BalancingNotActive) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor bitmask;
+  binary_sensor::BinarySensor active;
+  pack.set_balancing_bitmask_sensor(&bitmask);
+  pack.set_balancing_binary_sensor(&active);
+  pack.on_pack_status_(PACK_STATUS_FRAME);
+  EXPECT_FLOAT_EQ(bitmask.state, 0.0f);
+  EXPECT_FALSE(active.state);
+}
+
+TEST(PackStatusTest, BalancingActive) {
+  TestableJbdBmsUpPack pack;
+  sensor::Sensor bitmask;
+  binary_sensor::BinarySensor active;
+  pack.set_balancing_bitmask_sensor(&bitmask);
+  pack.set_balancing_binary_sensor(&active);
+  pack.on_pack_status_(make_pack_status_balancing());
+  EXPECT_FLOAT_EQ(bitmask.state, 3.0f);  // bits 0+1 → cells 1 and 2
+  EXPECT_TRUE(active.state);
+}
+
+// ── Firmware version ──────────────────────────────────────────────────────────
+
+TEST(PackStatusTest, FirmwareVersion) {
+  TestableJbdBmsUpPack pack;
+  text_sensor::TextSensor fw;
+  pack.set_firmware_version_text_sensor(&fw);
+  pack.on_pack_status_(PACK_STATUS_FRAME);
+  EXPECT_EQ(fw.state, "12.4");
+}
+
+TEST(PackStatusTest, Addr2FirmwareVersion) {
+  TestableJbdBmsUpPack pack;
+  text_sensor::TextSensor fw;
+  pack.set_firmware_version_text_sensor(&fw);
+  pack.on_pack_status_(PACK_STATUS_FRAME_ADDR2);
+  EXPECT_EQ(fw.state, "0.4");
+}
+
 // ── Device model ──────────────────────────────────────────────────────────────
 
 TEST(PackStatusTest, DeviceModel) {
@@ -296,6 +413,7 @@ TEST(PackStatusTest, NullSensorsDoNotCrash) {
   pack.on_pack_status_(PACK_STATUS_FRAME_ADDR2);
   pack.on_pack_status_(make_pack_status_charging());
   pack.on_pack_status_(make_pack_status_with_errors());
+  pack.on_pack_status_(make_pack_status_balancing());
 }
 
 TEST(PackStatusTest, ShortFrameDoesNotCrash) {

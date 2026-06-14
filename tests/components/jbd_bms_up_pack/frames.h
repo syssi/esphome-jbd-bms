@@ -165,4 +165,14 @@ static std::vector<uint8_t> make_pack_status_with_errors() {
   return f;
 }
 
+// ── Balancing variant ─────────────────────────────────────────────────────────
+// balance_status = 0x0003: bits 0+1 set → cells 1 and 2 balancing.
+// Offset 112 = (68 + 16*2) + 2 + 4*2 + 2 = 116 - 4 for the 16S/4T frame.
+static std::vector<uint8_t> make_pack_status_balancing() {
+  auto f = PACK_STATUS_FRAME;
+  f[112] = 0x00;
+  f[113] = 0x03;
+  return f;
+}
+
 }  // namespace esphome::jbd_bms_up::testing
