@@ -22,7 +22,7 @@ from esphome.const import (
     UNIT_WATT,
 )
 
-from . import CONF_JBD_BMS_ID, JBD_BMS_COMPONENT_SCHEMA
+from . import CONF_JBD_BMS_ID, JBD_BMS_COMPONENT_SCHEMA, deprecated_renames
 
 DEPENDENCIES = ["jbd_bms"]
 
@@ -46,7 +46,7 @@ CONF_AVERAGE_CELL_VOLTAGE = "average_cell_voltage"
 CONF_OPERATION_STATUS_BITMASK = "operation_status_bitmask"
 CONF_ERRORS_BITMASK = "errors_bitmask"
 CONF_BALANCER_STATUS_BITMASK = "balancer_status_bitmask"
-CONF_BATTERY_STRINGS = "battery_strings"
+CONF_CELL_COUNT = "cell_count"
 CONF_SOFTWARE_VERSION = "software_version"
 CONF_SHORT_CIRCUIT_ERROR_COUNT = "short_circuit_error_count"
 CONF_CHARGE_OVERCURRENT_ERROR_COUNT = "charge_overcurrent_error_count"
@@ -61,7 +61,7 @@ CONF_BATTERY_OVERVOLTAGE_ERROR_COUNT = "battery_overvoltage_error_count"
 CONF_BATTERY_UNDERVOLTAGE_ERROR_COUNT = "battery_undervoltage_error_count"
 
 ICON_CURRENT_DC = "mdi:current-dc"
-ICON_BATTERY_STRINGS = "mdi:car-battery"
+ICON_CELL_COUNT = "mdi:car-battery"
 ICON_CAPACITY_REMAINING = "mdi:battery-50"
 ICON_NOMINAL_CAPACITY = "mdi:battery-50"
 ICON_CHARGING_CYCLES = "mdi:battery-sync"
@@ -211,9 +211,9 @@ SENSOR_DEFS = {
         "state_class": STATE_CLASS_MEASUREMENT,
         "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
-    CONF_BATTERY_STRINGS: {
+    CONF_CELL_COUNT: {
         "unit_of_measurement": UNIT_EMPTY,
-        "icon": ICON_BATTERY_STRINGS,
+        "icon": ICON_CELL_COUNT,
         "accuracy_decimals": 0,
         "device_class": DEVICE_CLASS_EMPTY,
         "state_class": STATE_CLASS_MEASUREMENT,
@@ -328,7 +328,12 @@ _TEMPERATURE_SCHEMA = sensor.sensor_schema(
     state_class=STATE_CLASS_MEASUREMENT,
 )
 
-CONFIG_SCHEMA = (
+_RENAMED_SENSORS = {
+    "battery_strings": "cell_count",
+}
+
+CONFIG_SCHEMA = cv.All(
+    deprecated_renames(_RENAMED_SENSORS),
     JBD_BMS_COMPONENT_SCHEMA.extend(
         {
             cv.Optional(key): sensor.sensor_schema(**kwargs)
@@ -336,7 +341,7 @@ CONFIG_SCHEMA = (
         }
     )
     .extend({cv.Optional(key): _CELL_VOLTAGE_SCHEMA for key in CELLS})
-    .extend({cv.Optional(key): _TEMPERATURE_SCHEMA for key in TEMPERATURES})
+    .extend({cv.Optional(key): _TEMPERATURE_SCHEMA for key in TEMPERATURES}),
 )
 
 

@@ -1,3 +1,5 @@
+import logging
+
 from esphome import pins
 import esphome.codegen as cg
 from esphome.components import uart
@@ -5,11 +7,30 @@ import esphome.config_validation as cv
 from esphome.const import CONF_FLOW_CONTROL_PIN, CONF_ID
 from esphome.cpp_helpers import gpio_pin_expression
 
+_LOGGER = logging.getLogger(__name__)
+
 CODEOWNERS = ["@syssi"]
 
 DEPENDENCIES = ["uart"]
 AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
 MULTI_CONF = True
+
+
+def deprecated_renames(renames: dict[str, str]):
+    def validator(config):
+        config = config.copy()
+        for old, new in renames.items():
+            if old in config:
+                _LOGGER.warning(
+                    "'%s' is deprecated, use '%s' instead. Will be removed in a future release.",
+                    old,
+                    new,
+                )
+                config[new] = config.pop(old)
+        return config
+
+    return validator
+
 
 CONF_JBD_BMS_ID = "jbd_bms_id"
 CONF_RX_TIMEOUT = "rx_timeout"

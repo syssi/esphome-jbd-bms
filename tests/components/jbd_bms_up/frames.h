@@ -23,7 +23,7 @@ namespace esphome::jbd_bms_up::testing {
 //   max_voltage_cell:      3 (1-idx)  max_cell_voltage:      3.331 V
 //   min_voltage_cell:      8 (1-idx)  min_cell_voltage:      3.317 V
 //   avg_cell_voltage:      3.323 V    delta_cell_voltage:    0.014 V
-//   battery_strings:       16         temp[0..3]: 20.9, 20.4, 21.0, 21.2 °C
+//   cell_count:       16         temp[0..3]: 20.9, 20.4, 21.0, 21.2 °C
 //   device_model:          "JBD48100000"
 
 // clang-format off
@@ -89,7 +89,7 @@ static const std::vector<uint8_t> PACK_STATUS_FRAME(PACK_STATUS_RESPONSE.begin()
 //   max_voltage_cell:      4 (1-idx)  max_cell_voltage:      3.329 V
 //   min_voltage_cell:      1 (1-idx)  min_cell_voltage:      3.322 V
 //   avg_cell_voltage:      3.325 V    delta_cell_voltage:    0.007 V
-//   battery_strings:       16         temp[0..3]: 21.4, 21.3, 22.0, 21.8 °C
+//   cell_count:       16         temp[0..3]: 21.4, 21.3, 22.0, 21.8 °C
 //   device_model:          "JBD48100000"
 
 // clang-format off

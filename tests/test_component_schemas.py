@@ -245,7 +245,7 @@ class TestJbdBmsUpPackSensorLists:
             "max_voltage_cell",
             "delta_cell_voltage",
             "average_cell_voltage",
-            "battery_strings",
+            "cell_count",
         ]:
             assert key in up_pack_sensor.SENSOR_DEFS, f"{key} missing from SENSOR_DEFS"
 

@@ -145,9 +145,7 @@ class JbdBmsBle :
   void set_balancer_status_bitmask_sensor(sensor::Sensor *balancer_status_bitmask_sensor) {
     balancer_status_bitmask_sensor_ = balancer_status_bitmask_sensor;
   }
-  void set_battery_strings_sensor(sensor::Sensor *battery_strings_sensor) {
-    battery_strings_sensor_ = battery_strings_sensor;
-  }
+  void set_cell_count_sensor(sensor::Sensor *cell_count_sensor) { cell_count_sensor_ = cell_count_sensor; }
   void set_temperature_sensors_sensor(sensor::Sensor *temperature_sensors_sensor) {
     temperature_sensors_sensor_ = temperature_sensors_sensor;
   }
@@ -266,7 +264,7 @@ class JbdBmsBle :
   sensor::Sensor *operation_status_bitmask_sensor_{nullptr};
   sensor::Sensor *errors_bitmask_sensor_{nullptr};
   sensor::Sensor *balancer_status_bitmask_sensor_{nullptr};
-  sensor::Sensor *battery_strings_sensor_{nullptr};
+  sensor::Sensor *cell_count_sensor_{nullptr};
   sensor::Sensor *temperature_sensors_sensor_{nullptr};
   sensor::Sensor *software_version_sensor_{nullptr};
   sensor::Sensor *short_circuit_error_count_sensor_{nullptr};
