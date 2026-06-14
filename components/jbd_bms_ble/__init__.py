@@ -7,7 +7,10 @@ from esphome.const import CONF_ID, CONF_PASSWORD, CONF_SERVICE_UUID
 
 _LOGGER = logging.getLogger(__name__)
 
-CONF_AUTH_TIMEOUT = "auth_timeout"
+CODEOWNERS = ["@syssi"]
+DEPENDENCIES = ["ble_client"]
+AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
+MULTI_CONF = True
 
 
 def deprecated_renames(renames: dict[str, str]):
@@ -26,15 +29,10 @@ def deprecated_renames(renames: dict[str, str]):
     return validator
 
 
+CONF_JBD_BMS_BLE_ID = "jbd_bms_ble_id"
+CONF_AUTH_TIMEOUT = "auth_timeout"
 CONF_NOTIFY_CHARACTERISTIC_UUID = "notify_characteristic_uuid"
 CONF_CONTROL_CHARACTERISTIC_UUID = "control_characteristic_uuid"
-
-CODEOWNERS = ["@syssi"]
-DEPENDENCIES = ["ble_client"]
-AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
-MULTI_CONF = True
-
-CONF_JBD_BMS_BLE_ID = "jbd_bms_ble_id"
 
 jbd_bms_ble_ns = cg.esphome_ns.namespace("jbd_bms_ble")
 JbdBmsBle = jbd_bms_ble_ns.class_(

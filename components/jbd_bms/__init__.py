@@ -11,6 +11,10 @@ _LOGGER = logging.getLogger(__name__)
 
 CODEOWNERS = ["@syssi"]
 
+DEPENDENCIES = ["uart"]
+AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
+MULTI_CONF = True
+
 
 def deprecated_renames(renames: dict[str, str]):
     def validator(config):
@@ -27,10 +31,6 @@ def deprecated_renames(renames: dict[str, str]):
 
     return validator
 
-
-DEPENDENCIES = ["uart"]
-AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
-MULTI_CONF = True
 
 CONF_JBD_BMS_ID = "jbd_bms_id"
 CONF_RX_TIMEOUT = "rx_timeout"
