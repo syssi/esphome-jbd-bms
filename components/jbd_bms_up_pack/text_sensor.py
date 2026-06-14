@@ -9,12 +9,17 @@ DEPENDENCIES = ["jbd_bms_up_pack"]
 
 CODEOWNERS = ["@syssi"]
 
+CONF_FIRMWARE_VERSION = "firmware_version"
 CONF_OPERATION_STATUS = "operation_status"
 CONF_ERRORS = "errors"
 CONF_PROTECT = "protect"
 CONF_DEVICE_MODEL = "device_model"
 
 TEXT_SENSOR_DEFS = {
+    CONF_FIRMWARE_VERSION: {
+        "icon": "mdi:tag",
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+    },
     CONF_OPERATION_STATUS: {"icon": "mdi:heart-pulse"},
     CONF_ERRORS: {
         "icon": "mdi:alert-circle-outline",

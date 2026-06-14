@@ -110,6 +110,18 @@ class JbdBmsUpPack : public PollingComponent, public jbd_bms_up::JbdBmsUpDevice 
     device_model_text_sensor_ = device_model_text_sensor;
   }
 
+  void set_rated_capacity_sensor(sensor::Sensor *s) { rated_capacity_sensor_ = s; }
+  void set_max_temperature_sensor(sensor::Sensor *s) { max_temperature_sensor_ = s; }
+  void set_min_temperature_sensor(sensor::Sensor *s) { min_temperature_sensor_ = s; }
+  void set_average_temperature_sensor(sensor::Sensor *s) { average_temperature_sensor_ = s; }
+  void set_charge_voltage_limit_sensor(sensor::Sensor *s) { charge_voltage_limit_sensor_ = s; }
+  void set_charge_current_limit_sensor(sensor::Sensor *s) { charge_current_limit_sensor_ = s; }
+  void set_discharge_voltage_limit_sensor(sensor::Sensor *s) { discharge_voltage_limit_sensor_ = s; }
+  void set_discharge_current_limit_sensor(sensor::Sensor *s) { discharge_current_limit_sensor_ = s; }
+  void set_balancing_bitmask_sensor(sensor::Sensor *s) { balancing_bitmask_sensor_ = s; }
+  void set_balancing_binary_sensor(binary_sensor::BinarySensor *s) { balancing_binary_sensor_ = s; }
+  void set_firmware_version_text_sensor(text_sensor::TextSensor *s) { firmware_version_text_sensor_ = s; }
+
   void set_charging_switch(switch_::Switch *charging_switch) { charging_switch_ = charging_switch; }
   void set_discharging_switch(switch_::Switch *discharging_switch) { discharging_switch_ = discharging_switch; }
 
@@ -130,8 +142,12 @@ class JbdBmsUpPack : public PollingComponent, public jbd_bms_up::JbdBmsUpDevice 
   sensor::Sensor *state_of_charge_sensor_{nullptr};
   sensor::Sensor *capacity_remaining_sensor_{nullptr};
   sensor::Sensor *nominal_capacity_sensor_{nullptr};
+  sensor::Sensor *rated_capacity_sensor_{nullptr};
   sensor::Sensor *mosfet_temperature_sensor_{nullptr};
   sensor::Sensor *ambient_temperature_sensor_{nullptr};
+  sensor::Sensor *max_temperature_sensor_{nullptr};
+  sensor::Sensor *min_temperature_sensor_{nullptr};
+  sensor::Sensor *average_temperature_sensor_{nullptr};
   sensor::Sensor *state_of_health_sensor_{nullptr};
   sensor::Sensor *operation_status_bitmask_sensor_{nullptr};
   sensor::Sensor *errors_bitmask_sensor_{nullptr};
@@ -144,9 +160,15 @@ class JbdBmsUpPack : public PollingComponent, public jbd_bms_up::JbdBmsUpDevice 
   sensor::Sensor *delta_cell_voltage_sensor_{nullptr};
   sensor::Sensor *average_cell_voltage_sensor_{nullptr};
   sensor::Sensor *battery_strings_sensor_{nullptr};
+  sensor::Sensor *charge_voltage_limit_sensor_{nullptr};
+  sensor::Sensor *charge_current_limit_sensor_{nullptr};
+  sensor::Sensor *discharge_voltage_limit_sensor_{nullptr};
+  sensor::Sensor *discharge_current_limit_sensor_{nullptr};
+  sensor::Sensor *balancing_bitmask_sensor_{nullptr};
   sensor::Sensor *cell_voltage_sensors_[32]{};
   sensor::Sensor *temperature_sensors_[6]{};
 
+  binary_sensor::BinarySensor *balancing_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *charging_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *discharging_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *precharging_binary_sensor_{nullptr};
@@ -154,6 +176,7 @@ class JbdBmsUpPack : public PollingComponent, public jbd_bms_up::JbdBmsUpDevice 
   binary_sensor::BinarySensor *fan_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *online_status_binary_sensor_{nullptr};
 
+  text_sensor::TextSensor *firmware_version_text_sensor_{nullptr};
   text_sensor::TextSensor *operation_status_text_sensor_{nullptr};
   text_sensor::TextSensor *errors_text_sensor_{nullptr};
   text_sensor::TextSensor *protect_text_sensor_{nullptr};
