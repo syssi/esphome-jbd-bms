@@ -136,8 +136,6 @@ static const std::vector<uint8_t> PACK_STATUS_RESPONSE_ADDR2 = {
 static const std::vector<uint8_t> PACK_STATUS_FRAME_ADDR2(PACK_STATUS_RESPONSE_ADDR2.begin() + 8,
                                                           PACK_STATUS_RESPONSE_ADDR2.end() - 2);
 
-#endif  // JBD_BMS_PACK_STATUS_FRAMES_DEFINED
-
 // ── Charging variant ──────────────────────────────────────────────────────────
 // current = +50.00A → val = 305000 = 0x0004A768
 // operation_status = 1 (Charging), MOSFET = 0x0002 (CHG only)
@@ -164,5 +162,7 @@ static std::vector<uint8_t> make_pack_status_with_errors() {
   f[31] = 0x01;  // errors low word  = 0x0001 (bit0  = cell overvoltage)
   return f;
 }
+
+#endif  // JBD_BMS_PACK_STATUS_FRAMES_DEFINED
 
 }  // namespace esphome::jbd_bms_up::testing

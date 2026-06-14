@@ -121,6 +121,7 @@ void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
   this->publish_state_(state_of_charge_sensor_, jbd_get_16bit(8) * 0.01f);
   this->publish_state_(capacity_remaining_sensor_, jbd_get_16bit(10) * 0.01f);
   this->publish_state_(nominal_capacity_sensor_, jbd_get_16bit(12) * 0.01f);
+  this->publish_state_(rated_capacity_sensor_, jbd_get_16bit(14) * 0.01f);
 
   this->publish_state_(mosfet_temperature_sensor_, (jbd_get_16bit(16) - 500) * 0.1f);
   this->publish_state_(ambient_temperature_sensor_, (jbd_get_16bit(18) - 500) * 0.1f);
@@ -155,8 +156,10 @@ void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
   // Byte layout verified against UP16S020 raw capture (FC=0x78, reg=0x1000):
   // [38-39] max_voltage_cell index (1-based), [40-41] max_cell_voltage mV
   // [42-43] min_voltage_cell index, [44-45] min_cell_voltage mV
-  // [46-47] average_cell_voltage mV, [48-65] reserved (18 bytes)
-  // [66-67] cell count, [68+] cell voltage array
+  // [46-47] average_cell_voltage mV, [48-49] max_temp_sensor index
+  // [50-51] max_temperature, [52-53] min_temp_sensor index, [54-55] min_temperature
+  // [56-57] average_temperature, [58-59] CVL V/10, [60-61] CCL A/10
+  // [62-63] DVL V/10, [64-65] DCL A/10, [66-67] cell count, [68+] cell voltage array
   this->publish_state_(max_voltage_cell_sensor_, (float) jbd_get_16bit(38));
   float max_cell_v = jbd_get_16bit(40) * 0.001f;
   this->publish_state_(max_cell_voltage_sensor_, max_cell_v);
@@ -165,6 +168,14 @@ void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
   this->publish_state_(min_cell_voltage_sensor_, min_cell_v);
   this->publish_state_(average_cell_voltage_sensor_, jbd_get_16bit(46) * 0.001f);
   this->publish_state_(delta_cell_voltage_sensor_, max_cell_v - min_cell_v);
+
+  this->publish_state_(max_temperature_sensor_, (jbd_get_16bit(50) - 500) * 0.1f);
+  this->publish_state_(min_temperature_sensor_, (jbd_get_16bit(54) - 500) * 0.1f);
+  this->publish_state_(average_temperature_sensor_, (jbd_get_16bit(56) - 500) * 0.1f);
+  this->publish_state_(charge_voltage_limit_sensor_, jbd_get_16bit(58) * 0.1f);
+  this->publish_state_(charge_current_limit_sensor_, jbd_get_16bit(60) * 0.1f);
+  this->publish_state_(discharge_voltage_limit_sensor_, jbd_get_16bit(62) * 0.1f);
+  this->publish_state_(discharge_current_limit_sensor_, jbd_get_16bit(64) * 0.1f);
 
   if (data.size() < 68) {
     return;
@@ -197,6 +208,15 @@ void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
   offset = offset + 2 * temperature_sensor_count + 6;
 
   if (data.size() >= offset + 30) {
+    uint16_t balance_status = jbd_get_16bit(offset - 4);
+    this->publish_state_(balancing_bitmask_sensor_, (float) balance_status);
+    this->publish_state_(balancing_binary_sensor_, balance_status != 0);
+    uint16_t firmware_version_raw = jbd_get_16bit(offset - 2);
+    uint8_t version_major = firmware_version_raw >> 8;
+    uint8_t version_minor = firmware_version_raw & 0xFF;
+    char version_str[8];
+    snprintf(version_str, sizeof(version_str), "%d.%d", version_major, version_minor);
+    this->publish_state_(firmware_version_text_sensor_, std::string(version_str));
     std::string model(data.begin() + offset, data.begin() + offset + 30);
     auto null_pos = model.find('\0');
     if (null_pos != std::string::npos) {
@@ -233,8 +253,12 @@ void JbdBmsUpPack::dump_config() {
   LOG_SENSOR("", "State of Charge", this->state_of_charge_sensor_);
   LOG_SENSOR("", "Capacity Remaining", this->capacity_remaining_sensor_);
   LOG_SENSOR("", "Nominal Capacity", this->nominal_capacity_sensor_);
+  LOG_SENSOR("", "Rated Capacity", this->rated_capacity_sensor_);
   LOG_SENSOR("", "Mosfet Temperature", this->mosfet_temperature_sensor_);
   LOG_SENSOR("", "Ambient Temperature", this->ambient_temperature_sensor_);
+  LOG_SENSOR("", "Max Temperature", this->max_temperature_sensor_);
+  LOG_SENSOR("", "Min Temperature", this->min_temperature_sensor_);
+  LOG_SENSOR("", "Average Temperature", this->average_temperature_sensor_);
   LOG_SENSOR("", "State of Health", this->state_of_health_sensor_);
   LOG_SENSOR("", "Operation Status Bitmask", this->operation_status_bitmask_sensor_);
   LOG_SENSOR("", "Errors Bitmask", this->errors_bitmask_sensor_);
@@ -247,12 +271,19 @@ void JbdBmsUpPack::dump_config() {
   LOG_SENSOR("", "Delta Cell Voltage", this->delta_cell_voltage_sensor_);
   LOG_SENSOR("", "Average Cell Voltage", this->average_cell_voltage_sensor_);
   LOG_SENSOR("", "Battery Strings", this->battery_strings_sensor_);
+  LOG_SENSOR("", "Charge Voltage Limit", this->charge_voltage_limit_sensor_);
+  LOG_SENSOR("", "Charge Current Limit", this->charge_current_limit_sensor_);
+  LOG_SENSOR("", "Discharge Voltage Limit", this->discharge_voltage_limit_sensor_);
+  LOG_SENSOR("", "Discharge Current Limit", this->discharge_current_limit_sensor_);
+  LOG_SENSOR("", "Balancing Bitmask", this->balancing_bitmask_sensor_);
+  LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Discharging", this->discharging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Precharging", this->precharging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Heat", this->heat_binary_sensor_);
   LOG_BINARY_SENSOR("", "Fan", this->fan_binary_sensor_);
   LOG_BINARY_SENSOR("", "Online Status", this->online_status_binary_sensor_);
+  LOG_TEXT_SENSOR("", "Firmware Version", this->firmware_version_text_sensor_);
   LOG_TEXT_SENSOR("", "Operation Status", this->operation_status_text_sensor_);
   LOG_TEXT_SENSOR("", "Errors", this->errors_text_sensor_);
   LOG_TEXT_SENSOR("", "Protect", this->protect_text_sensor_);

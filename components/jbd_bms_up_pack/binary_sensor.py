@@ -9,6 +9,7 @@ DEPENDENCIES = ["jbd_bms_up_pack"]
 
 CODEOWNERS = ["@syssi"]
 
+CONF_BALANCING = "balancing"
 CONF_CHARGING = "charging"
 CONF_DISCHARGING = "discharging"
 CONF_PRECHARGING = "precharging"
@@ -16,6 +17,7 @@ CONF_HEAT = "heat"
 CONF_FAN = "fan"
 CONF_ONLINE_STATUS = "online_status"
 
+ICON_BALANCING = "mdi:seesaw"
 ICON_CHARGING = "mdi:battery-charging"
 ICON_DISCHARGING = "mdi:power-plug"
 ICON_PRECHARGING = "mdi:battery-charging-10"
@@ -23,6 +25,7 @@ ICON_HEAT = "mdi:radiator"
 ICON_FAN = "mdi:fan"
 
 BINARY_SENSOR_DEFS = {
+    CONF_BALANCING: {"icon": ICON_BALANCING},
     CONF_CHARGING: {"icon": ICON_CHARGING},
     CONF_DISCHARGING: {"icon": ICON_DISCHARGING},
     CONF_PRECHARGING: {"icon": ICON_PRECHARGING},
