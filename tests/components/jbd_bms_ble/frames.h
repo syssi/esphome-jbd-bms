@@ -11,7 +11,7 @@ namespace esphome::jbd_bms_ble::testing {
 //   charging_cycles: 0             soc: 100 %
 //   balancer_status_bitmask: 0     errors_bitmask: 0
 //   software_version: 8.0          operation_status: 0x03 → "Charging, Discharging"
-//   battery_strings: 4             temperature_sensors: 3
+//   cell_count: 4             temperature_sensors: 3
 //   temperatures[0]: 22.4°C  [1]: 22.3°C  [2]: 21.7°C
 static const std::vector<uint8_t> HWINFO_FRAME = {
     0x06, 0x18, 0x00, 0x00, 0x01, 0xF2, 0x01, 0xF4, 0x00, 0x00, 0x2C, 0x7C, 0x00, 0x00, 0x00,
@@ -53,7 +53,7 @@ static const std::vector<uint8_t> ERRCOUNT_FRAME = {
 //   charging_cycles: 8             soc: 100 %
 //   balancer_status_bitmask: 0     errors_bitmask: 0x0001 → cell_overvoltage_protection
 //   software_version: 8.0          operation_status: 0x02 → "Discharging"
-//   battery_strings: 4             temperature_sensors: 3
+//   cell_count: 4             temperature_sensors: 3
 //   temperatures[0]: 21.5°C  [1]: 20.9°C  [2]: 20.4°C
 static const std::vector<uint8_t> HWINFO_FRAME_CELL_OVERVOLTAGE = {
     0x05, 0x94, 0x00, 0x00, 0x6D, 0x60, 0x6D, 0x60, 0x00, 0x08, 0x2C, 0x7C, 0x00, 0x00, 0x00,
@@ -74,7 +74,7 @@ static const std::vector<uint8_t> HWINFO_FRAME_ALL_PROTECTIONS = {
 //   charging_cycles: 0             soc: 99 %
 //   balancer_status_bitmask: 0     errors_bitmask: 0x1000 → mosfet_software_lock
 //   software_version: 8.0          operation_status: 0x02 → "Discharging"
-//   battery_strings: 4             temperature_sensors: 3
+//   cell_count: 4             temperature_sensors: 3
 //   temperatures[0]: 24.5°C  [1]: 24.2°C  [2]: 23.7°C
 static const std::vector<uint8_t> HWINFO_FRAME_MOSFET_SOFTWARE_LOCK = {
     0x06, 0x0B, 0x00, 0x00, 0x01, 0xED, 0x01, 0xF4, 0x00, 0x00, 0x2C, 0x7C, 0x00, 0x00, 0x00,
@@ -82,7 +82,7 @@ static const std::vector<uint8_t> HWINFO_FRAME_MOSFET_SOFTWARE_LOCK = {
 };
 
 // Synthetic frame: cells 1 and 3 balancing (4S pack). Decoded key values:
-//   battery_strings: 4
+//   cell_count: 4
 //   balancer_status_bitmask: 0x0000000A → bit3=cell1, bit1=cell3
 //   errors_bitmask: 0
 static const std::vector<uint8_t> HWINFO_FRAME_BALANCING_CELLS_1_3 = {

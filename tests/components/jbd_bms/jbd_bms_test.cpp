@@ -79,7 +79,7 @@ TEST(JbdBmsHwInfoTest, SoftwareVersion) {
 TEST(JbdBmsHwInfoTest, BatteryStringsAndTempSensors) {
   TestableJbdBms bms;
   sensor::Sensor strings, temp_sensors;
-  bms.set_battery_strings_sensor(&strings);
+  bms.set_cell_count_sensor(&strings);
   bms.set_temperature_sensors_sensor(&temp_sensors);
 
   bms.on_jbd_bms_data(0x03, HWINFO_FRAME);

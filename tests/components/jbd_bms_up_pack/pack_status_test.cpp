@@ -199,7 +199,7 @@ TEST(PackStatusTest, CellVoltageStats) {
 TEST(PackStatusTest, BatteryStrings) {
   TestableJbdBmsUpPack pack;
   sensor::Sensor strings;
-  pack.set_battery_strings_sensor(&strings);
+  pack.set_cell_count_sensor(&strings);
   pack.on_pack_status_(PACK_STATUS_FRAME);
   EXPECT_FLOAT_EQ(strings.state, 16.0f);
 }
