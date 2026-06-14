@@ -211,10 +211,12 @@ void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
     uint16_t balance_status = jbd_get_16bit(offset + 2);
     this->publish_state_(balancing_bitmask_sensor_, (float) balance_status);
     this->publish_state_(balancing_binary_sensor_, balance_status != 0);
-    uint16_t fw = jbd_get_16bit(offset + 4);
-    char fw_str[8];
-    snprintf(fw_str, sizeof(fw_str), "%d.%d", fw >> 8, fw & 0xFF);
-    this->publish_state_(firmware_version_text_sensor_, std::string(fw_str));
+    uint16_t firmware_version_raw = jbd_get_16bit(offset + 4);
+    uint8_t version_major = firmware_version_raw >> 8;
+    uint8_t version_minor = firmware_version_raw & 0xFF;
+    char version_str[8];
+    snprintf(version_str, sizeof(version_str), "%d.%d", version_major, version_minor);
+    this->publish_state_(firmware_version_text_sensor_, std::string(version_str));
   }
   offset += 6;
 
