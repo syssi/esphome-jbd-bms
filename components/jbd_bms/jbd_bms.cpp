@@ -365,7 +365,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->discharging_switch_, operation_status & JBD_MOS_DISCHARGE);
 
   // 21    2   0x04                   Cell count
-  this->publish_state_(this->battery_strings_sensor_, data[21]);
+  this->publish_state_(this->cell_count_sensor_, data[21]);
 
   // 22    3   0x03                   Temperature sensors
   // 23    2   0x0B 0x8D              Temperature 1
@@ -430,7 +430,7 @@ void JbdBms::publish_device_unavailable_() {
   this->publish_state_(operation_status_bitmask_sensor_, NAN);
   this->publish_state_(errors_bitmask_sensor_, NAN);
   this->publish_state_(balancer_status_bitmask_sensor_, NAN);
-  this->publish_state_(battery_strings_sensor_, NAN);
+  this->publish_state_(cell_count_sensor_, NAN);
   this->publish_state_(temperature_sensors_sensor_, NAN);
   this->publish_state_(software_version_sensor_, NAN);
 
@@ -469,7 +469,7 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   LOG_BINARY_SENSOR("", "Mosfet Software Lock", this->mosfet_software_lock_binary_sensor_);
 
   LOG_SENSOR("", "Total voltage", this->total_voltage_sensor_);
-  LOG_SENSOR("", "Battery strings", this->battery_strings_sensor_);
+  LOG_SENSOR("", "Cell count", this->cell_count_sensor_);
   LOG_SENSOR("", "Software version", this->software_version_sensor_);
   LOG_SENSOR("", "Current", this->current_sensor_);
   LOG_SENSOR("", "Power", this->power_sensor_);

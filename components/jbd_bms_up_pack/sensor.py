@@ -24,7 +24,7 @@ from esphome.const import (
     UNIT_WATT,
 )
 
-from . import CONF_JBD_BMS_UP_PACK_ID, JBD_BMS_UP_PACK_COMPONENT_SCHEMA
+from . import CONF_JBD_BMS_UP_PACK_ID, JBD_BMS_UP_PACK_COMPONENT_SCHEMA, deprecated_renames
 
 DEPENDENCIES = ["jbd_bms_up_pack"]
 
@@ -51,7 +51,7 @@ CONF_MIN_VOLTAGE_CELL = "min_voltage_cell"
 CONF_MAX_VOLTAGE_CELL = "max_voltage_cell"
 CONF_DELTA_CELL_VOLTAGE = "delta_cell_voltage"
 CONF_AVERAGE_CELL_VOLTAGE = "average_cell_voltage"
-CONF_BATTERY_STRINGS = "battery_strings"
+CONF_CELL_COUNT = "cell_count"
 CONF_CHARGE_VOLTAGE_LIMIT = "charge_voltage_limit"
 CONF_CHARGE_CURRENT_LIMIT = "charge_current_limit"
 CONF_DISCHARGE_VOLTAGE_LIMIT = "discharge_voltage_limit"
@@ -69,7 +69,7 @@ ICON_MAX_VOLTAGE_CELL = "mdi:battery-plus-outline"
 ICON_OPERATION_STATUS_BITMASK = "mdi:heart-pulse"
 ICON_ERRORS_BITMASK = "mdi:alert-circle-outline"
 ICON_PROTECT_BITMASK = "mdi:shield-alert-outline"
-ICON_BATTERY_STRINGS = "mdi:car-battery"
+ICON_CELL_COUNT = "mdi:car-battery"
 ICON_BALANCING_BITMASK = "mdi:seesaw"
 
 UNIT_AMPERE_HOURS = "Ah"
@@ -256,9 +256,9 @@ SENSOR_DEFS = {
         "device_class": DEVICE_CLASS_VOLTAGE,
         "state_class": STATE_CLASS_MEASUREMENT,
     },
-    CONF_BATTERY_STRINGS: {
+    CONF_CELL_COUNT: {
         "unit_of_measurement": UNIT_EMPTY,
-        "icon": ICON_BATTERY_STRINGS,
+        "icon": ICON_CELL_COUNT,
         "accuracy_decimals": 0,
         "device_class": DEVICE_CLASS_EMPTY,
         "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
@@ -306,7 +306,12 @@ SENSOR_DEFS = {
     },
 }
 
-CONFIG_SCHEMA = (
+_RENAMED_SENSORS = {
+    "battery_strings": "cell_count",
+}
+
+CONFIG_SCHEMA = cv.All(
+    deprecated_renames(_RENAMED_SENSORS),
     JBD_BMS_UP_PACK_COMPONENT_SCHEMA.extend(
         {
             cv.Optional(key): sensor.sensor_schema(**kwargs)
@@ -336,7 +341,7 @@ CONFIG_SCHEMA = (
             )
             for temp in TEMPERATURES
         }
-    )
+    ),
 )
 
 

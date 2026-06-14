@@ -127,7 +127,7 @@ sensor:
       name: "${name} delta cell voltage"
     average_cell_voltage:
       name: "${name} average cell voltage"
-    battery_strings:
+    cell_count:
       name: "${name} battery strings"
     operation_status_bitmask:
       name: "${name} operation status bitmask"

@@ -182,7 +182,7 @@ void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
   }
 
   uint16_t cell_count = jbd_get_16bit(66);
-  this->publish_state_(battery_strings_sensor_, (float) cell_count);
+  this->publish_state_(cell_count_sensor_, (float) cell_count);
 
   size_t offset = 68;
   uint8_t cell_sensor_count = std::min((uint16_t) 32, cell_count);
@@ -270,7 +270,7 @@ void JbdBmsUpPack::dump_config() {
   LOG_SENSOR("", "Max Voltage Cell", this->max_voltage_cell_sensor_);
   LOG_SENSOR("", "Delta Cell Voltage", this->delta_cell_voltage_sensor_);
   LOG_SENSOR("", "Average Cell Voltage", this->average_cell_voltage_sensor_);
-  LOG_SENSOR("", "Battery Strings", this->battery_strings_sensor_);
+  LOG_SENSOR("", "Cell count", this->cell_count_sensor_);
   LOG_SENSOR("", "Charge Voltage Limit", this->charge_voltage_limit_sensor_);
   LOG_SENSOR("", "Charge Current Limit", this->charge_current_limit_sensor_);
   LOG_SENSOR("", "Discharge Voltage Limit", this->discharge_voltage_limit_sensor_);

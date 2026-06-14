@@ -133,7 +133,7 @@ binary_sensor:
 sensor:
   - platform: jbd_bms
     jbd_bms_id: bms0
-    battery_strings:
+    cell_count:
       name: "battery strings"
     current:
       name: "current"

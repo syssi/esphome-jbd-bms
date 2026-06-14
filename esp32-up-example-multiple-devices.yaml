@@ -162,7 +162,7 @@ sensor:
     average_cell_voltage:
       name: "${bms0} average cell voltage"
       device_id: device0
-    battery_strings:
+    cell_count:
       name: "${bms0} battery strings"
       device_id: device0
     operation_status_bitmask:
@@ -344,7 +344,7 @@ sensor:
     average_cell_voltage:
       name: "${bms1} average cell voltage"
       device_id: device1
-    battery_strings:
+    cell_count:
       name: "${bms1} battery strings"
       device_id: device1
     operation_status_bitmask:
