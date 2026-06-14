@@ -3,6 +3,8 @@ from esphome.components import sensor
 import esphome.config_validation as cv
 from esphome.const import (
     CONF_CURRENT,
+    CONF_MAX_TEMPERATURE,
+    CONF_MIN_TEMPERATURE,
     CONF_POWER,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_CURRENT,
@@ -37,8 +39,6 @@ CONF_NOMINAL_CAPACITY = "nominal_capacity"
 CONF_RATED_CAPACITY = "rated_capacity"
 CONF_MOSFET_TEMPERATURE = "mosfet_temperature"
 CONF_AMBIENT_TEMPERATURE = "ambient_temperature"
-CONF_MAX_TEMPERATURE = "max_temperature"
-CONF_MIN_TEMPERATURE = "min_temperature"
 CONF_AVERAGE_TEMPERATURE = "average_temperature"
 CONF_STATE_OF_HEALTH = "state_of_health"
 CONF_OPERATION_STATUS_BITMASK = "operation_status_bitmask"
