@@ -110,17 +110,39 @@ class JbdBmsUpPack : public PollingComponent, public jbd_bms_up::JbdBmsUpDevice 
     device_model_text_sensor_ = device_model_text_sensor;
   }
 
-  void set_rated_capacity_sensor(sensor::Sensor *s) { rated_capacity_sensor_ = s; }
-  void set_max_temperature_sensor(sensor::Sensor *s) { max_temperature_sensor_ = s; }
-  void set_min_temperature_sensor(sensor::Sensor *s) { min_temperature_sensor_ = s; }
-  void set_average_temperature_sensor(sensor::Sensor *s) { average_temperature_sensor_ = s; }
-  void set_charge_voltage_limit_sensor(sensor::Sensor *s) { charge_voltage_limit_sensor_ = s; }
-  void set_charge_current_limit_sensor(sensor::Sensor *s) { charge_current_limit_sensor_ = s; }
-  void set_discharge_voltage_limit_sensor(sensor::Sensor *s) { discharge_voltage_limit_sensor_ = s; }
-  void set_discharge_current_limit_sensor(sensor::Sensor *s) { discharge_current_limit_sensor_ = s; }
-  void set_balancing_bitmask_sensor(sensor::Sensor *s) { balancing_bitmask_sensor_ = s; }
-  void set_balancing_binary_sensor(binary_sensor::BinarySensor *s) { balancing_binary_sensor_ = s; }
-  void set_firmware_version_text_sensor(text_sensor::TextSensor *s) { firmware_version_text_sensor_ = s; }
+  void set_rated_capacity_sensor(sensor::Sensor *rated_capacity_sensor) {
+    rated_capacity_sensor_ = rated_capacity_sensor;
+  }
+  void set_max_temperature_sensor(sensor::Sensor *max_temperature_sensor) {
+    max_temperature_sensor_ = max_temperature_sensor;
+  }
+  void set_min_temperature_sensor(sensor::Sensor *min_temperature_sensor) {
+    min_temperature_sensor_ = min_temperature_sensor;
+  }
+  void set_average_temperature_sensor(sensor::Sensor *average_temperature_sensor) {
+    average_temperature_sensor_ = average_temperature_sensor;
+  }
+  void set_charge_voltage_limit_sensor(sensor::Sensor *charge_voltage_limit_sensor) {
+    charge_voltage_limit_sensor_ = charge_voltage_limit_sensor;
+  }
+  void set_charge_current_limit_sensor(sensor::Sensor *charge_current_limit_sensor) {
+    charge_current_limit_sensor_ = charge_current_limit_sensor;
+  }
+  void set_discharge_voltage_limit_sensor(sensor::Sensor *discharge_voltage_limit_sensor) {
+    discharge_voltage_limit_sensor_ = discharge_voltage_limit_sensor;
+  }
+  void set_discharge_current_limit_sensor(sensor::Sensor *discharge_current_limit_sensor) {
+    discharge_current_limit_sensor_ = discharge_current_limit_sensor;
+  }
+  void set_balancing_bitmask_sensor(sensor::Sensor *balancing_bitmask_sensor) {
+    balancing_bitmask_sensor_ = balancing_bitmask_sensor;
+  }
+  void set_balancing_binary_sensor(binary_sensor::BinarySensor *balancing_binary_sensor) {
+    balancing_binary_sensor_ = balancing_binary_sensor;
+  }
+  void set_firmware_version_text_sensor(text_sensor::TextSensor *firmware_version_text_sensor) {
+    firmware_version_text_sensor_ = firmware_version_text_sensor;
+  }
 
   void set_charging_switch(switch_::Switch *charging_switch) { charging_switch_ = charging_switch; }
   void set_discharging_switch(switch_::Switch *discharging_switch) { discharging_switch_ = discharging_switch; }
