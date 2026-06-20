@@ -442,9 +442,11 @@ void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8
       break;
     case JBD_CMD_CELLINFO:
       this->on_cell_info_data_(data);
+      this->send_command(JBD_CMD_READ, JBD_CMD_HWVER);
       break;
     case JBD_CMD_HWVER:
       this->on_hardware_version_data_(data);
+      this->send_command(JBD_CMD_READ, JBD_CMD_ERROR_COUNTS);
       break;
     case JBD_CMD_ERROR_COUNTS:
       this->on_error_counts_data_(data);

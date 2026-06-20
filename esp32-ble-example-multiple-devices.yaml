@@ -220,41 +220,237 @@ binary_sensor:
 sensor:
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms0
+    total_voltage:
+      name: "total voltage"
+      device_id: device0
+    current:
+      name: "current"
+      device_id: device0
     power:
       name: "power"
+      device_id: device0
+    charging_power:
+      name: "charging power"
+      device_id: device0
+    discharging_power:
+      name: "discharging power"
       device_id: device0
     state_of_charge:
       name: "state of charge"
       device_id: device0
-    total_voltage:
-      name: "total voltage"
+    nominal_capacity:
+      name: "nominal capacity"
       device_id: device0
-    average_cell_voltage:
-      name: "average cell voltage"
+    capacity_remaining:
+      name: "capacity remaining"
+      device_id: device0
+    charging_cycles:
+      name: "charging cycles"
+      device_id: device0
+    min_cell_voltage:
+      name: "min cell voltage"
+      device_id: device0
+    max_cell_voltage:
+      name: "max cell voltage"
+      device_id: device0
+    min_voltage_cell:
+      name: "min voltage cell"
+      device_id: device0
+    max_voltage_cell:
+      name: "max voltage cell"
       device_id: device0
     delta_cell_voltage:
       name: "delta cell voltage"
       device_id: device0
-    # ...
+    average_cell_voltage:
+      name: "average cell voltage"
+      device_id: device0
+    cell_count:
+      name: "cell count"
+      device_id: device0
+    software_version:
+      name: "software version"
+      device_id: device0
+    operation_status_bitmask:
+      name: "operation status bitmask"
+      device_id: device0
+    errors_bitmask:
+      name: "errors bitmask"
+      device_id: device0
+    balancer_status_bitmask:
+      name: "balancer status bitmask"
+      device_id: device0
+    short_circuit_error_count:
+      name: "short circuit error count"
+      device_id: device0
+    charge_overcurrent_error_count:
+      name: "charge overcurrent error count"
+      device_id: device0
+    discharge_overcurrent_error_count:
+      name: "discharge overcurrent error count"
+      device_id: device0
+    cell_overvoltage_error_count:
+      name: "cell overvoltage error count"
+      device_id: device0
+    cell_undervoltage_error_count:
+      name: "cell undervoltage error count"
+      device_id: device0
+    charge_overtemperature_error_count:
+      name: "charge overtemperature error count"
+      device_id: device0
+    charge_undertemperature_error_count:
+      name: "charge undertemperature error count"
+      device_id: device0
+    discharge_overtemperature_error_count:
+      name: "discharge overtemperature error count"
+      device_id: device0
+    discharge_undertemperature_error_count:
+      name: "discharge undertemperature error count"
+      device_id: device0
+    battery_overvoltage_error_count:
+      name: "battery overvoltage error count"
+      device_id: device0
+    battery_undervoltage_error_count:
+      name: "battery undervoltage error count"
+      device_id: device0
+    cell_voltage_1:
+      name: "cell voltage 1"
+      device_id: device0
+    cell_voltage_2:
+      name: "cell voltage 2"
+      device_id: device0
+    cell_voltage_3:
+      name: "cell voltage 3"
+      device_id: device0
+    cell_voltage_4:
+      name: "cell voltage 4"
+      device_id: device0
+    temperature_1:
+      name: "temperature 1"
+      device_id: device0
+    temperature_2:
+      name: "temperature 2"
+      device_id: device0
+    temperature_3:
+      name: "temperature 3"
+      device_id: device0
 
   - platform: jbd_bms_ble
     jbd_bms_ble_id: bms1
+    total_voltage:
+      name: "total voltage"
+      device_id: device1
+    current:
+      name: "current"
+      device_id: device1
     power:
       name: "power"
+      device_id: device1
+    charging_power:
+      name: "charging power"
+      device_id: device1
+    discharging_power:
+      name: "discharging power"
       device_id: device1
     state_of_charge:
       name: "state of charge"
       device_id: device1
-    total_voltage:
-      name: "total voltage"
+    nominal_capacity:
+      name: "nominal capacity"
       device_id: device1
-    average_cell_voltage:
-      name: "average cell voltage"
+    capacity_remaining:
+      name: "capacity remaining"
+      device_id: device1
+    charging_cycles:
+      name: "charging cycles"
+      device_id: device1
+    min_cell_voltage:
+      name: "min cell voltage"
+      device_id: device1
+    max_cell_voltage:
+      name: "max cell voltage"
+      device_id: device1
+    min_voltage_cell:
+      name: "min voltage cell"
+      device_id: device1
+    max_voltage_cell:
+      name: "max voltage cell"
       device_id: device1
     delta_cell_voltage:
       name: "delta cell voltage"
       device_id: device1
-    # ...
+    average_cell_voltage:
+      name: "average cell voltage"
+      device_id: device1
+    cell_count:
+      name: "cell count"
+      device_id: device1
+    software_version:
+      name: "software version"
+      device_id: device1
+    operation_status_bitmask:
+      name: "operation status bitmask"
+      device_id: device1
+    errors_bitmask:
+      name: "errors bitmask"
+      device_id: device1
+    balancer_status_bitmask:
+      name: "balancer status bitmask"
+      device_id: device1
+    short_circuit_error_count:
+      name: "short circuit error count"
+      device_id: device1
+    charge_overcurrent_error_count:
+      name: "charge overcurrent error count"
+      device_id: device1
+    discharge_overcurrent_error_count:
+      name: "discharge overcurrent error count"
+      device_id: device1
+    cell_overvoltage_error_count:
+      name: "cell overvoltage error count"
+      device_id: device1
+    cell_undervoltage_error_count:
+      name: "cell undervoltage error count"
+      device_id: device1
+    charge_overtemperature_error_count:
+      name: "charge overtemperature error count"
+      device_id: device1
+    charge_undertemperature_error_count:
+      name: "charge undertemperature error count"
+      device_id: device1
+    discharge_overtemperature_error_count:
+      name: "discharge overtemperature error count"
+      device_id: device1
+    discharge_undertemperature_error_count:
+      name: "discharge undertemperature error count"
+      device_id: device1
+    battery_overvoltage_error_count:
+      name: "battery overvoltage error count"
+      device_id: device1
+    battery_undervoltage_error_count:
+      name: "battery undervoltage error count"
+      device_id: device1
+    cell_voltage_1:
+      name: "cell voltage 1"
+      device_id: device1
+    cell_voltage_2:
+      name: "cell voltage 2"
+      device_id: device1
+    cell_voltage_3:
+      name: "cell voltage 3"
+      device_id: device1
+    cell_voltage_4:
+      name: "cell voltage 4"
+      device_id: device1
+    temperature_1:
+      name: "temperature 1"
+      device_id: device1
+    temperature_2:
+      name: "temperature 2"
+      device_id: device1
+    temperature_3:
+      name: "temperature 3"
+      device_id: device1
 
 text_sensor:
   - platform: jbd_bms_ble
