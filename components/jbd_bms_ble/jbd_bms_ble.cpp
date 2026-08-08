@@ -32,7 +32,7 @@ static const uint8_t JBD_AUTH_SEND_PASSWORD = 0x18;
 static const uint8_t JBD_AUTH_CHANGE_PASSWORD = 0x16;
 static const uint8_t JBD_AUTH_SEND_ROOT_PASSWORD = 0x1D;
 
-static const uint8_t JBD_CMD_HWINFO = 0x03;
+static const uint8_t JBD_CMD_BASICINFO = 0x03;
 static const uint8_t JBD_CMD_CELLINFO = 0x04;
 static const uint8_t JBD_CMD_HWVER = 0x05;
 
@@ -139,7 +139,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       if (this->enable_authentication_) {
         this->start_authentication_();
       } else {
-        this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+        this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO);
       }
 
       break;
@@ -340,7 +340,7 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
           ESP_LOGI(TAG, "App key accepted, no password required - authentication complete");
           this->authentication_state_ = AuthState::AUTHENTICATED;
           // Start normal data collection immediately
-          this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+          this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO);
           break;
         case 0x01:  // App key rejected
           ESP_LOGE(TAG, "App key rejected");
@@ -381,7 +381,7 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
         ESP_LOGI(TAG, "Authentication successful!");
         this->authentication_state_ = AuthState::AUTHENTICATED;
         // Start normal data collection
-        this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+        this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO);
       } else {
         ESP_LOGE(TAG, "Root password rejected");
         this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
@@ -411,7 +411,7 @@ void JbdBmsBle::update() {
     return;
   }
 
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO);
+  this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO);
 }
 
 void JbdBmsBle::check_auth_timeout_() {
@@ -436,8 +436,8 @@ void JbdBmsBle::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8
   this->reset_online_status_tracker_();
 
   switch (function) {
-    case JBD_CMD_HWINFO:
-      this->on_hardware_info_data_(data);
+    case JBD_CMD_BASICINFO:
+      this->on_basic_info_data_(data);
       this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO);
       break;
     case JBD_CMD_CELLINFO:
@@ -507,7 +507,7 @@ void JbdBmsBle::on_cell_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->average_cell_voltage_sensor_, average_cell_voltage);
 }
 
-void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
+void JbdBmsBle::on_basic_info_data_(const std::vector<uint8_t> &data) {
   auto jbd_get_16bit = [&](size_t i) -> uint16_t {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
@@ -515,7 +515,7 @@ void JbdBmsBle::on_hardware_info_data_(const std::vector<uint8_t> &data) {
     return (uint32_t(jbd_get_16bit(i + 0)) << 16) | (uint32_t(jbd_get_16bit(i + 2)) << 0);
   };
 
-  ESP_LOGI(TAG, "Hardware info frame (%zu bytes) received", data.size());
+  ESP_LOGI(TAG, "Basic info frame (%zu bytes) received", data.size());
   ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
 
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());

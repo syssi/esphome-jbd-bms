@@ -6,19 +6,19 @@ namespace esphome::jbd_bms_ble::testing {
 
 // ── Total voltage ─────────────────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, TotalVoltage) {
+TEST(JbdBmsBleBasicInfoTest, TotalVoltage) {
   TestableJbdBmsBle bms;
   sensor::Sensor total;
   bms.set_total_voltage_sensor(&total);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_NEAR(total.state, 15.60f, 0.01f);
 }
 
 // ── Current and power ─────────────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, CurrentAndPower) {
+TEST(JbdBmsBleBasicInfoTest, CurrentAndPower) {
   TestableJbdBmsBle bms;
   sensor::Sensor current, power, charging_power, discharging_power;
   bms.set_current_sensor(&current);
@@ -26,7 +26,7 @@ TEST(JbdBmsBleHwInfoTest, CurrentAndPower) {
   bms.set_charging_power_sensor(&charging_power);
   bms.set_discharging_power_sensor(&discharging_power);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_NEAR(current.state, 0.0f, 0.001f);
   EXPECT_NEAR(power.state, 0.0f, 0.01f);
@@ -36,14 +36,14 @@ TEST(JbdBmsBleHwInfoTest, CurrentAndPower) {
 
 // ── Capacity ──────────────────────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, Capacity) {
+TEST(JbdBmsBleBasicInfoTest, Capacity) {
   TestableJbdBmsBle bms;
   sensor::Sensor cap_rem, nominal, cycles;
   bms.set_capacity_remaining_sensor(&cap_rem);
   bms.set_nominal_capacity_sensor(&nominal);
   bms.set_charging_cycles_sensor(&cycles);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_NEAR(cap_rem.state, 4.98f, 0.01f);
   EXPECT_NEAR(nominal.state, 5.00f, 0.01f);
@@ -52,37 +52,37 @@ TEST(JbdBmsBleHwInfoTest, Capacity) {
 
 // ── State of charge ───────────────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, StateOfCharge) {
+TEST(JbdBmsBleBasicInfoTest, StateOfCharge) {
   TestableJbdBmsBle bms;
   sensor::Sensor soc;
   bms.set_state_of_charge_sensor(&soc);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_FLOAT_EQ(soc.state, 100.0f);
 }
 
 // ── Software version ──────────────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, SoftwareVersion) {
+TEST(JbdBmsBleBasicInfoTest, SoftwareVersion) {
   TestableJbdBmsBle bms;
   sensor::Sensor ver;
   bms.set_software_version_sensor(&ver);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_NEAR(ver.state, 8.0f, 0.01f);
 }
 
 // ── Battery strings and temperature sensors ───────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, BatteryStringsAndTempSensors) {
+TEST(JbdBmsBleBasicInfoTest, BatteryStringsAndTempSensors) {
   TestableJbdBmsBle bms;
   sensor::Sensor strings, temp_sensors;
   bms.set_cell_count_sensor(&strings);
   bms.set_temperature_sensors_sensor(&temp_sensors);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_FLOAT_EQ(strings.state, 4.0f);
   EXPECT_FLOAT_EQ(temp_sensors.state, 3.0f);
@@ -90,13 +90,13 @@ TEST(JbdBmsBleHwInfoTest, BatteryStringsAndTempSensors) {
 
 // ── Temperatures ──────────────────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, Temperatures) {
+TEST(JbdBmsBleBasicInfoTest, Temperatures) {
   TestableJbdBmsBle bms;
   sensor::Sensor t[3];
   for (int i = 0; i < 3; i++)
     bms.set_temperature_sensor(i, &t[i]);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_NEAR(t[0].state, 22.4f, 0.05f);
   EXPECT_NEAR(t[1].state, 22.3f, 0.05f);
@@ -105,14 +105,14 @@ TEST(JbdBmsBleHwInfoTest, Temperatures) {
 
 // ── Balancer and error bitmasks ───────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, Bitmasks) {
+TEST(JbdBmsBleBasicInfoTest, Bitmasks) {
   TestableJbdBmsBle bms;
   sensor::Sensor bal_bitmask, err_bitmask, op_bitmask;
   bms.set_balancer_status_bitmask_sensor(&bal_bitmask);
   bms.set_errors_bitmask_sensor(&err_bitmask);
   bms.set_operation_status_bitmask_sensor(&op_bitmask);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_FLOAT_EQ(bal_bitmask.state, 0.0f);
   EXPECT_FLOAT_EQ(err_bitmask.state, 0.0f);
@@ -121,7 +121,7 @@ TEST(JbdBmsBleHwInfoTest, Bitmasks) {
 
 // ── Binary sensors and switches ───────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, BinarySensorsAndSwitches) {
+TEST(JbdBmsBleBasicInfoTest, BinarySensorsAndSwitches) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor charging_bs, discharging_bs, balancing_bs;
   TestableSwitch charging_sw, discharging_sw;
@@ -131,7 +131,7 @@ TEST(JbdBmsBleHwInfoTest, BinarySensorsAndSwitches) {
   bms.set_charging_switch(&charging_sw);
   bms.set_discharging_switch(&discharging_sw);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_TRUE(charging_bs.state);
   EXPECT_TRUE(discharging_bs.state);
@@ -142,12 +142,12 @@ TEST(JbdBmsBleHwInfoTest, BinarySensorsAndSwitches) {
 
 // ── Operation status text ─────────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, OperationStatusText) {
+TEST(JbdBmsBleBasicInfoTest, OperationStatusText) {
   TestableJbdBmsBle bms;
   text_sensor::TextSensor op_status;
   bms.set_operation_status_text_sensor(&op_status);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_NE(op_status.state.find("Charging"), std::string::npos);
   EXPECT_NE(op_status.state.find("Discharging"), std::string::npos);
@@ -155,12 +155,12 @@ TEST(JbdBmsBleHwInfoTest, OperationStatusText) {
 
 // ── Errors text (no errors) ───────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, ErrorsTextEmpty) {
+TEST(JbdBmsBleBasicInfoTest, ErrorsTextEmpty) {
   TestableJbdBmsBle bms;
   text_sensor::TextSensor errors;
   bms.set_errors_text_sensor(&errors);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_EQ(errors.state, "");
 }
@@ -249,7 +249,7 @@ TEST(JbdBmsBleErrorCountsTest, ErrorCounts) {
 
 // ── Protection binary sensors ─────────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsNoneActive) {
+TEST(JbdBmsBleBasicInfoTest, ProtectionBinarySensorsNoneActive) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
@@ -266,7 +266,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsNoneActive) {
   bms.set_ic_frontend_error_binary_sensor(&ic);
   bms.set_mosfet_software_lock_binary_sensor(&swl);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_FALSE(cov.state);
   EXPECT_FALSE(cuv.state);
@@ -283,7 +283,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsNoneActive) {
   EXPECT_FALSE(swl.state);
 }
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsCellOvervoltage) {
+TEST(JbdBmsBleBasicInfoTest, ProtectionBinarySensorsCellOvervoltage) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
@@ -300,7 +300,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsCellOvervoltage) {
   bms.set_ic_frontend_error_binary_sensor(&ic);
   bms.set_mosfet_software_lock_binary_sensor(&swl);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_CELL_OVERVOLTAGE);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_CELL_OVERVOLTAGE);
 
   EXPECT_TRUE(cov.state);
   EXPECT_FALSE(cuv.state);
@@ -317,7 +317,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsCellOvervoltage) {
   EXPECT_FALSE(swl.state);
 }
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsAllActive) {
+TEST(JbdBmsBleBasicInfoTest, ProtectionBinarySensorsAllActive) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
@@ -334,7 +334,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsAllActive) {
   bms.set_ic_frontend_error_binary_sensor(&ic);
   bms.set_mosfet_software_lock_binary_sensor(&swl);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_ALL_PROTECTIONS);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_ALL_PROTECTIONS);
 
   EXPECT_TRUE(cov.state);
   EXPECT_TRUE(cuv.state);
@@ -351,7 +351,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsAllActive) {
   EXPECT_TRUE(swl.state);
 }
 
-TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsByteOrder) {
+TEST(JbdBmsBleBasicInfoTest, ProtectionBinarySensorsByteOrder) {
   TestableJbdBmsBle bms;
   binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
   bms.set_cell_overvoltage_protection_binary_sensor(&cov);
@@ -368,7 +368,7 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsByteOrder) {
   bms.set_ic_frontend_error_binary_sensor(&ic);
   bms.set_mosfet_software_lock_binary_sensor(&swl);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_MOSFET_SOFTWARE_LOCK);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_MOSFET_SOFTWARE_LOCK);
 
   EXPECT_FALSE(cov.state);
   EXPECT_FALSE(cuv.state);
@@ -387,22 +387,22 @@ TEST(JbdBmsBleHwInfoTest, ProtectionBinarySensorsByteOrder) {
 
 // ── Balancing cells text sensor ───────────────────────────────────────────────
 
-TEST(JbdBmsBleHwInfoTest, BalancingCellsEmpty) {
+TEST(JbdBmsBleBasicInfoTest, BalancingCellsEmpty) {
   TestableJbdBmsBle bms;
   text_sensor::TextSensor balancing_cells;
   bms.set_balancing_cells_text_sensor(&balancing_cells);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
 
   EXPECT_EQ(balancing_cells.state, "");
 }
 
-TEST(JbdBmsBleHwInfoTest, BalancingCellsActive) {
+TEST(JbdBmsBleBasicInfoTest, BalancingCellsActive) {
   TestableJbdBmsBle bms;
   text_sensor::TextSensor balancing_cells;
   bms.set_balancing_cells_text_sensor(&balancing_cells);
 
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME_BALANCING_CELLS_1_3);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_BALANCING_CELLS_1_3);
 
   EXPECT_EQ(balancing_cells.state, "1, 3");
 }
@@ -411,7 +411,7 @@ TEST(JbdBmsBleHwInfoTest, BalancingCellsActive) {
 
 TEST(JbdBmsBleTest, NullSensorsDoNotCrash) {
   TestableJbdBmsBle bms;
-  bms.on_jbd_bms_data(0x03, HWINFO_FRAME);
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
   bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
   bms.on_jbd_bms_data(0x05, HWVER_FRAME);
   bms.on_jbd_bms_data(0xAA, ERRCOUNT_FRAME);
