@@ -14,7 +14,7 @@ static const uint8_t JBD_PKT_END = 0x77;
 static const uint8_t JBD_CMD_READ = 0xA5;
 static const uint8_t JBD_CMD_WRITE = 0x5A;
 
-static const uint8_t JBD_CMD_HWINFO = 0x03;
+static const uint8_t JBD_CMD_BASICINFO = 0x03;
 static const uint8_t JBD_CMD_CELLINFO = 0x04;
 static const uint8_t JBD_CMD_HWVER = 0x05;
 
@@ -65,7 +65,7 @@ void JbdBms::setup() {
   if (this->flow_control_pin_ != nullptr) {
     this->flow_control_pin_->setup();
   }
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO, nullptr, 0);
+  this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO, nullptr, 0);
 }
 
 void JbdBms::loop() {
@@ -93,7 +93,7 @@ void JbdBms::loop() {
 
 void JbdBms::update() {
   this->track_online_status_();
-  this->send_command(JBD_CMD_READ, JBD_CMD_HWINFO, nullptr, 0);
+  this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO, nullptr, 0);
 }
 
 bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
@@ -174,8 +174,8 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
   this->reset_online_status_tracker_();
 
   switch (function) {
-    case JBD_CMD_HWINFO:
-      this->on_hardware_info_data_(data);
+    case JBD_CMD_BASICINFO:
+      this->on_basic_info_data_(data);
       this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO, nullptr, 0);
       break;
     case JBD_CMD_CELLINFO:
@@ -272,7 +272,7 @@ void JbdBms::on_error_counts_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->battery_undervoltage_error_count_sensor_, jbd_get_16bit(20));
 }
 
-void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
+void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   auto jbd_get_16bit = [&](size_t i) -> uint16_t {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
@@ -280,7 +280,7 @@ void JbdBms::on_hardware_info_data_(const std::vector<uint8_t> &data) {
     return (uint32_t(jbd_get_16bit(i + 0)) << 16) | (uint32_t(jbd_get_16bit(i + 2)) << 0);
   };
 
-  ESP_LOGI(TAG, "Hardware info frame (%zu bytes) received", data.size());
+  ESP_LOGI(TAG, "Basic info frame (%zu bytes) received", data.size());
   ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
 
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());

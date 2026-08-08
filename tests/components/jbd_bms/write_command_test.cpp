@@ -222,12 +222,12 @@ TEST(ButtonCommandTest, ForceSocResetFrame) {
 // ── Read command frames ───────────────────────────────────────────────────────
 //
 // Read frames carry no payload (data_len=0); CRC covers only [address, 0x00].
-//   hardware_info              reg 0x03: DD A5 03 00 FF FD 77  (confirmed: btsnoop_hci_jbd-sp04s034-l4s-200a-b-u.log)
+//   basic_info                 reg 0x03: DD A5 03 00 FF FD 77  (confirmed: btsnoop_hci_jbd-sp04s034-l4s-200a-b-u.log)
 //   cell_info                  reg 0x04: DD A5 04 00 FF FC 77  (confirmed: btsnoop_hci_jbd-sp04s034-l4s-200a-b-u.log)
 //   retrieve_hardware_version  reg 0x05: DD A5 05 00 FF FB 77  (confirmed: debug.txt)
 //   retrieve_error_counts      reg 0xAA: DD A5 AA 00 FF 56 77  (confirmed: btsnoop_hci_jbd-sp04s034-l4s-200a-b-u.log)
 
-TEST(ReadCommandTest, HardwareInfoFrame) {
+TEST(ReadCommandTest, BasicInfoFrame) {
   TestableJbdBms bms;
   auto f = bms.build_frame_(0xA5, 0x03, nullptr, 0);
 

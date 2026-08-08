@@ -316,7 +316,7 @@ class JbdBmsBle :
 
   void on_cell_info_data_(const std::vector<uint8_t> &data);
   void on_error_counts_data_(const std::vector<uint8_t> &data);
-  void on_hardware_info_data_(const std::vector<uint8_t> &data);
+  void on_basic_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_version_data_(const std::vector<uint8_t> &data);
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);
   void publish_state_(sensor::Sensor *sensor, float value);

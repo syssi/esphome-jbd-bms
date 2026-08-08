@@ -293,7 +293,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
 
   void on_cell_info_data_(const std::vector<uint8_t> &data);
   void on_error_counts_data_(const std::vector<uint8_t> &data);
-  void on_hardware_info_data_(const std::vector<uint8_t> &data);
+  void on_basic_info_data_(const std::vector<uint8_t> &data);
   void on_hardware_version_data_(const std::vector<uint8_t> &data);
   bool parse_jbd_bms_byte_(uint8_t byte);
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);
