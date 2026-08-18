@@ -39,7 +39,7 @@ uart:
 interval:
   - interval: 10s
     then:
-      # Retrieve hardware info
+      # Retrieve basic info
       - uart.write: [0xDD, 0xA5, 0x03, 0x00, 0xFF, 0xFD, 0x77]
       - delay: 5s
 

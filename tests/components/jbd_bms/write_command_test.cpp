@@ -120,7 +120,7 @@ TEST(WriteCommandTest, FrameBothDisabled) {
 // Internal mosfet_status_ bit layout: bit0=charging, bit1=discharging.
 // Wire encoding: bits XOR'd with 0x03 (both inverted).
 //
-// Initial state from hardware info frame: 0x03 = both enabled → wire value 0x00.
+// Initial state from basic info frame: 0x03 = both enabled → wire value 0x00.
 
 TEST(MosfetSwitchTest, ChargingOffFromBothEnabled) {
   TestableJbdBms bms;
