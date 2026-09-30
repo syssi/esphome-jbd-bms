@@ -300,8 +300,10 @@ void JbdBmsBle::assemble(const uint8_t *data, uint16_t length) {
 
   this->frame_buffer_.insert(this->frame_buffer_.end(), data, data + length);
 
+  // A payload byte of 0x77 can land at the end of a BLE notification (20 bytes with the default MTU of 23),
+  // so a trailing JBD_PKT_END alone doesn't mean the frame is complete. Wait for the length declared in the header.
   if (this->frame_buffer_.size() >= 7 && this->frame_buffer_[0] == JBD_PKT_START &&
-      this->frame_buffer_.back() == JBD_PKT_END) {
+      this->frame_buffer_.size() >= 4u + this->frame_buffer_[3] + 3u && this->frame_buffer_.back() == JBD_PKT_END) {
     const uint8_t *raw = &this->frame_buffer_[0];
     uint8_t function = raw[1];
     uint16_t data_len = raw[3];
