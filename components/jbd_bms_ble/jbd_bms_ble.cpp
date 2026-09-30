@@ -300,16 +300,20 @@ void JbdBmsBle::assemble(const uint8_t *data, uint16_t length) {
 
   this->frame_buffer_.insert(this->frame_buffer_.end(), data, data + length);
 
-  // A payload byte of 0x77 can land at the end of a BLE notification (20 bytes with the default MTU of 23),
-  // so a trailing JBD_PKT_END alone doesn't mean the frame is complete. Wait for the length declared in the header.
-  if (this->frame_buffer_.size() >= 7 && this->frame_buffer_[0] == JBD_PKT_START &&
-      this->frame_buffer_.size() >= 4u + this->frame_buffer_[3] + 3u && this->frame_buffer_.back() == JBD_PKT_END) {
+  if (this->frame_buffer_.size() >= 7 && this->frame_buffer_[0] == JBD_PKT_START) {
     const uint8_t *raw = &this->frame_buffer_[0];
     uint8_t function = raw[1];
     uint16_t data_len = raw[3];
     uint16_t frame_len = 4 + data_len + 3;
 
-    if (frame_len == this->frame_buffer_.size()) {
+    // The payload may contain JBD_PKT_END, so wait for the frame length announced by the header
+    if (this->frame_buffer_.size() < frame_len) {
+      return;
+    }
+
+    if (this->frame_buffer_.back() != JBD_PKT_END) {
+      ESP_LOGW(TAG, "Invalid end of frame: 0x%02X", this->frame_buffer_.back());
+    } else if (frame_len == this->frame_buffer_.size()) {
       uint16_t computed_crc = chksum_(raw + 2, data_len + 2);
       uint16_t remote_crc = uint16_t(raw[frame_len - 3]) << 8 | (uint16_t(raw[frame_len - 2]) << 0);
 
