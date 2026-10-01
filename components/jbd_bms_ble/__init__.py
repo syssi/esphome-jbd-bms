@@ -67,7 +67,7 @@ JBD_BMS_BLE_COMPONENT_SCHEMA = cv.Schema(
 )
 
 CONFIG_SCHEMA = cv.All(
-    cv.require_esphome_version(2025, 11, 0),
+    cv.require_esphome_version(2026, 4, 0),
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(JbdBmsBle),
@@ -80,8 +80,11 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_CONTROL_CHARACTERISTIC_UUID, default=0xFF02): cv.int_range(
                 min=0, max=0xFFFF
             ),
-            cv.Optional(CONF_PASSWORD, default=""): cv.All(
-                cv.string_strict, validate_password
+            cv.Optional(CONF_PASSWORD, default=""): cv.sensitive(
+                cv.All(
+                    cv.string_strict, 
+                    validate_password,
+                )    
             ),
             cv.Optional(
                 CONF_AUTH_TIMEOUT, default="10s"
