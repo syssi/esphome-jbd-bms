@@ -59,6 +59,16 @@ CONFIG_SCHEMA = cv.All(
     .extend(uart.UART_DEVICE_SCHEMA),
 )
 
+FINAL_VALIDATE_SCHEMA = uart.final_validate_device_schema(
+    "jbd_bms",
+    baud_rate=9600,
+    data_bits=8,
+    parity="NONE",
+    stop_bits=1,
+    require_tx=True,
+    require_rx=True,
+)
+
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
