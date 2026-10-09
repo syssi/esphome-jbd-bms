@@ -8,6 +8,7 @@ from esphome.const import CONF_ID, CONF_PASSWORD, CONF_SERVICE_UUID
 _LOGGER = logging.getLogger(__name__)
 
 CODEOWNERS = ["@syssi"]
+DOMAIN = "jbd_bms_ble"
 DEPENDENCIES = ["ble_client"]
 AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]
 MULTI_CONF = True

@@ -6,6 +6,7 @@ from esphome.const import CONF_ADDRESS, CONF_FLOW_CONTROL_PIN, CONF_ID
 
 DEPENDENCIES = ["uart"]
 CODEOWNERS = ["@syssi"]
+DOMAIN = "jbd_bms_up"
 MULTI_CONF = True
 
 jbd_bms_up_ns = cg.esphome_ns.namespace("jbd_bms_up")
