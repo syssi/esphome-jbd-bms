@@ -3,9 +3,14 @@
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 
+// Fallback for ESPHome < 2026.10.0
+#ifndef ESPHOME_LOG_TAG
+#define ESPHOME_LOG_TAG(name, tag) static const char *const name = tag
+#endif
+
 namespace esphome::jbd_bms {
 
-static const char *const TAG = "jbd_bms";
+ESPHOME_LOG_TAG(TAG, "jbd_bms");
 
 static const uint8_t MAX_NO_RESPONSE_COUNT = 5;
 
