@@ -2,9 +2,14 @@
 #include "esphome/core/log.h"
 #include "esphome/core/application.h"
 
+// Fallback for ESPHome < 2026.10.0
+#ifndef ESPHOME_LOG_TAG
+#define ESPHOME_LOG_TAG(name, tag) static const char *const name = tag
+#endif
+
 namespace esphome::jbd_bms_ble {
 
-static const char *const TAG = "jbd_bms_ble.switch";
+ESPHOME_LOG_TAG(TAG, "jbd_bms_ble.switch");
 
 void JbdSwitch::dump_config() { LOG_SWITCH("", "JbdBmsBle Switch", this); }
 void JbdSwitch::write_state(bool state) {
