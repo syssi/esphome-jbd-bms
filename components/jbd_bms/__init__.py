@@ -10,6 +10,7 @@ from esphome.cpp_helpers import gpio_pin_expression
 _LOGGER = logging.getLogger(__name__)
 
 CODEOWNERS = ["@syssi"]
+DOMAIN = "jbd_bms"
 
 DEPENDENCIES = ["uart"]
 AUTO_LOAD = ["binary_sensor", "button", "select", "sensor", "switch", "text_sensor"]

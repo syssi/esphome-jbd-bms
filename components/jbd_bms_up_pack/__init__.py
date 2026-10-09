@@ -15,6 +15,7 @@ AUTO_LOAD = [
     "text_sensor",
 ]
 CODEOWNERS = ["@syssi"]
+DOMAIN = "jbd_bms_up_pack"
 MULTI_CONF = True
 
 
