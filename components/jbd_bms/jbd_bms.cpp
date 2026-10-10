@@ -12,6 +12,18 @@ namespace esphome::jbd_bms {
 
 ESPHOME_LOG_TAG(TAG, "jbd_bms");
 
+static constexpr size_t MAX_HEX_DUMP_BYTES = 100;
+
+#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
+static void log_hex_chunked(const char *tag, const uint8_t *data, size_t size) {
+  char buf[format_hex_pretty_size(100)];
+  for (size_t i = 0; i < size; i += 100) {
+    size_t len = std::min<size_t>(100, size - i);
+    ESP_LOGD(tag, "  %s", format_hex_pretty_to(buf, sizeof(buf), data + i, len, '.'));
+  }
+}
+#endif
+
 static const uint8_t MAX_NO_RESPONSE_COUNT = 5;
 
 static const uint8_t JBD_PKT_START = 0xDD;
@@ -77,8 +89,8 @@ void JbdBms::loop() {
   const uint32_t now = millis();
 
   if (now - this->last_byte_ > this->rx_timeout_) {
-    ESP_LOGVV(TAG, "Buffer cleared due to timeout: %s",
-              format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  // NOLINT
+    char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+    ESP_LOGVV(TAG, "Buffer cleared due to timeout: %s", format_hex_pretty_to(hex_buf, this->rx_buffer_, '.'));
     this->rx_buffer_.clear();
     this->last_byte_ = now;
   }
@@ -89,8 +101,8 @@ void JbdBms::loop() {
     if (this->parse_jbd_bms_byte_(byte)) {
       this->last_byte_ = now;
     } else {
-      ESP_LOGVV(TAG, "Buffer cleared due to reset: %s",
-                format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  // NOLINT
+      char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+      ESP_LOGVV(TAG, "Buffer cleared due to reset: %s", format_hex_pretty_to(hex_buf, this->rx_buffer_, '.'));
       this->rx_buffer_.clear();
     }
   }
@@ -165,7 +177,8 @@ bool JbdBms::parse_jbd_bms_byte_(uint8_t byte) {
     return false;
   }
 
-  ESP_LOGVV(TAG, "RX <- %s", format_hex_pretty(raw, at + 1).c_str());  // NOLINT
+  char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+  ESP_LOGVV(TAG, "RX <- %s", format_hex_pretty_to(hex_buf, raw, at + 1, '.'));
 
   std::vector<uint8_t> data(this->rx_buffer_.begin() + 4, this->rx_buffer_.begin() + frame_len - 3);
 
@@ -197,8 +210,9 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
     case JBD_CMD_FORCE_SOC_RESET:
       break;
     default:
+      char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
       ESP_LOGW(TAG, "Unhandled response (function 0x%02X) received: %s", function,
-               format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
+               format_hex_pretty_to(hex_buf, data, '.'));
   }
 }
 
@@ -208,7 +222,9 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Cell info frame (%zu bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
+#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
+  log_hex_chunked(TAG, data.data(), data.size());
+#endif
 
   uint8_t data_len = data.size();
   if (data_len < 2 || data_len > 64 || (data_len % 2) != 0) {
@@ -256,7 +272,9 @@ void JbdBms::on_error_counts_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Error counts frame (%zu bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
+#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
+  log_hex_chunked(TAG, data.data(), data.size());
+#endif
 
   uint8_t data_len = data.size();
   if (data_len != 24) {
@@ -286,7 +304,9 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Basic info frame (%zu bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
+#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
+  log_hex_chunked(TAG, data.data(), data.size());
+#endif
 
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
 
@@ -386,7 +406,9 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
 
 void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
   ESP_LOGI(TAG, "Hardware version frame (%zu bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
+#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
+  log_hex_chunked(TAG, data.data(), data.size());
+#endif
 
   // Byte Len  Payload                                              Content
   // 0    25   0x4A 0x42 0x44 0x2D 0x53 0x50 0x30 0x34 0x53 0x30
@@ -626,7 +648,8 @@ void JbdBms::send_command(uint8_t command, uint8_t address, const uint8_t *data,
     this->flow_control_pin_->digital_write(true);
 
   auto frame = build_frame_(command, address, data, data_len);
-  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
+  char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+  ESP_LOGVV(TAG, "Send command: %s", format_hex_pretty_to(hex_buf, frame, '.'));
   this->write_array(frame.data(), frame.size());
   this->flush();
 
