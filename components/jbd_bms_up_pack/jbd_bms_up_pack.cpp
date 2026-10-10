@@ -11,6 +11,8 @@ namespace esphome::jbd_bms_up_pack {
 
 ESPHOME_LOG_TAG(TAG, "jbd_bms_up_pack");
 
+static constexpr size_t MAX_HEX_DUMP_BYTES = 100;
+
 static const uint8_t JBD_FC_READ = 0x78;
 static const uint8_t JBD_FC_WRITE = 0x79;
 
@@ -96,8 +98,9 @@ void JbdBmsUpPack::on_jbd_bms_up_data(uint8_t function, uint16_t start_addr, con
     ESP_LOGD(TAG, "MOSFET write acknowledged");
     return;
   }
+  char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
   ESP_LOGW(TAG, "Unhandled response (function 0x%02X, addr 0x%04X): %s", function, start_addr,
-           format_hex_pretty(&data.front(), data.size()).c_str());  // NOLINT
+           format_hex_pretty_to(hex_buf, data, '.'));
 }
 
 void JbdBmsUpPack::on_pack_status_(const std::vector<uint8_t> &data) {
