@@ -11,6 +11,8 @@ namespace esphome::jbd_bms_up {
 
 ESPHOME_LOG_TAG(TAG, "jbd_bms_up");
 
+static constexpr size_t MAX_HEX_DUMP_BYTES = 100;
+
 uint16_t crc16(const uint8_t *data, size_t len) {
   uint16_t crc = 0xFFFF;
   for (size_t i = 0; i < len; i++) {
@@ -33,8 +35,8 @@ void JbdBmsUp::loop() {
   const uint32_t now = millis();
   if (now - this->last_byte_ > this->rx_timeout_) {
     if (!this->rx_buffer_.empty()) {
-      ESP_LOGVV(TAG, "Buffer cleared due to timeout: %s",
-                format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  // NOLINT
+      char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+      ESP_LOGVV(TAG, "Buffer cleared due to timeout: %s", format_hex_pretty_to(hex_buf, this->rx_buffer_, '.'));
       this->rx_buffer_.clear();
     }
     this->last_byte_ = now;
@@ -47,8 +49,8 @@ void JbdBmsUp::loop() {
       this->last_byte_ = now;
     } else {
       if (!this->rx_buffer_.empty()) {
-        ESP_LOGVV(TAG, "Buffer cleared due to reset: %s",
-                  format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  // NOLINT
+        char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+        ESP_LOGVV(TAG, "Buffer cleared due to reset: %s", format_hex_pretty_to(hex_buf, this->rx_buffer_, '.'));
       }
       this->rx_buffer_.clear();
     }
@@ -94,7 +96,8 @@ bool JbdBmsUp::parse_byte_(uint8_t byte) {
   uint8_t function = raw[1];
   uint16_t start_addr = (uint16_t(raw[2]) << 8) | raw[3];
 
-  ESP_LOGV(TAG, "RX <- %s", format_hex_pretty(raw, frame_len).c_str());  // NOLINT
+  char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+  ESP_LOGV(TAG, "RX <- %s", format_hex_pretty_to(hex_buf, raw, frame_len, '.'));
 
   std::vector<uint8_t> data(this->rx_buffer_.begin() + 8, this->rx_buffer_.begin() + 8 + data_len);
 
@@ -138,7 +141,8 @@ void JbdBmsUp::send(uint8_t address, uint8_t function, uint16_t start_addr, uint
                     const std::vector<uint8_t> &data) {
   auto frame = build_frame_(address, function, start_addr, end_addr, data);
 
-  ESP_LOGV(TAG, "TX -> %s", format_hex_pretty(frame.data(), frame.size()).c_str());  // NOLINT
+  char hex_buf[format_hex_pretty_size(MAX_HEX_DUMP_BYTES)];
+  ESP_LOGV(TAG, "TX -> %s", format_hex_pretty_to(hex_buf, frame, '.'));
 
   if (this->flow_control_pin_ != nullptr) {
     this->flow_control_pin_->digital_write(true);
