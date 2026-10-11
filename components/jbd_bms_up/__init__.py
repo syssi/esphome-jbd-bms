@@ -17,7 +17,7 @@ CONF_JBD_BMS_UP_ID = "jbd_bms_up_id"
 CONF_RX_TIMEOUT = "rx_timeout"
 
 CONFIG_SCHEMA = cv.All(
-    cv.require_esphome_version(2025, 11, 0),
+    cv.require_esphome_version(2025, 12, 0),
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(JbdBmsUp),
