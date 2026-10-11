@@ -15,7 +15,6 @@ CONF_BUZZER = "buzzer"
 ICON_DISCHARGING = "mdi:battery-charging-50"
 ICON_CHARGING = "mdi:battery-charging-50"
 ICON_BALANCER = "mdi:seesaw"
-ICON_BLUETOOTH = "mdi:bluetooth"
 ICON_BUZZER = "mdi:volume-high"
 
 SWITCHES = {

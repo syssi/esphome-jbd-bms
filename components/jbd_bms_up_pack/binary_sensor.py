@@ -1,7 +1,11 @@
 import esphome.codegen as cg
 from esphome.components import binary_sensor
 import esphome.config_validation as cv
-from esphome.const import DEVICE_CLASS_CONNECTIVITY, ENTITY_CATEGORY_DIAGNOSTIC
+from esphome.const import (
+    DEVICE_CLASS_CONNECTIVITY,
+    ENTITY_CATEGORY_DIAGNOSTIC,
+    ICON_FAN,
+)
 
 from . import CONF_JBD_BMS_UP_PACK_ID, JBD_BMS_UP_PACK_COMPONENT_SCHEMA
 
@@ -22,7 +26,6 @@ ICON_CHARGING = "mdi:battery-charging"
 ICON_DISCHARGING = "mdi:power-plug"
 ICON_PRECHARGING = "mdi:battery-charging-10"
 ICON_HEAT = "mdi:radiator"
-ICON_FAN = "mdi:fan"
 
 BINARY_SENSOR_DEFS = {
     CONF_BALANCING: {"icon": ICON_BALANCING},
