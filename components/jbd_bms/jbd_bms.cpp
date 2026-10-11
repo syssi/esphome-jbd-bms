@@ -14,15 +14,13 @@ ESPHOME_LOG_TAG(TAG, "jbd_bms");
 
 static constexpr size_t MAX_HEX_DUMP_BYTES = 100;
 
-#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
 static void log_hex_chunked(const char *tag, const uint8_t *data, size_t size) {
   char buf[format_hex_pretty_size(100)];
   for (size_t i = 0; i < size; i += 100) {
     size_t len = std::min<size_t>(100, size - i);
-    ESP_LOGD(tag, "  %s", format_hex_pretty_to(buf, sizeof(buf), data + i, len, '.'));
+    ESP_LOGVV(tag, "  %s", format_hex_pretty_to(buf, sizeof(buf), data + i, len, '.'));
   }
 }
-#endif
 
 static const uint8_t MAX_NO_RESPONSE_COUNT = 5;
 
@@ -222,9 +220,7 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Cell info frame (%zu bytes) received", data.size());
-#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
   log_hex_chunked(TAG, data.data(), data.size());
-#endif
 
   uint8_t data_len = data.size();
   if (data_len < 2 || data_len > 64 || (data_len % 2) != 0) {
@@ -272,9 +268,7 @@ void JbdBms::on_error_counts_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Error counts frame (%zu bytes) received", data.size());
-#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
   log_hex_chunked(TAG, data.data(), data.size());
-#endif
 
   uint8_t data_len = data.size();
   if (data_len != 24) {
@@ -304,9 +298,7 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   };
 
   ESP_LOGI(TAG, "Basic info frame (%zu bytes) received", data.size());
-#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
   log_hex_chunked(TAG, data.data(), data.size());
-#endif
 
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
 
@@ -406,9 +398,7 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
 
 void JbdBms::on_hardware_version_data_(const std::vector<uint8_t> &data) {
   ESP_LOGI(TAG, "Hardware version frame (%zu bytes) received", data.size());
-#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERY_VERBOSE
   log_hex_chunked(TAG, data.data(), data.size());
-#endif
 
   // Byte Len  Payload                                              Content
   // 0    25   0x4A 0x42 0x44 0x2D 0x53 0x50 0x30 0x34 0x53 0x30
