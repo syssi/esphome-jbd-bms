@@ -437,8 +437,8 @@ void JbdBmsBle::check_auth_timeout_() {
 
   const uint32_t now = millis();
   if (now - this->auth_timeout_start_ > this->auth_timeout_ms_) {
-    ESP_LOGW(TAG, "[%s] Authentication timeout after %d ms, resetting to retry", this->parent_->address_str(),
-             this->auth_timeout_ms_);
+    ESP_LOGW(TAG, "[%s] Authentication timeout after %lu ms, resetting to retry", this->parent_->address_str(),
+             static_cast<unsigned long>(this->auth_timeout_ms_));
     this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
   }
 }
