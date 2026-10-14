@@ -68,7 +68,7 @@ JBD_BMS_BLE_COMPONENT_SCHEMA = cv.Schema(
 )
 
 CONFIG_SCHEMA = cv.All(
-    cv.require_esphome_version(2026, 4, 0),
+    cv.require_esphome_version(2026, 6, 0),
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(JbdBmsBle),
