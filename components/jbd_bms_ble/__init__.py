@@ -83,9 +83,9 @@ CONFIG_SCHEMA = cv.All(
             ),
             cv.Optional(CONF_PASSWORD, default=""): cv.sensitive(
                 cv.All(
-                    cv.string_strict, 
+                    cv.string_strict,
                     validate_password,
-                )    
+                )
             ),
             cv.Optional(
                 CONF_AUTH_TIMEOUT, default="10s"
