@@ -87,6 +87,16 @@ Untested but probably supported devices:
 
 Connector 4 Pin, JST PA 2.0mm pitch
 
+### Connecting multiple BMS units
+
+> **Safety warning:** Do not connect the UART-TTL ports of BMS units on separate battery packs to one ESP32 without galvanic isolation.
+>
+> The BMS switches the negative (ground) side of the pack. As soon as a BMS opens its MOSFETs (e.g. on a protection event), its ground is no longer tied to the common pack negative. The current then looks for an alternative return path. If the UART GND of all BMS units is joined at the ESP32, this path runs through the UART wiring (GND and data lines) and the ESP32. The current bypasses the open MOSFETs and destroys the ESP32, the BMS or both.
+>
+> Use one ESP32 per wired BMS. If one ESP32 must serve multiple wired BMS units, galvanically isolate each UART and power each isolated side from its own isolated supply. See [issue #169](https://github.com/syssi/esphome-jbd-bms/issues/169#issuecomment-3591502174).
+
+This warning concerns wired UART-TTL connections. The [BLE multiple-device example](esp32-ble-example-multiple-devices.yaml) avoids a wired common-ground path. Do not assume an RS-485 transceiver or adapter provides galvanic isolation; check the specific hardware and its power supply.
+
 ## Installation
 
 You can install this component with [ESPHome external components feature](https://esphome.io/components/external_components.html) like this:
