@@ -180,7 +180,8 @@ If you are a Home Assistant user without any ESPHome experience yet please take 
 
 ## Protocol
 
-See [Jiabaida.communication.protocol.pdf](docs/Jiabaida.communication.protocol.pdf)
+See the [implemented UART/BLE protocol reference](docs/protocol.md) and the
+[Jiabaida communication protocol PDF](docs/Jiabaida.communication.protocol.pdf).
 
 ## Known issues
 
