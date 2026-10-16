@@ -293,9 +293,6 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   auto jbd_get_16bit = [&](size_t i) -> uint16_t {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
-  auto jbd_get_32bit = [&](size_t i) -> uint32_t {
-    return (uint32_t(jbd_get_16bit(i + 0)) << 16) | (uint32_t(jbd_get_16bit(i + 2)) << 0);
-  };
 
   ESP_LOGI(TAG, "Basic info frame (%zu bytes) received", data.size());
   log_hex_chunked(TAG, data.data(), data.size());
