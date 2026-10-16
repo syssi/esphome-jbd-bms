@@ -94,6 +94,22 @@ static const std::vector<uint8_t> BASICINFO_FRAME_MOSFET_SOFTWARE_LOCK = {
     0x00, 0x10, 0x00, 0x80, 0x63, 0x02, 0x04, 0x03, 0x0B, 0xA0, 0x0B, 0x9D, 0x0B, 0x98,
 };
 
+// SYNTHETIC FRAME - NOT A REAL HARDWARE CAPTURE.
+// No real capture with the capacity/current unit flag (bit 7 of byte 20) set is available
+// (see PR #262). Derived from BASICINFO_FRAME with current, capacities, SoC and byte 20
+// modified to model a high-current BMS reporting in 100 mA / 100 mAh units.
+// Decoded key values:
+//   total_voltage: 15.60 V         current: -123.4 A (raw -1234 × 0.1)   power: -1925.04 W
+//   capacity_remaining: 300.0 Ah (raw 3000 × 0.1)
+//   nominal_capacity: 400.0 Ah (raw 4000 × 0.1)
+//   soc: 75 %                      operation_status: 0x83 → bit7 = 100 mA / 100 mAh unit flag,
+//                                                    "Charging, Discharging"
+//   cell_count: 4                  temperature_sensors: 3
+static const std::vector<uint8_t> BASICINFO_FRAME_CAPACITY_UNIT_FLAG_SYNTHETIC = {
+    0x06, 0x18, 0xFB, 0x2E, 0x0B, 0xB8, 0x0F, 0xA0, 0x00, 0x00, 0x2C, 0x7C, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x80, 0x4B, 0x83, 0x04, 0x03, 0x0B, 0x8B, 0x0B, 0x8A, 0x0B, 0x84,
+};
+
 // Synthetic frame: cells 1 and 3 balancing (4S pack). Decoded key values:
 //   cell_count: 4
 //   balancer_status_bitmask: 0x00000005 → bit0=cell1, bit2=cell3
