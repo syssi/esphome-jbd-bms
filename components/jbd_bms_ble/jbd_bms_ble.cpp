@@ -114,6 +114,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       this->frame_buffer_.clear();
       this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
       this->random_byte_ = 0;
+      this->hardware_version_query_attempts_ = 0;
 
       break;
     }

@@ -289,6 +289,7 @@ TEST(JbdBmsHwVerTest, QueryDeviceModelWhenConfiguredAndEmpty) {
   bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
 
   EXPECT_EQ(bms.last_command_address, 0x05);
+  EXPECT_EQ(bms.last_command_type, 0xA5);
 }
 
 TEST(JbdBmsHwVerTest, SkipQueryDeviceModelWhenAutoRetrieveDisabled) {
@@ -334,6 +335,7 @@ TEST(JbdBmsHwVerTest, MaxQueryDeviceModelAttempts) {
     bms.last_command_address = 0;
     bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
     EXPECT_EQ(bms.last_command_address, 0x05);
+    EXPECT_EQ(bms.last_command_type, 0xA5);
   }
 
   bms.last_command_address = 0;
