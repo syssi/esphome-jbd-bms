@@ -280,6 +280,37 @@ TEST(JbdBmsBleHwVerTest, DeviceModel) {
   EXPECT_EQ(model.state, "JBD-SP04S034-L4S-200A-B-U");
 }
 
+TEST(JbdBmsBleHwVerTest, QueryDeviceModelWhenConfiguredAndEmpty) {
+  TestableJbdBmsBle bms;
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0x05);
+}
+
+TEST(JbdBmsBleHwVerTest, SkipQueryDeviceModelWhenSensorNotConfigured) {
+  TestableJbdBmsBle bms;
+  // device_model_text_sensor_ is nullptr by default
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
+TEST(JbdBmsBleHwVerTest, SkipQueryDeviceModelWhenPopulated) {
+  TestableJbdBmsBle bms;
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+  bms.on_jbd_bms_data(0x05, HWVER_FRAME);
+  bms.last_command_address = 0;
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
 // ── Error counts ──────────────────────────────────────────────────────────────
 
 TEST(JbdBmsBleErrorCountsTest, ErrorCounts) {

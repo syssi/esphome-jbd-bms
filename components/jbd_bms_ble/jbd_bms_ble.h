@@ -219,7 +219,7 @@ class JbdBmsBle :
   }
   void set_authentication_timeout(uint32_t timeout_ms) { auth_timeout_ms_ = timeout_ms; }
 
-  bool send_command(uint8_t command, uint8_t address, const uint8_t *data = nullptr, uint8_t data_len = 0);
+  virtual bool send_command(uint8_t command, uint8_t address, const uint8_t *data = nullptr, uint8_t data_len = 0);
   virtual bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);
