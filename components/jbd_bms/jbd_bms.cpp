@@ -321,7 +321,8 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->total_voltage_sensor_, total_voltage);
 
   //  2    2   0x00 0x00              Current
-  float current = (float) ((int16_t) jbd_get_16bit(2)) * 0.01f;
+  float capacity_unit_scale = (data[20] & 0x80) ? 0.1f : 0.01f;
+  float current = (float) ((int16_t) jbd_get_16bit(2)) * capacity_unit_scale;
   float power = total_voltage * current;
   this->publish_state_(this->current_sensor_, current);
   this->publish_state_(this->power_sensor_, power);
@@ -329,10 +330,10 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->discharging_power_sensor_, std::abs(std::min(0.0f, power)));  // -500W vs 0W -> 500W
 
   //  4    2   0x01 0xF3              Residual Capacity                            499
-  this->publish_state_(this->capacity_remaining_sensor_, (float) jbd_get_16bit(4) * 0.01f);
+  this->publish_state_(this->capacity_remaining_sensor_, (float) jbd_get_16bit(4) * capacity_unit_scale);
 
   //  6    2   0x01 0xF4              Nominal Capacity                             500
-  this->publish_state_(this->nominal_capacity_sensor_, (float) jbd_get_16bit(6) * 0.01f);
+  this->publish_state_(this->nominal_capacity_sensor_, (float) jbd_get_16bit(6) * capacity_unit_scale);
 
   //  8    2   0x00 0x00              Cycle Life
   this->publish_state_(this->charging_cycles_sensor_, (float) jbd_get_16bit(8));
