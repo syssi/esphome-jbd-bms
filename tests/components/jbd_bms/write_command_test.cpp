@@ -166,6 +166,16 @@ TEST(MosfetSwitchTest, ChargingOnFromBothDisabled) {
   EXPECT_EQ(bms.last_write_value, 0x0002);
 }
 
+TEST(MosfetSwitchTest, UpperStatusBitsAreNotWritten) {
+  TestableJbdBms bms;
+  bms.set_mosfet_status(0xF3);  // charging=1, discharging=1, undocumented upper bits set
+  bms.change_mosfet_status(0xE1, 0, false);
+
+  // (0xF2 & 0x03) XOR 0x03 = 0x01 — upper bits must never reach register 0xE1
+  EXPECT_EQ(bms.last_write_address, 0xE1);
+  EXPECT_EQ(bms.last_write_value, 0x0001);
+}
+
 TEST(MosfetSwitchTest, UnknownStatusReturnsError) {
   TestableJbdBms bms;
   // mosfet_status_ defaults to 255 = unknown
