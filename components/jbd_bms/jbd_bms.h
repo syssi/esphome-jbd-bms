@@ -199,6 +199,9 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
     balancing_cells_text_sensor_ = balancing_cells_text_sensor;
   }
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
+  void set_auto_retrieve_hardware_version(bool auto_retrieve_hardware_version) {
+    auto_retrieve_hardware_version_ = auto_retrieve_hardware_version;
+  }
   void set_flow_control_pin(GPIOPin *flow_control_pin) { this->flow_control_pin_ = flow_control_pin; }
   virtual void send_command(uint8_t command, uint8_t address, const uint8_t *data, uint8_t data_len);
   virtual bool write_register(uint8_t address, uint16_t value);
@@ -284,6 +287,8 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   // Version
 
   std::string device_model_{};
+  bool auto_retrieve_hardware_version_{false};
+  uint8_t hardware_version_query_attempts_{0};
   std::vector<uint8_t> rx_buffer_;
   uint32_t last_byte_{0};
   uint16_t rx_timeout_{150};

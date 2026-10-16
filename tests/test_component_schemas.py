@@ -33,6 +33,16 @@ class TestHubConstants:
         assert hub.CONF_JBD_BMS_ID == "jbd_bms_id"
         assert hub_ble.CONF_JBD_BMS_BLE_ID == "jbd_bms_ble_id"
 
+    def test_auto_retrieve_hardware_version_defined(self):
+        assert (
+            hub.CONF_AUTO_RETRIEVE_HARDWARE_VERSION
+            == "auto_retrieve_hardware_version"
+        )
+        assert (
+            hub_ble.CONF_AUTO_RETRIEVE_HARDWARE_VERSION
+            == "auto_retrieve_hardware_version"
+        )
+
 
 class TestSensorLists:
     def test_cells_count(self):

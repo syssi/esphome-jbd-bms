@@ -35,6 +35,7 @@ def deprecated_renames(renames: dict[str, str]):
 
 CONF_JBD_BMS_ID = "jbd_bms_id"
 CONF_RX_TIMEOUT = "rx_timeout"
+CONF_AUTO_RETRIEVE_HARDWARE_VERSION = "auto_retrieve_hardware_version"
 
 jbd_bms_ns = cg.esphome_ns.namespace("jbd_bms")
 JbdBms = jbd_bms_ns.class_("JbdBms", cg.PollingComponent, uart.UARTDevice)
@@ -54,6 +55,9 @@ CONFIG_SCHEMA = cv.All(
                 CONF_RX_TIMEOUT, default="150ms"
             ): cv.positive_time_period_milliseconds,
             cv.Optional(CONF_FLOW_CONTROL_PIN): pins.gpio_output_pin_schema,
+            cv.Optional(
+                CONF_AUTO_RETRIEVE_HARDWARE_VERSION, default=False
+            ): cv.boolean,
         }
     )
     .extend(cv.polling_component_schema("2s"))
@@ -77,6 +81,11 @@ async def to_code(config):
     await uart.register_uart_device(var, config)
 
     cg.add(var.set_rx_timeout(config[CONF_RX_TIMEOUT]))
+    cg.add(
+        var.set_auto_retrieve_hardware_version(
+            config[CONF_AUTO_RETRIEVE_HARDWARE_VERSION]
+        )
+    )
     if CONF_FLOW_CONTROL_PIN in config:
         pin = await gpio_pin_expression(config[CONF_FLOW_CONTROL_PIN])
         cg.add(var.set_flow_control_pin(pin))

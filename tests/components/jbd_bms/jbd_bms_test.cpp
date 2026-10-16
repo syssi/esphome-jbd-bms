@@ -282,6 +282,7 @@ TEST(JbdBmsHwVerTest, DeviceModel) {
 
 TEST(JbdBmsHwVerTest, QueryDeviceModelWhenConfiguredAndEmpty) {
   TestableJbdBms bms;
+  bms.set_auto_retrieve_hardware_version(true);
   text_sensor::TextSensor model;
   bms.set_device_model_text_sensor(&model);
 
@@ -290,8 +291,19 @@ TEST(JbdBmsHwVerTest, QueryDeviceModelWhenConfiguredAndEmpty) {
   EXPECT_EQ(bms.last_command_address, 0x05);
 }
 
+TEST(JbdBmsHwVerTest, SkipQueryDeviceModelWhenAutoRetrieveDisabled) {
+  TestableJbdBms bms;
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
 TEST(JbdBmsHwVerTest, SkipQueryDeviceModelWhenSensorNotConfigured) {
   TestableJbdBms bms;
+  bms.set_auto_retrieve_hardware_version(true);
   // device_model_text_sensor_ is nullptr by default
 
   bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
@@ -301,6 +313,7 @@ TEST(JbdBmsHwVerTest, SkipQueryDeviceModelWhenSensorNotConfigured) {
 
 TEST(JbdBmsHwVerTest, SkipQueryDeviceModelWhenPopulated) {
   TestableJbdBms bms;
+  bms.set_auto_retrieve_hardware_version(true);
   text_sensor::TextSensor model;
   bms.set_device_model_text_sensor(&model);
   bms.on_jbd_bms_data(0x05, HWVER_FRAME);
@@ -308,6 +321,23 @@ TEST(JbdBmsHwVerTest, SkipQueryDeviceModelWhenPopulated) {
 
   bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
 
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
+TEST(JbdBmsHwVerTest, MaxQueryDeviceModelAttempts) {
+  TestableJbdBms bms;
+  bms.set_auto_retrieve_hardware_version(true);
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+
+  for (int i = 0; i < 5; i++) {
+    bms.last_command_address = 0;
+    bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+    EXPECT_EQ(bms.last_command_address, 0x05);
+  }
+
+  bms.last_command_address = 0;
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
   EXPECT_EQ(bms.last_command_address, 0);
 }
 

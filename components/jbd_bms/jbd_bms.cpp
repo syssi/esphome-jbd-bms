@@ -272,7 +272,9 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->delta_cell_voltage_sensor_, max_cell_voltage - min_cell_voltage);
   this->publish_state_(this->average_cell_voltage_sensor_, average_cell_voltage);
 
-  if (this->device_model_text_sensor_ != nullptr && this->device_model_.empty()) {
+  if (this->auto_retrieve_hardware_version_ && this->device_model_text_sensor_ != nullptr &&
+      this->device_model_.empty() && this->hardware_version_query_attempts_ < 5) {
+    this->hardware_version_query_attempts_++;
     this->send_command(JBD_CMD_READ, JBD_CMD_HWVER, nullptr, 0);
   }
 }
@@ -487,6 +489,7 @@ void JbdBms::dump_config() {  // NOLINT(google-readability-function-size,readabi
   ESP_LOGCONFIG(TAG, "JbdBms:");
   LOG_PIN("  Flow Control Pin: ", this->flow_control_pin_);
   ESP_LOGCONFIG(TAG, "  RX timeout: %d ms", this->rx_timeout_);
+  ESP_LOGCONFIG(TAG, "  Auto-retrieve Hardware Version: %s", YESNO(this->auto_retrieve_hardware_version_));
 
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
