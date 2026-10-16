@@ -636,7 +636,7 @@ void JbdBmsBle::on_error_counts_data_(const std::vector<uint8_t> &data) {
   log_hex_chunked(TAG, data.data(), data.size());
 
   uint8_t data_len = data.size();
-  if (data_len != 24) {
+  if (data_len < 22) {
     ESP_LOGW(TAG, "Skipping error counts frame because of invalid length: %d", data_len);
     return;
   }

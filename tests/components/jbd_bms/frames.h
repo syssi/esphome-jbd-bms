@@ -46,6 +46,19 @@ static const std::vector<uint8_t> ERRCOUNT_FRAME = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
 };
 
+// SYNTHETIC FRAME - NOT A REAL HARDWARE CAPTURE.
+// Hand-crafted 22-byte error counts response modelled after JBD firmware versions
+// that omit the two trailing reserved registers (see PR #259). Each counter holds a
+// distinct value to verify the register offsets. Decoded values:
+//   short_circuit: 1           charge_overcurrent: 2      discharge_overcurrent: 3
+//   cell_overvoltage: 4        cell_undervoltage: 5       charge_overtemperature: 6
+//   charge_undertemperature: 7 discharge_overtemperature: 8  discharge_undertemperature: 9
+//   battery_overvoltage: 10    battery_undervoltage: 11
+static const std::vector<uint8_t> ERRCOUNT_FRAME_22_BYTES_SYNTHETIC = {
+    0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00,
+    0x06, 0x00, 0x07, 0x00, 0x08, 0x00, 0x09, 0x00, 0x0A, 0x00, 0x0B,
+};
+
 // Source: real hardware capture (BLE log, jbd_bms_ble component).
 // 4S, 280 Ah, cell overvoltage protection active. Decoded key values:
 //   total_voltage: 14.28 V         current: 0.00 A
