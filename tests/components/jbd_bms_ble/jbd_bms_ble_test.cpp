@@ -247,6 +247,49 @@ TEST(JbdBmsBleErrorCountsTest, ErrorCounts) {
   EXPECT_FLOAT_EQ(buv.state, 0.0f);
 }
 
+TEST(JbdBmsBleErrorCountsTest, ErrorCounts22Bytes) {
+  TestableJbdBmsBle bms;
+  sensor::Sensor sc, co, doc, cov, cuv, cot, cut, dot, dut, bov, buv;
+  bms.set_short_circuit_error_count_sensor(&sc);
+  bms.set_charge_overcurrent_error_count_sensor(&co);
+  bms.set_discharge_overcurrent_error_count_sensor(&doc);
+  bms.set_cell_overvoltage_error_count_sensor(&cov);
+  bms.set_cell_undervoltage_error_count_sensor(&cuv);
+  bms.set_charge_overtemperature_error_count_sensor(&cot);
+  bms.set_charge_undertemperature_error_count_sensor(&cut);
+  bms.set_discharge_overtemperature_error_count_sensor(&dot);
+  bms.set_discharge_undertemperature_error_count_sensor(&dut);
+  bms.set_battery_overvoltage_error_count_sensor(&bov);
+  bms.set_battery_undervoltage_error_count_sensor(&buv);
+
+  bms.on_jbd_bms_data(0xAA, ERRCOUNT_FRAME_22_BYTES_SYNTHETIC);
+
+  EXPECT_FLOAT_EQ(sc.state, 1.0f);
+  EXPECT_FLOAT_EQ(co.state, 2.0f);
+  EXPECT_FLOAT_EQ(doc.state, 3.0f);
+  EXPECT_FLOAT_EQ(cov.state, 4.0f);
+  EXPECT_FLOAT_EQ(cuv.state, 5.0f);
+  EXPECT_FLOAT_EQ(cot.state, 6.0f);
+  EXPECT_FLOAT_EQ(cut.state, 7.0f);
+  EXPECT_FLOAT_EQ(dot.state, 8.0f);
+  EXPECT_FLOAT_EQ(dut.state, 9.0f);
+  EXPECT_FLOAT_EQ(bov.state, 10.0f);
+  EXPECT_FLOAT_EQ(buv.state, 11.0f);
+}
+
+TEST(JbdBmsBleErrorCountsTest, ErrorCountsTooShortIsSkipped) {
+  TestableJbdBmsBle bms;
+  sensor::Sensor sc, buv;
+  bms.set_short_circuit_error_count_sensor(&sc);
+  bms.set_battery_undervoltage_error_count_sensor(&buv);
+
+  std::vector<uint8_t> frame(ERRCOUNT_FRAME_22_BYTES_SYNTHETIC.begin(), ERRCOUNT_FRAME_22_BYTES_SYNTHETIC.end() - 1);
+  bms.on_jbd_bms_data(0xAA, frame);
+
+  EXPECT_FALSE(sc.has_state());
+  EXPECT_FALSE(buv.has_state());
+}
+
 // ── Protection binary sensors ─────────────────────────────────────────────────
 
 TEST(JbdBmsBleBasicInfoTest, ProtectionBinarySensorsNoneActive) {
