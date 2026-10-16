@@ -280,6 +280,23 @@ TEST(JbdBmsHwVerTest, DeviceModel) {
   EXPECT_EQ(model.state, "JBD-SP04S034-L4S-200A-B-U");
 }
 
+TEST(JbdBmsHwVerTest, QueryDeviceModelWhenEmpty) {
+  TestableJbdBms bms;
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0x05);
+}
+
+TEST(JbdBmsHwVerTest, SkipQueryDeviceModelWhenPopulated) {
+  TestableJbdBms bms;
+  bms.on_jbd_bms_data(0x05, HWVER_FRAME);
+  bms.last_command_address = 0;
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
 // ── Error counts ──────────────────────────────────────────────────────────────
 
 TEST(JbdBmsErrorCountsTest, ErrorCounts) {

@@ -271,6 +271,10 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->min_voltage_cell_sensor_, (float) min_voltage_cell);
   this->publish_state_(this->delta_cell_voltage_sensor_, max_cell_voltage - min_cell_voltage);
   this->publish_state_(this->average_cell_voltage_sensor_, average_cell_voltage);
+
+  if (this->device_model_.empty()) {
+    this->send_command(JBD_CMD_READ, JBD_CMD_HWVER, nullptr, 0);
+  }
 }
 
 void JbdBms::on_error_counts_data_(const std::vector<uint8_t> &data) {
