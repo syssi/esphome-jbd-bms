@@ -43,6 +43,7 @@ jbd_bms_ble:
   - id: bms0
     ble_client_id: client0
     update_interval: 30s
+    auto_retrieve_hardware_version: false
     password: "123456"
 
 interval:

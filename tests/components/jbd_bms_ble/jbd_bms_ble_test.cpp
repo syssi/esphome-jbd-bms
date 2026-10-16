@@ -280,6 +280,69 @@ TEST(JbdBmsBleHwVerTest, DeviceModel) {
   EXPECT_EQ(model.state, "JBD-SP04S034-L4S-200A-B-U");
 }
 
+TEST(JbdBmsBleHwVerTest, QueryDeviceModelWhenConfiguredAndEmpty) {
+  TestableJbdBmsBle bms;
+  bms.set_auto_retrieve_hardware_version(true);
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0x05);
+  EXPECT_EQ(bms.last_command_type, 0xA5);
+}
+
+TEST(JbdBmsBleHwVerTest, SkipQueryDeviceModelWhenAutoRetrieveDisabled) {
+  TestableJbdBmsBle bms;
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
+TEST(JbdBmsBleHwVerTest, SkipQueryDeviceModelWhenSensorNotConfigured) {
+  TestableJbdBmsBle bms;
+  bms.set_auto_retrieve_hardware_version(true);
+  // device_model_text_sensor_ is nullptr by default
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
+TEST(JbdBmsBleHwVerTest, SkipQueryDeviceModelWhenPopulated) {
+  TestableJbdBmsBle bms;
+  bms.set_auto_retrieve_hardware_version(true);
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+  bms.on_jbd_bms_data(0x05, HWVER_FRAME);
+  bms.last_command_address = 0;
+
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
+TEST(JbdBmsBleHwVerTest, MaxQueryDeviceModelAttempts) {
+  TestableJbdBmsBle bms;
+  bms.set_auto_retrieve_hardware_version(true);
+  text_sensor::TextSensor model;
+  bms.set_device_model_text_sensor(&model);
+
+  for (int i = 0; i < 5; i++) {
+    bms.last_command_address = 0;
+    bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+    EXPECT_EQ(bms.last_command_address, 0x05);
+    EXPECT_EQ(bms.last_command_type, 0xA5);
+  }
+
+  bms.last_command_address = 0;
+  bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
+  EXPECT_EQ(bms.last_command_address, 0);
+}
+
 // ── Error counts ──────────────────────────────────────────────────────────────
 
 TEST(JbdBmsBleErrorCountsTest, ErrorCounts) {

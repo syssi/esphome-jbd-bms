@@ -34,6 +34,7 @@ CONF_JBD_BMS_BLE_ID = "jbd_bms_ble_id"
 CONF_AUTH_TIMEOUT = "auth_timeout"
 CONF_NOTIFY_CHARACTERISTIC_UUID = "notify_characteristic_uuid"
 CONF_CONTROL_CHARACTERISTIC_UUID = "control_characteristic_uuid"
+CONF_AUTO_RETRIEVE_HARDWARE_VERSION = "auto_retrieve_hardware_version"
 
 jbd_bms_ble_ns = cg.esphome_ns.namespace("jbd_bms_ble")
 JbdBmsBle = jbd_bms_ble_ns.class_(
@@ -90,6 +91,7 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(
                 CONF_AUTH_TIMEOUT, default="10s"
             ): cv.positive_time_period_milliseconds,
+            cv.Optional(CONF_AUTO_RETRIEVE_HARDWARE_VERSION, default=False): cv.boolean,
         }
     )
     .extend(ble_client.BLE_CLIENT_SCHEMA)
@@ -106,6 +108,11 @@ async def to_code(config):
     cg.add(var.set_notify_characteristic_uuid(config[CONF_NOTIFY_CHARACTERISTIC_UUID]))
     cg.add(
         var.set_control_characteristic_uuid(config[CONF_CONTROL_CHARACTERISTIC_UUID])
+    )
+    cg.add(
+        var.set_auto_retrieve_hardware_version(
+            config[CONF_AUTO_RETRIEVE_HARDWARE_VERSION]
+        )
     )
 
     if CONF_PASSWORD in config and config[CONF_PASSWORD]:

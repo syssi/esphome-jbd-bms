@@ -114,6 +114,7 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       this->frame_buffer_.clear();
       this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
       this->random_byte_ = 0;
+      this->hardware_version_query_attempts_ = 0;
 
       break;
     }
@@ -524,6 +525,12 @@ void JbdBmsBle::on_cell_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->min_voltage_cell_sensor_, (float) min_voltage_cell);
   this->publish_state_(this->delta_cell_voltage_sensor_, max_cell_voltage - min_cell_voltage);
   this->publish_state_(this->average_cell_voltage_sensor_, average_cell_voltage);
+
+  if (this->auto_retrieve_hardware_version_ && this->device_model_text_sensor_ != nullptr &&
+      this->device_model_.empty() && this->hardware_version_query_attempts_ < 5) {
+    this->hardware_version_query_attempts_++;
+    this->send_command(JBD_CMD_READ, JBD_CMD_HWVER);
+  }
 }
 
 void JbdBmsBle::on_basic_info_data_(const std::vector<uint8_t> &data) {
@@ -737,6 +744,7 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   ESP_LOGCONFIG(TAG, "  Service UUID: 0x%04X", this->service_uuid_);
   ESP_LOGCONFIG(TAG, "  Notify Characteristic UUID: 0x%04X", this->notify_char_uuid_);
   ESP_LOGCONFIG(TAG, "  Control Characteristic UUID: 0x%04X", this->control_char_uuid_);
+  ESP_LOGCONFIG(TAG, "  Auto-retrieve Hardware Version: %s", YESNO(this->auto_retrieve_hardware_version_));
 
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
