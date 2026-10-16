@@ -312,6 +312,7 @@ void JbdBmsBle::assemble(const uint8_t *data, uint16_t length) {
   if (this->frame_buffer_.size() >= 7 && this->frame_buffer_[0] == JBD_PKT_START) {
     const uint8_t *raw = &this->frame_buffer_[0];
     uint8_t function = raw[1];
+    uint8_t status = raw[2];
     uint16_t data_len = raw[3];
     uint16_t frame_len = 4 + data_len + 3;
 
@@ -326,11 +327,13 @@ void JbdBmsBle::assemble(const uint8_t *data, uint16_t length) {
       uint16_t computed_crc = chksum_(raw + 2, data_len + 2);
       uint16_t remote_crc = uint16_t(raw[frame_len - 3]) << 8 | (uint16_t(raw[frame_len - 2]) << 0);
 
-      if (computed_crc == remote_crc) {
+      if (computed_crc != remote_crc) {
+        ESP_LOGW(TAG, "CRC check failed! 0x%04X != 0x%04X", computed_crc, remote_crc);
+      } else if (status != 0x00) {
+        ESP_LOGW(TAG, "BMS returned error status 0x%02X for function 0x%02X", status, function);
+      } else {
         std::vector<uint8_t> frame_data(this->frame_buffer_.begin() + 4, this->frame_buffer_.end() - 3);
         this->on_jbd_bms_data(function, frame_data);
-      } else {
-        ESP_LOGW(TAG, "CRC check failed! 0x%04X != 0x%04X", computed_crc, remote_crc);
       }
     } else {
       ESP_LOGW(TAG, "Invalid frame length: expected %d, got %zu", frame_len, this->frame_buffer_.size());
@@ -524,6 +527,11 @@ void JbdBmsBle::on_cell_info_data_(const std::vector<uint8_t> &data) {
 }
 
 void JbdBmsBle::on_basic_info_data_(const std::vector<uint8_t> &data) {
+  if (data.size() < 23) {
+    ESP_LOGW(TAG, "Skipping basic info frame because of invalid length: %zu", data.size());
+    return;
+  }
+
   auto jbd_get_16bit = [&](size_t i) -> uint16_t {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
@@ -619,7 +627,8 @@ void JbdBmsBle::on_basic_info_data_(const std::vector<uint8_t> &data) {
   // 23    2   0x0B 0x8D              Temperature 1
   // 25    2   0x0B 0x8C              Temperature 2
   // 27    2   0x0B 0x88              Temperature 3
-  uint8_t temperature_sensors = std::min(data[22], (uint8_t) 6);
+  uint8_t available_temp_sensors = (data.size() - 23) / 2;
+  uint8_t temperature_sensors = std::min({data[22], (uint8_t) 6, available_temp_sensors});
   this->publish_state_(this->temperature_sensors_sensor_, temperature_sensors);
   for (uint8_t i = 0; i < temperature_sensors; i++) {
     this->publish_state_(this->temperatures_[i].temperature_sensor_,
