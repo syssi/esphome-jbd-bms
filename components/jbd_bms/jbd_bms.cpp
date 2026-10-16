@@ -348,6 +348,10 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->balancer_status_bitmask_sensor_, (float) balance_status_bitmask);
   this->publish_state_(this->balancing_binary_sensor_, balance_status_bitmask > 0);
   uint8_t cells = data[21];
+  if (cells > 32) {
+    ESP_LOGW(TAG, "Cell count %u exceeds balancer bitmask width, clamping to 32", cells);
+    cells = 32;
+  }
   std::string balancing_cells;
   for (uint8_t i = 0; i < cells; i++) {
     if (balance_status_bitmask & (1u << i)) {
