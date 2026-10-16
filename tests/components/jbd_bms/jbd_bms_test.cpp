@@ -50,6 +50,55 @@ TEST(JbdBmsBasicInfoTest, Capacity) {
   EXPECT_FLOAT_EQ(cycles.state, 0.0f);
 }
 
+// ── Capacity / current unit flag (byte 20, bit 7) ────────────────────────────
+
+TEST(JbdBmsBasicInfoTest, CapacityUnitFlagClearUsesDefaultScaleOnLargePack) {
+  // Real 280 Ah capture: bit 7 of byte 20 is clear, so 10 mA / 10 mAh units apply.
+  TestableJbdBms bms;
+  sensor::Sensor current, cap_rem, nominal;
+  bms.set_current_sensor(&current);
+  bms.set_capacity_remaining_sensor(&cap_rem);
+  bms.set_nominal_capacity_sensor(&nominal);
+
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_CELL_OVERVOLTAGE);
+
+  EXPECT_NEAR(current.state, 0.0f, 0.001f);
+  EXPECT_NEAR(cap_rem.state, 280.00f, 0.01f);
+  EXPECT_NEAR(nominal.state, 280.00f, 0.01f);
+}
+
+TEST(JbdBmsBasicInfoTest, CapacityUnitFlagSetScalesCurrentAndCapacity) {
+  TestableJbdBms bms;
+  sensor::Sensor current, power, charging_power, discharging_power, cap_rem, nominal;
+  bms.set_current_sensor(&current);
+  bms.set_power_sensor(&power);
+  bms.set_charging_power_sensor(&charging_power);
+  bms.set_discharging_power_sensor(&discharging_power);
+  bms.set_capacity_remaining_sensor(&cap_rem);
+  bms.set_nominal_capacity_sensor(&nominal);
+
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_CAPACITY_UNIT_FLAG_SYNTHETIC);
+
+  EXPECT_NEAR(current.state, -123.4f, 0.001f);
+  EXPECT_NEAR(power.state, -1925.04f, 0.01f);
+  EXPECT_NEAR(charging_power.state, 0.0f, 0.01f);
+  EXPECT_NEAR(discharging_power.state, 1925.04f, 0.01f);
+  EXPECT_NEAR(cap_rem.state, 300.0f, 0.01f);
+  EXPECT_NEAR(nominal.state, 400.0f, 0.01f);
+}
+
+TEST(JbdBmsBasicInfoTest, CapacityUnitFlagSetKeepsMosfetStatus) {
+  TestableJbdBms bms;
+  binary_sensor::BinarySensor charging_bs, discharging_bs;
+  bms.set_charging_binary_sensor(&charging_bs);
+  bms.set_discharging_binary_sensor(&discharging_bs);
+
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_CAPACITY_UNIT_FLAG_SYNTHETIC);
+
+  EXPECT_TRUE(charging_bs.state);
+  EXPECT_TRUE(discharging_bs.state);
+}
+
 // ── State of charge ───────────────────────────────────────────────────────────
 
 TEST(JbdBmsBasicInfoTest, StateOfCharge) {
