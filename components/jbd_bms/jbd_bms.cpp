@@ -293,9 +293,6 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   auto jbd_get_16bit = [&](size_t i) -> uint16_t {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
-  auto jbd_get_32bit = [&](size_t i) -> uint32_t {
-    return (uint32_t(jbd_get_16bit(i + 0)) << 16) | (uint32_t(jbd_get_16bit(i + 2)) << 0);
-  };
 
   ESP_LOGI(TAG, "Basic info frame (%zu bytes) received", data.size());
   log_hex_chunked(TAG, data.data(), data.size());
@@ -329,14 +326,14 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
   ESP_LOGD(TAG, "  Date of manufacture: %d.%d.%d", 2000 + (production_date >> 9), (production_date >> 5) & 0x0f,
            production_date & 0x1f);
 
-  // 12    4   0x00 0x00 0x00 0x00    Balancer Status
-  uint32_t balance_status_bitmask = jbd_get_32bit(12);
+  // 12    4   0x00 0x00 0x00 0x00    Balancer Status (bytes 12-13: cells 1-16, bytes 14-15: cells 17-32)
+  uint32_t balance_status_bitmask = (uint32_t(jbd_get_16bit(14)) << 16) | (uint32_t(jbd_get_16bit(12)) << 0);
   this->publish_state_(this->balancer_status_bitmask_sensor_, (float) balance_status_bitmask);
   this->publish_state_(this->balancing_binary_sensor_, balance_status_bitmask > 0);
   uint8_t cells = data[21];
   std::string balancing_cells;
   for (uint8_t i = 0; i < cells; i++) {
-    if (balance_status_bitmask & (1u << (cells - 1 - i))) {
+    if (balance_status_bitmask & (1u << i)) {
       if (!balancing_cells.empty())
         balancing_cells += ", ";
       char buf[4];
