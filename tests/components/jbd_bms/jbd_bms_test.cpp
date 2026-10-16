@@ -400,10 +400,13 @@ TEST(JbdBmsBasicInfoTest, BalancingCellsEmpty) {
 TEST(JbdBmsBasicInfoTest, BalancingCellsActive) {
   TestableJbdBms bms;
   text_sensor::TextSensor balancing_cells;
+  sensor::Sensor bal_bitmask;
   bms.set_balancing_cells_text_sensor(&balancing_cells);
+  bms.set_balancer_status_bitmask_sensor(&bal_bitmask);
 
   bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_BALANCING_CELLS_1_3);
 
+  EXPECT_FLOAT_EQ(bal_bitmask.state, 5.0f);
   EXPECT_EQ(balancing_cells.state, "1, 3");
 }
 
