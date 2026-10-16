@@ -875,6 +875,8 @@ bool JbdBmsBle::change_mosfet_status(uint8_t address, uint8_t bitmask, bool stat
 
   this->mosfet_status_ = value;
 
+  // Bits 0 (charge) and 1 (discharge): 1 = close/off, 0 = open/on
+  value &= 0x03;
   value ^= (1 << 0);
   value ^= (1 << 1);
 
