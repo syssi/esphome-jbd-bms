@@ -77,14 +77,14 @@ static constexpr const char *const ERRORS[ERRORS_SIZE] = {
 
 static const uint8_t OPERATION_STATUS_SIZE = 8;
 static constexpr const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
-    "Charging",        // 0x01
-    "Discharging",     // 0x02
-    "Unknown (0x04)",  // 0x04
-    "Unknown (0x08)",  // 0x08
-    "Unknown (0x10)",  // 0x10
-    "Unknown (0x20)",  // 0x20
-    "Unknown (0x40)",  // 0x40
-    "Unknown (0x80)",  // 0x80
+    "Charging",            // 0x01
+    "Discharging",         // 0x02
+    "Unknown (0x04)",      // 0x04
+    "Unknown (0x08)",      // 0x08
+    "Unknown (0x10)",      // 0x10
+    "Unknown (0x20)",      // 0x20
+    "Unknown (0x40)",      // 0x40
+    "100mA/100mAh units",  // 0x80 (capacity/current unit flag)
 };
 
 static const uint8_t ROOT_PASSWORD[] = {0x4a, 0x42, 0x44, 0x62, 0x74, 0x70, 0x77, 0x64,

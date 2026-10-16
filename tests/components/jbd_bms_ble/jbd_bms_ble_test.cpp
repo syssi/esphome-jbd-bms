@@ -99,6 +99,22 @@ TEST(JbdBmsBleBasicInfoTest, CapacityUnitFlagSetKeepsMosfetStatus) {
   EXPECT_TRUE(discharging_bs.state);
 }
 
+TEST(JbdBmsBleBasicInfoTest, CapacityUnitFlagSetOperationStatusText) {
+  TestableJbdBmsBle bms;
+  sensor::Sensor op_bitmask;
+  text_sensor::TextSensor op_status;
+  bms.set_operation_status_bitmask_sensor(&op_bitmask);
+  bms.set_operation_status_text_sensor(&op_status);
+
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_CAPACITY_UNIT_FLAG_SYNTHETIC);
+
+  EXPECT_FLOAT_EQ(op_bitmask.state, 131.0f);
+  EXPECT_NE(op_status.state.find("Charging"), std::string::npos);
+  EXPECT_NE(op_status.state.find("Discharging"), std::string::npos);
+  EXPECT_NE(op_status.state.find("100mA/100mAh units"), std::string::npos);
+  EXPECT_EQ(op_status.state.find("Unknown"), std::string::npos);
+}
+
 // ── State of charge ───────────────────────────────────────────────────────────
 
 TEST(JbdBmsBleBasicInfoTest, StateOfCharge) {
