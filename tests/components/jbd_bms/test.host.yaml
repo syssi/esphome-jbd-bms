@@ -6,3 +6,4 @@ jbd_bms:
   id: test_bms
   uart_id: uart_bus
   update_interval: 5s
+  auto_retrieve_hardware_version: false

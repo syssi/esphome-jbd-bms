@@ -4,6 +4,7 @@ jbd_bms:
   - id: bms0
     uart_id: uart_0
     update_interval: 2s
+    auto_retrieve_hardware_version: false
     rx_timeout: ${rx_timeout}
 
 interval:

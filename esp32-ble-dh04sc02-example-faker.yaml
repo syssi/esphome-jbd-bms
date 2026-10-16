@@ -4,6 +4,7 @@ jbd_bms_ble:
   - id: bms0
     ble_client_id: client0
     update_interval: 1s
+    auto_retrieve_hardware_version: false
 
 interval:
   - interval: 10s

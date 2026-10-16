@@ -1,3 +1,4 @@
 jbd_bms_ble:
   id: test_bms
   update_interval: 20s
+  auto_retrieve_hardware_version: false
