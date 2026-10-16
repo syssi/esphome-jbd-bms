@@ -35,8 +35,7 @@ class TestHubConstants:
 
     def test_auto_retrieve_hardware_version_defined(self):
         assert (
-            hub.CONF_AUTO_RETRIEVE_HARDWARE_VERSION
-            == "auto_retrieve_hardware_version"
+            hub.CONF_AUTO_RETRIEVE_HARDWARE_VERSION == "auto_retrieve_hardware_version"
         )
         assert (
             hub_ble.CONF_AUTO_RETRIEVE_HARDWARE_VERSION

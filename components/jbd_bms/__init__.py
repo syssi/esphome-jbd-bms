@@ -55,9 +55,7 @@ CONFIG_SCHEMA = cv.All(
                 CONF_RX_TIMEOUT, default="150ms"
             ): cv.positive_time_period_milliseconds,
             cv.Optional(CONF_FLOW_CONTROL_PIN): pins.gpio_output_pin_schema,
-            cv.Optional(
-                CONF_AUTO_RETRIEVE_HARDWARE_VERSION, default=False
-            ): cv.boolean,
+            cv.Optional(CONF_AUTO_RETRIEVE_HARDWARE_VERSION, default=False): cv.boolean,
         }
     )
     .extend(cv.polling_component_schema("2s"))

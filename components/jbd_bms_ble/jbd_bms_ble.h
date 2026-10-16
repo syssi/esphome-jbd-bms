@@ -222,7 +222,8 @@ class JbdBmsBle :
     auto_retrieve_hardware_version_ = auto_retrieve_hardware_version;
   }
 
-  virtual bool send_command(uint8_t command, uint8_t address, const uint8_t *data = nullptr, uint8_t data_len = 0);
+  virtual bool send_command(uint8_t command, uint8_t address, const uint8_t *data, uint8_t data_len);
+  bool send_command(uint8_t command, uint8_t address) { return this->send_command(command, address, nullptr, 0); }
   virtual bool write_register(uint8_t address, uint16_t value);
   bool change_mosfet_status(uint8_t address, uint8_t bitmask, bool state);
   void on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t> &data);

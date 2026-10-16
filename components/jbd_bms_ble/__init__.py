@@ -91,9 +91,7 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(
                 CONF_AUTH_TIMEOUT, default="10s"
             ): cv.positive_time_period_milliseconds,
-            cv.Optional(
-                CONF_AUTO_RETRIEVE_HARDWARE_VERSION, default=False
-            ): cv.boolean,
+            cv.Optional(CONF_AUTO_RETRIEVE_HARDWARE_VERSION, default=False): cv.boolean,
         }
     )
     .extend(ble_client.BLE_CLIENT_SCHEMA)

@@ -21,6 +21,7 @@ class TestableJbdBmsBle : public JbdBmsBle {
     last_write_value = value;
     return true;
   }
+  using JbdBmsBle::send_command;
   using JbdBmsBle::build_frame_;
   uint8_t last_write_address{0};
   uint16_t last_write_value{0};
