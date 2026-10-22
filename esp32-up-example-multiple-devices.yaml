@@ -11,14 +11,17 @@ substitutions:
 esphome:
   name: ${name}
   comment: ${device_description}
+  min_version: "2026.11.0"
   project:
     name: "syssi.esphome-jbd-bms"
     version: 2.3.0
   devices:
     - id: device0
       name: "${bms0}"
+      relation: via
     - id: device1
       name: "${bms1}"
+      relation: via
 
 esp32:
   board: wemos_d1_mini32
