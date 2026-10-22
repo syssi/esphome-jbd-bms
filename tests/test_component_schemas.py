@@ -1,18 +1,12 @@
 """Schema structure tests for jbd_bms ESPHome component modules."""
 
-import os
+from pathlib import Path
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import components.jbd_bms as hub  # noqa: E402
-from components.jbd_bms import (  # noqa: E402  # noqa: E402
-    binary_sensor,
-    button,
-    sensor,
-    switch,
-    text_sensor,
-)
+from components.jbd_bms import binary_sensor, button, sensor, switch, text_sensor  # noqa: E402
 import components.jbd_bms_ble as hub_ble  # noqa: E402
 from components.jbd_bms_ble import (  # noqa: E402
     binary_sensor as ble_binary_sensor,  # noqa: E402
@@ -107,9 +101,9 @@ class TestBinarySensorConstants:
 
     def test_protection_sensors_in_defs(self):
         for key in PROTECTION_KEYS:
-            assert (
-                key in binary_sensor.BINARY_SENSOR_DEFS
-            ), f"{key} missing from jbd_bms BINARY_SENSOR_DEFS"
+            assert key in binary_sensor.BINARY_SENSOR_DEFS, (
+                f"{key} missing from jbd_bms BINARY_SENSOR_DEFS"
+            )
 
     def test_ble_binary_sensor_defs_dict(self):
         from components.jbd_bms_ble.const import CONF_CHARGING, CONF_DISCHARGING
@@ -124,9 +118,9 @@ class TestBinarySensorConstants:
 
     def test_ble_protection_sensors_in_defs(self):
         for key in PROTECTION_KEYS:
-            assert (
-                key in ble_binary_sensor.BINARY_SENSOR_DEFS
-            ), f"{key} missing from jbd_bms_ble BINARY_SENSOR_DEFS"
+            assert key in ble_binary_sensor.BINARY_SENSOR_DEFS, (
+                f"{key} missing from jbd_bms_ble BINARY_SENSOR_DEFS"
+            )
 
 
 class TestTextSensorConstants:
