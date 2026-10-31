@@ -230,7 +230,7 @@ void JbdBms::on_cell_info_data_(const std::vector<uint8_t> &data) {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
 
-  ESP_LOGI(TAG, "Cell info frame (%zu bytes) received", data.size());
+  ESP_LOGD(TAG, "Cell info frame (%zu bytes) received", data.size());
   log_hex_chunked(TAG, data.data(), data.size());
 
   uint8_t data_len = data.size();
@@ -316,7 +316,7 @@ void JbdBms::on_basic_info_data_(const std::vector<uint8_t> &data) {
     return (uint16_t(data[i + 0]) << 8) | (uint16_t(data[i + 1]) << 0);
   };
 
-  ESP_LOGI(TAG, "Basic info frame (%zu bytes) received", data.size());
+  ESP_LOGD(TAG, "Basic info frame (%zu bytes) received", data.size());
   log_hex_chunked(TAG, data.data(), data.size());
 
   ESP_LOGD(TAG, "  Device model: %s", this->device_model_.c_str());
