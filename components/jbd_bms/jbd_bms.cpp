@@ -23,6 +23,7 @@ static void log_hex_chunked(const char *tag, const uint8_t *data, size_t size) {
 }
 
 static const uint8_t MAX_NO_RESPONSE_COUNT = 5;
+static const uint8_t INTER_FRAME_DELAY_MS = 50;
 
 static const uint8_t JBD_PKT_START = 0xDD;
 static const uint8_t JBD_PKT_END = 0x77;
@@ -104,10 +105,16 @@ void JbdBms::loop() {
       this->rx_buffer_.clear();
     }
   }
+
+  if (this->pending_cell_info_ && now - this->cell_info_request_ms_ >= INTER_FRAME_DELAY_MS) {
+    this->pending_cell_info_ = false;
+    this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO, nullptr, 0);
+  }
 }
 
 void JbdBms::update() {
   this->track_online_status_();
+  this->pending_cell_info_ = false;
   this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO, nullptr, 0);
 }
 
@@ -203,7 +210,8 @@ void JbdBms::on_jbd_bms_data(const uint8_t &function, const std::vector<uint8_t>
   switch (function) {
     case JBD_CMD_BASICINFO:
       this->on_basic_info_data_(data);
-      this->send_command(JBD_CMD_READ, JBD_CMD_CELLINFO, nullptr, 0);
+      this->pending_cell_info_ = true;
+      this->cell_info_request_ms_ = millis();
       break;
     case JBD_CMD_CELLINFO:
       this->on_cell_info_data_(data);

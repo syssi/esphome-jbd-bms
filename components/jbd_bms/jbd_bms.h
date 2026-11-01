@@ -291,10 +291,12 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   uint8_t hardware_version_query_attempts_{0};
   std::vector<uint8_t> rx_buffer_;
   uint32_t last_byte_{0};
+  uint32_t cell_info_request_ms_{0};
   uint16_t rx_timeout_{150};
   GPIOPin *flow_control_pin_{nullptr};
   uint8_t no_response_count_{0};
   uint8_t mosfet_status_{255};
+  bool pending_cell_info_{false};
 
   void on_cell_info_data_(const std::vector<uint8_t> &data);
   void on_error_counts_data_(const std::vector<uint8_t> &data);
