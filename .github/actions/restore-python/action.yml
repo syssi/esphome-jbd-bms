@@ -37,3 +37,4 @@ runs:
         cd esphome
         pip install -r requirements.txt -r requirements_test.txt
         pip install -e .
+        pip install yq
