@@ -28,6 +28,9 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   void set_discharging_binary_sensor(binary_sensor::BinarySensor *discharging_binary_sensor) {
     discharging_binary_sensor_ = discharging_binary_sensor;
   }
+  void set_heating_binary_sensor(binary_sensor::BinarySensor *heating_binary_sensor) {
+    heating_binary_sensor_ = heating_binary_sensor;
+  }
   void set_online_status_binary_sensor(binary_sensor::BinarySensor *online_status_binary_sensor) {
     online_status_binary_sensor_ = online_status_binary_sensor;
   }
@@ -212,6 +215,7 @@ class JbdBms : public uart::UARTDevice, public PollingComponent {
   binary_sensor::BinarySensor *balancing_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *charging_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *discharging_binary_sensor_{nullptr};
+  binary_sensor::BinarySensor *heating_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *online_status_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *cell_overvoltage_protection_binary_sensor_{nullptr};
   binary_sensor::BinarySensor *cell_undervoltage_protection_binary_sensor_{nullptr};

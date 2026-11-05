@@ -15,6 +15,7 @@ DEPENDENCIES = ["jbd_bms"]
 CODEOWNERS = ["@syssi"]
 
 CONF_BALANCING = "balancing"
+CONF_HEATING = "heating"
 CONF_ONLINE_STATUS = "online_status"
 CONF_CELL_OVERVOLTAGE_PROTECTION = "cell_overvoltage_protection"
 CONF_CELL_UNDERVOLTAGE_PROTECTION = "cell_undervoltage_protection"
@@ -33,6 +34,7 @@ CONF_MOSFET_SOFTWARE_LOCK = "mosfet_software_lock"
 ICON_CHARGING = "mdi:battery-charging"
 ICON_DISCHARGING = "mdi:power-plug"
 ICON_BALANCING = "mdi:battery-heart-variant"
+ICON_HEATING = "mdi:radiator"
 
 # key: binary_sensor_schema kwargs
 BINARY_SENSOR_DEFS = {
@@ -44,6 +46,9 @@ BINARY_SENSOR_DEFS = {
     },
     CONF_BALANCING: {
         "icon": ICON_BALANCING,
+    },
+    CONF_HEATING: {
+        "icon": ICON_HEATING,
     },
     CONF_ONLINE_STATUS: {
         "device_class": DEVICE_CLASS_CONNECTIVITY,

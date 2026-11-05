@@ -218,6 +218,66 @@ TEST(JbdBmsBleBasicInfoTest, OperationStatusText) {
   EXPECT_NE(op_status.state.find("Discharging"), std::string::npos);
 }
 
+// ── Heating status ────────────────────────────────────────────────────────────
+
+TEST(JbdBmsBleBasicInfoTest, HeatingOffByDefault) {
+  TestableJbdBmsBle bms;
+  binary_sensor::BinarySensor heating_bs;
+  bms.set_heating_binary_sensor(&heating_bs);
+
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME);
+
+  EXPECT_FALSE(heating_bs.state);
+}
+
+TEST(JbdBmsBleBasicInfoTest, HeatingBit3) {
+  TestableJbdBmsBle bms;
+  binary_sensor::BinarySensor heating_bs;
+  text_sensor::TextSensor op_status;
+  bms.set_heating_binary_sensor(&heating_bs);
+  bms.set_operation_status_text_sensor(&op_status);
+
+  auto frame = BASICINFO_FRAME;
+  frame[20] = 0x0B;  // Charging, Discharging, Heating (0x08)
+  bms.on_jbd_bms_data(0x03, frame);
+
+  EXPECT_TRUE(heating_bs.state);
+  EXPECT_NE(op_status.state.find("Heating (0x08)"), std::string::npos);
+  EXPECT_EQ(op_status.state.find("Unknown"), std::string::npos);
+}
+
+TEST(JbdBmsBleBasicInfoTest, HeatingBit4) {
+  TestableJbdBmsBle bms;
+  binary_sensor::BinarySensor heating_bs, charging_bs, discharging_bs;
+  text_sensor::TextSensor op_status;
+  bms.set_heating_binary_sensor(&heating_bs);
+  bms.set_charging_binary_sensor(&charging_bs);
+  bms.set_discharging_binary_sensor(&discharging_bs);
+  bms.set_operation_status_text_sensor(&op_status);
+
+  auto frame = BASICINFO_FRAME;
+  frame[20] = 0x11;  // Charging, Heating (0x10)
+  bms.on_jbd_bms_data(0x03, frame);
+
+  EXPECT_TRUE(heating_bs.state);
+  EXPECT_TRUE(charging_bs.state);
+  EXPECT_FALSE(discharging_bs.state);
+  EXPECT_NE(op_status.state.find("Heating (0x10)"), std::string::npos);
+}
+
+TEST(JbdBmsBleBasicInfoTest, FactoryModeOperationStatusText) {
+  TestableJbdBmsBle bms;
+  text_sensor::TextSensor op_status;
+  bms.set_operation_status_text_sensor(&op_status);
+
+  auto frame = BASICINFO_FRAME;
+  frame[20] = 0x43;  // Charging, Discharging, Factory mode
+  bms.on_jbd_bms_data(0x03, frame);
+
+  EXPECT_NE(op_status.state.find("Factory mode"), std::string::npos);
+  EXPECT_EQ(op_status.state.find("Unknown"), std::string::npos);
+}
+
 // ── Errors text (no errors) ───────────────────────────────────────────────────
 
 TEST(JbdBmsBleBasicInfoTest, ErrorsTextEmpty) {

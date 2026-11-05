@@ -97,7 +97,8 @@ class TestBinarySensorConstants:
         assert CONF_DISCHARGING in binary_sensor.BINARY_SENSOR_DEFS
         assert binary_sensor.CONF_BALANCING in binary_sensor.BINARY_SENSOR_DEFS
         assert binary_sensor.CONF_ONLINE_STATUS in binary_sensor.BINARY_SENSOR_DEFS
-        assert len(binary_sensor.BINARY_SENSOR_DEFS) == 17
+        assert binary_sensor.CONF_HEATING in binary_sensor.BINARY_SENSOR_DEFS
+        assert len(binary_sensor.BINARY_SENSOR_DEFS) == 18
 
     def test_protection_sensors_in_defs(self):
         for key in PROTECTION_KEYS:
@@ -114,7 +115,8 @@ class TestBinarySensorConstants:
         assert (
             ble_binary_sensor.CONF_ONLINE_STATUS in ble_binary_sensor.BINARY_SENSOR_DEFS
         )
-        assert len(ble_binary_sensor.BINARY_SENSOR_DEFS) == 17
+        assert ble_binary_sensor.CONF_HEATING in ble_binary_sensor.BINARY_SENSOR_DEFS
+        assert len(ble_binary_sensor.BINARY_SENSOR_DEFS) == 18
 
     def test_ble_protection_sensors_in_defs(self):
         for key in PROTECTION_KEYS:

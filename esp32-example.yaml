@@ -102,6 +102,8 @@ binary_sensor:
       name: "charging"
     discharging:
       name: "discharging"
+    heating:
+      name: "heating"
     online_status:
       name: "online status"
     cell_overvoltage_protection:
