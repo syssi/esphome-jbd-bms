@@ -40,6 +40,9 @@ static const uint8_t JBD_AUTH_SEND_PASSWORD = 0x18;
 static const uint8_t JBD_AUTH_CHANGE_PASSWORD = 0x16;
 static const uint8_t JBD_AUTH_SEND_ROOT_PASSWORD = 0x1D;
 
+// Probe for a password protection after this many unanswered requests (no password configured only)
+static const uint8_t JBD_PASSWORD_PROBE_THRESHOLD = 3;
+
 static const uint8_t JBD_CMD_BASICINFO = 0x03;
 static const uint8_t JBD_CMD_CELLINFO = 0x04;
 static const uint8_t JBD_CMD_HWVER = 0x05;
@@ -116,6 +119,8 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       this->authentication_state_ = AuthState::NOT_AUTHENTICATED;
       this->random_byte_ = 0;
       this->hardware_version_query_attempts_ = 0;
+      this->unanswered_requests_ = 0;
+      this->password_probe_sent_ = false;
 
       break;
     }
@@ -160,6 +165,8 @@ void JbdBmsBle::gattc_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t ga
       ESP_LOGV(TAG, "Notification received (handle 0x%02X): %s", param->notify.handle,
                format_hex_pretty_to(hex_buf, param->notify.value, param->notify.value_len, '.'));
 
+      // Any notification proves the BMS is talking to us, so no password probe is needed
+      this->unanswered_requests_ = 0;
       this->assemble(param->notify.value, param->notify.value_len);
 
       break;
@@ -350,6 +357,16 @@ void JbdBmsBle::handle_auth_response_(uint8_t command, const uint8_t *data, uint
 
   switch (command) {
     case JBD_AUTH_SEND_APP_KEY:
+      if (!this->enable_authentication_) {
+        // Response to the password probe: only report, never start the authentication flow
+        if (data[0] == 0x00) {
+          ESP_LOGW(TAG, "[%s] The BMS requires a password. Please configure the 'password' option",
+                   this->parent_->address_str());
+        } else {
+          ESP_LOGD(TAG, "Password probe response: 0x%02X", data[0]);
+        }
+        break;
+      }
       switch (data[0]) {
         case 0x00:  // App key accepted, password required
           ESP_LOGD(TAG, "App key accepted, password required - requesting random byte");
@@ -431,6 +448,19 @@ void JbdBmsBle::update() {
     return;
   }
 
+  // A password protected BMS ignores all requests silently. If a BMS without configured password never
+  // answers, send the app key once per connection (like the JBD app does) to find out whether it is locked
+  if (!this->enable_authentication_ && !this->password_probe_sent_ &&
+      this->unanswered_requests_ >= JBD_PASSWORD_PROBE_THRESHOLD) {
+    ESP_LOGD(TAG, "[%s] No response from BMS, probing for password protection", this->parent_->address_str());
+    this->password_probe_sent_ = true;
+    this->send_app_key_();
+    return;
+  }
+
+  if (this->unanswered_requests_ < JBD_PASSWORD_PROBE_THRESHOLD) {
+    this->unanswered_requests_++;
+  }
   this->send_command(JBD_CMD_READ, JBD_CMD_BASICINFO);
 }
 
