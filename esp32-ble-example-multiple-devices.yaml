@@ -125,6 +125,9 @@ binary_sensor:
     discharging:
       name: "discharging"
       device_id: device0
+    heating:
+      name: "heating"
+      device_id: device0
     online_status:
       name: "online status"
       device_id: device0
@@ -178,6 +181,9 @@ binary_sensor:
       device_id: device1
     discharging:
       name: "discharging"
+      device_id: device1
+    heating:
+      name: "heating"
       device_id: device1
     online_status:
       name: "online status"

@@ -54,6 +54,7 @@ static const uint8_t JBD_CMD_BALANCER = 0xE2;  // Enable/disable balancer
 
 static const uint8_t JBD_MOS_CHARGE = 0x01;
 static const uint8_t JBD_MOS_DISCHARGE = 0x02;
+static const uint8_t JBD_MOS_HEATING = 0x18;  // Either bit 3 or bit 4 indicates an active heater
 
 static const uint8_t ERRORS_SIZE = 16;
 static constexpr const char *const ERRORS[ERRORS_SIZE] = {
@@ -80,10 +81,10 @@ static constexpr const char *const OPERATION_STATUS[OPERATION_STATUS_SIZE] = {
     "Charging",            // 0x01
     "Discharging",         // 0x02
     "Unknown (0x04)",      // 0x04
-    "Unknown (0x08)",      // 0x08
-    "Unknown (0x10)",      // 0x10
+    "Heating (0x08)",      // 0x08
+    "Heating (0x10)",      // 0x10
     "Unknown (0x20)",      // 0x20
-    "Unknown (0x40)",      // 0x40
+    "Factory mode",        // 0x40
     "100mA/100mAh units",  // 0x80 (capacity/current unit flag)
 };
 
@@ -631,6 +632,7 @@ void JbdBmsBle::on_basic_info_data_(const std::vector<uint8_t> &data) {
   this->publish_state_(this->charging_switch_, operation_status & JBD_MOS_CHARGE);
   this->publish_state_(this->discharging_binary_sensor_, operation_status & JBD_MOS_DISCHARGE);
   this->publish_state_(this->discharging_switch_, operation_status & JBD_MOS_DISCHARGE);
+  this->publish_state_(this->heating_binary_sensor_, operation_status & JBD_MOS_HEATING);
 
   // 21    2   0x04                   Cell count
   this->publish_state_(this->cell_count_sensor_, data[21]);
@@ -749,6 +751,7 @@ void JbdBmsBle::dump_config() {  // NOLINT(google-readability-function-size,read
   LOG_BINARY_SENSOR("", "Balancing", this->balancing_binary_sensor_);
   LOG_BINARY_SENSOR("", "Charging", this->charging_binary_sensor_);
   LOG_BINARY_SENSOR("", "Discharging", this->discharging_binary_sensor_);
+  LOG_BINARY_SENSOR("", "Heating", this->heating_binary_sensor_);
   LOG_BINARY_SENSOR("", "Online status", this->online_status_binary_sensor_);
   LOG_BINARY_SENSOR("", "Cell overvoltage protection", this->cell_overvoltage_protection_binary_sensor_);
   LOG_BINARY_SENSOR("", "Cell undervoltage protection", this->cell_undervoltage_protection_binary_sensor_);
