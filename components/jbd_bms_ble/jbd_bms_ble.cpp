@@ -710,29 +710,23 @@ void JbdBmsBle::publish_device_unavailable_() {
   this->publish_state_(this->online_status_binary_sensor_, false);
   this->publish_state_(this->errors_text_sensor_, "Offline");
 
-  auto invalidate_binary_sensor = [](binary_sensor::BinarySensor *binary_sensor) {
-    if (binary_sensor != nullptr) {
-      binary_sensor->invalidate_state();
-    }
-  };
-
-  invalidate_binary_sensor(this->balancing_binary_sensor_);
-  invalidate_binary_sensor(this->charging_binary_sensor_);
-  invalidate_binary_sensor(this->discharging_binary_sensor_);
-  invalidate_binary_sensor(this->heating_binary_sensor_);
-  invalidate_binary_sensor(this->cell_overvoltage_protection_binary_sensor_);
-  invalidate_binary_sensor(this->cell_undervoltage_protection_binary_sensor_);
-  invalidate_binary_sensor(this->pack_overvoltage_protection_binary_sensor_);
-  invalidate_binary_sensor(this->pack_undervoltage_protection_binary_sensor_);
-  invalidate_binary_sensor(this->charge_overtemperature_protection_binary_sensor_);
-  invalidate_binary_sensor(this->charge_undertemperature_protection_binary_sensor_);
-  invalidate_binary_sensor(this->discharge_overtemperature_protection_binary_sensor_);
-  invalidate_binary_sensor(this->discharge_undertemperature_protection_binary_sensor_);
-  invalidate_binary_sensor(this->charge_overcurrent_protection_binary_sensor_);
-  invalidate_binary_sensor(this->discharge_overcurrent_protection_binary_sensor_);
-  invalidate_binary_sensor(this->short_circuit_protection_binary_sensor_);
-  invalidate_binary_sensor(this->ic_frontend_error_binary_sensor_);
-  invalidate_binary_sensor(this->mosfet_software_lock_binary_sensor_);
+  this->invalidate_binary_sensor_(this->balancing_binary_sensor_);
+  this->invalidate_binary_sensor_(this->charging_binary_sensor_);
+  this->invalidate_binary_sensor_(this->discharging_binary_sensor_);
+  this->invalidate_binary_sensor_(this->heating_binary_sensor_);
+  this->invalidate_binary_sensor_(this->cell_overvoltage_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->cell_undervoltage_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->pack_overvoltage_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->pack_undervoltage_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->charge_overtemperature_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->charge_undertemperature_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->discharge_overtemperature_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->discharge_undertemperature_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->charge_overcurrent_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->discharge_overcurrent_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->short_circuit_protection_binary_sensor_);
+  this->invalidate_binary_sensor_(this->ic_frontend_error_binary_sensor_);
+  this->invalidate_binary_sensor_(this->mosfet_software_lock_binary_sensor_);
 
   this->publish_state_(state_of_charge_sensor_, NAN);
   this->publish_state_(total_voltage_sensor_, NAN);
@@ -875,6 +869,13 @@ void JbdBmsBle::publish_state_(binary_sensor::BinarySensor *binary_sensor, const
     return;
 
   binary_sensor->publish_state(state);
+}
+
+void JbdBmsBle::invalidate_binary_sensor_(binary_sensor::BinarySensor *binary_sensor) {
+  if (binary_sensor == nullptr)
+    return;
+
+  binary_sensor->invalidate_state();
 }
 
 void JbdBmsBle::publish_state_(sensor::Sensor *sensor, float value) {
