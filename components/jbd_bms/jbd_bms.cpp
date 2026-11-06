@@ -464,27 +464,27 @@ void JbdBms::publish_device_unavailable_() {
   this->publish_state_(this->online_status_binary_sensor_, false);
   this->publish_state_(this->errors_text_sensor_, "Offline");
 
-  this->publish_state_(state_of_charge_sensor_, NAN);
-  this->publish_state_(total_voltage_sensor_, NAN);
-  this->publish_state_(current_sensor_, NAN);
-  this->publish_state_(power_sensor_, NAN);
-  this->publish_state_(charging_power_sensor_, NAN);
-  this->publish_state_(discharging_power_sensor_, NAN);
-  this->publish_state_(nominal_capacity_sensor_, NAN);
-  this->publish_state_(charging_cycles_sensor_, NAN);
-  this->publish_state_(capacity_remaining_sensor_, NAN);
-  this->publish_state_(min_cell_voltage_sensor_, NAN);
-  this->publish_state_(max_cell_voltage_sensor_, NAN);
-  this->publish_state_(min_voltage_cell_sensor_, NAN);
-  this->publish_state_(max_voltage_cell_sensor_, NAN);
-  this->publish_state_(delta_cell_voltage_sensor_, NAN);
-  this->publish_state_(average_cell_voltage_sensor_, NAN);
-  this->publish_state_(operation_status_bitmask_sensor_, NAN);
-  this->publish_state_(errors_bitmask_sensor_, NAN);
-  this->publish_state_(balancer_status_bitmask_sensor_, NAN);
-  this->publish_state_(cell_count_sensor_, NAN);
-  this->publish_state_(temperature_sensors_sensor_, NAN);
-  this->publish_state_(software_version_sensor_, NAN);
+  this->publish_state_(this->state_of_charge_sensor_, NAN);
+  this->publish_state_(this->total_voltage_sensor_, NAN);
+  this->publish_state_(this->current_sensor_, NAN);
+  this->publish_state_(this->power_sensor_, NAN);
+  this->publish_state_(this->charging_power_sensor_, NAN);
+  this->publish_state_(this->discharging_power_sensor_, NAN);
+  this->publish_state_(this->nominal_capacity_sensor_, NAN);
+  this->publish_state_(this->charging_cycles_sensor_, NAN);
+  this->publish_state_(this->capacity_remaining_sensor_, NAN);
+  this->publish_state_(this->min_cell_voltage_sensor_, NAN);
+  this->publish_state_(this->max_cell_voltage_sensor_, NAN);
+  this->publish_state_(this->min_voltage_cell_sensor_, NAN);
+  this->publish_state_(this->max_voltage_cell_sensor_, NAN);
+  this->publish_state_(this->delta_cell_voltage_sensor_, NAN);
+  this->publish_state_(this->average_cell_voltage_sensor_, NAN);
+  this->publish_state_(this->operation_status_bitmask_sensor_, NAN);
+  this->publish_state_(this->errors_bitmask_sensor_, NAN);
+  this->publish_state_(this->balancer_status_bitmask_sensor_, NAN);
+  this->publish_state_(this->cell_count_sensor_, NAN);
+  this->publish_state_(this->temperature_sensors_sensor_, NAN);
+  this->publish_state_(this->software_version_sensor_, NAN);
 
   for (auto &temperature : this->temperatures_) {
     this->publish_state_(temperature.temperature_sensor_, NAN);
