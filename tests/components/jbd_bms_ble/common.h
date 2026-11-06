@@ -23,6 +23,8 @@ class TestableJbdBmsBle : public JbdBmsBle {
   }
   using JbdBmsBle::send_command;
   using JbdBmsBle::build_frame_;
+  using JbdBmsBle::publish_device_unavailable_;
+  using JbdBmsBle::track_online_status_;
   uint8_t last_write_address{0};
   uint16_t last_write_value{0};
   uint8_t last_command_type{0};

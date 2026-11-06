@@ -649,6 +649,62 @@ TEST(JbdBmsBleTest, NullSensorsDoNotCrash) {
   bms.on_jbd_bms_data(0x04, CELLINFO_FRAME);
   bms.on_jbd_bms_data(0x05, HWVER_FRAME);
   bms.on_jbd_bms_data(0xAA, ERRCOUNT_FRAME);
+  bms.publish_device_unavailable_();
+}
+
+TEST(JbdBmsBleTest, PublishDeviceUnavailableInvalidatesBinarySensors) {
+  TestableJbdBmsBle bms;
+  binary_sensor::BinarySensor online, balancing, charging, discharging, heating;
+  binary_sensor::BinarySensor cov, cuv, pov, puv, cot, cut, dot, dut, co, doc, sc, ic, swl;
+  bms.set_online_status_binary_sensor(&online);
+  bms.set_balancing_binary_sensor(&balancing);
+  bms.set_charging_binary_sensor(&charging);
+  bms.set_discharging_binary_sensor(&discharging);
+  bms.set_heating_binary_sensor(&heating);
+  bms.set_cell_overvoltage_protection_binary_sensor(&cov);
+  bms.set_cell_undervoltage_protection_binary_sensor(&cuv);
+  bms.set_pack_overvoltage_protection_binary_sensor(&pov);
+  bms.set_pack_undervoltage_protection_binary_sensor(&puv);
+  bms.set_charge_overtemperature_protection_binary_sensor(&cot);
+  bms.set_charge_undertemperature_protection_binary_sensor(&cut);
+  bms.set_discharge_overtemperature_protection_binary_sensor(&dot);
+  bms.set_discharge_undertemperature_protection_binary_sensor(&dut);
+  bms.set_charge_overcurrent_protection_binary_sensor(&co);
+  bms.set_discharge_overcurrent_protection_binary_sensor(&doc);
+  bms.set_short_circuit_protection_binary_sensor(&sc);
+  bms.set_ic_frontend_error_binary_sensor(&ic);
+  bms.set_mosfet_software_lock_binary_sensor(&swl);
+
+  bms.on_jbd_bms_data(0x03, BASICINFO_FRAME_ALL_PROTECTIONS);
+  EXPECT_TRUE(online.has_state());
+  EXPECT_TRUE(online.state);
+  EXPECT_TRUE(balancing.has_state());
+  EXPECT_TRUE(charging.has_state());
+  EXPECT_TRUE(discharging.has_state());
+  EXPECT_TRUE(heating.has_state());
+  EXPECT_TRUE(cov.has_state());
+  EXPECT_TRUE(swl.has_state());
+
+  bms.publish_device_unavailable_();
+  EXPECT_TRUE(online.has_state());
+  EXPECT_FALSE(online.state);
+  EXPECT_FALSE(balancing.has_state());
+  EXPECT_FALSE(charging.has_state());
+  EXPECT_FALSE(discharging.has_state());
+  EXPECT_FALSE(heating.has_state());
+  EXPECT_FALSE(cov.has_state());
+  EXPECT_FALSE(cuv.has_state());
+  EXPECT_FALSE(pov.has_state());
+  EXPECT_FALSE(puv.has_state());
+  EXPECT_FALSE(cot.has_state());
+  EXPECT_FALSE(cut.has_state());
+  EXPECT_FALSE(dot.has_state());
+  EXPECT_FALSE(dut.has_state());
+  EXPECT_FALSE(co.has_state());
+  EXPECT_FALSE(doc.has_state());
+  EXPECT_FALSE(sc.has_state());
+  EXPECT_FALSE(ic.has_state());
+  EXPECT_FALSE(swl.has_state());
 }
 
 }  // namespace esphome::jbd_bms_ble::testing
