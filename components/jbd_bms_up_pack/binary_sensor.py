@@ -8,14 +8,13 @@ from esphome.const import (
 )
 
 from . import CONF_JBD_BMS_UP_PACK_ID, JBD_BMS_UP_PACK_COMPONENT_SCHEMA
-from .const import CONF_DISCHARGING
+from .const import CONF_CHARGING, CONF_DISCHARGING
 
 DEPENDENCIES = ["jbd_bms_up_pack"]
 
 CODEOWNERS = ["@syssi"]
 
 CONF_BALANCING = "balancing"
-CONF_CHARGING = "charging"
 CONF_PRECHARGING = "precharging"
 CONF_HEAT = "heat"
 CONF_FAN = "fan"
