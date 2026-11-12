@@ -372,6 +372,8 @@ class JbdBmsBle :
   std::string password_{};
   uint32_t auth_timeout_start_{0};
   uint32_t auth_timeout_ms_{10000};
+  uint8_t unanswered_requests_{0};
+  bool password_probe_sent_{false};
 
   void start_authentication_();
   void send_app_key_();

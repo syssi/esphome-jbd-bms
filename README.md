@@ -184,7 +184,14 @@ See [Jiabaida.communication.protocol.pdf](docs/Jiabaida.communication.protocol.p
 
 ## Known issues
 
-None.
+* A password protected BMS ignores all BLE requests until the password was sent. In this case `jbd_bms_ble` logs `The BMS requires a password. Please configure the 'password' option`. Add the password configured in the JBD app (often `123456`) to your config:
+
+  ```yaml
+  jbd_bms_ble:
+    - id: bms0
+      ble_client_id: client0
+      password: "123456"
+  ```
 
 ## Goodies
 
