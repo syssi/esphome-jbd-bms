@@ -7,12 +7,12 @@ from .. import (
     JBD_BMS_UP_PACK_COMPONENT_SCHEMA,
     jbd_bms_up_pack_ns,
 )
+from ..const import CONF_DISCHARGING
 
 DEPENDENCIES = ["jbd_bms_up_pack"]
 CODEOWNERS = ["@syssi"]
 
 CONF_CHARGING = "charging"
-CONF_DISCHARGING = "discharging"
 
 ICON_CHARGING = "mdi:battery-charging-50"
 ICON_DISCHARGING = "mdi:battery-charging-50"
