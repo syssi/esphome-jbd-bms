@@ -25,7 +25,7 @@ BUTTONS = {
     CONF_CLEAR_ALARM: (JBD_CMD_WRITE, 0x0A, [0x04, 0x00]),
 }
 
-JbdButton = jbd_bms_ns.class_("JbdButton", button.Button, cg.Component)
+JbdButton = jbd_bms_ns.class_("JbdButton", button.Button)
 
 CONFIG_SCHEMA = JBD_BMS_COMPONENT_SCHEMA.extend(
     {
@@ -59,7 +59,6 @@ async def to_code(config):
         if key in config:
             conf = config[key]
             var = await button.new_button(conf)
-            await cg.register_component(var, conf)
             cg.add(var.set_parent(hub))
             cg.add(var.set_command(action))
             cg.add(var.set_address(register))

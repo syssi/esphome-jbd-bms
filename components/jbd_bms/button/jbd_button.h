@@ -1,13 +1,12 @@
 #pragma once
 
 #include "../jbd_bms.h"
-#include "esphome/core/component.h"
 #include "esphome/components/button/button.h"
 
 namespace esphome::jbd_bms {
 
 class JbdBms;
-class JbdButton : public button::Button, public Component {
+class JbdButton : public button::Button {
  public:
   void set_parent(JbdBms *parent) { this->parent_ = parent; };
   void set_command(uint8_t command) { this->command_ = command; };
@@ -17,8 +16,6 @@ class JbdButton : public button::Button, public Component {
     this->payload_[1] = low;
     this->length_ = 2;
   };
-  void dump_config() override;
-  float get_setup_priority() const override { return setup_priority::DATA; }
 
  protected:
   void press_action() override;
