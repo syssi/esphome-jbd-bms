@@ -11,7 +11,6 @@ class JbdBmsUpSwitch : public switch_::Switch, public Component {
   void set_parent(JbdBmsUpPack *parent) { parent_ = parent; }
   void set_bit(uint8_t bit) { bit_ = bit; }
   void dump_config() override;
-  void loop() override {}
   float get_setup_priority() const override { return setup_priority::DATA; }
 
  protected:

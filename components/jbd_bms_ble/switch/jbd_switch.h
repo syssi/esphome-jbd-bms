@@ -13,7 +13,6 @@ class JbdSwitch : public switch_::Switch, public Component {
   void set_address(uint8_t address) { this->address_ = address; };
   void set_bitmask(uint8_t bitmask) { this->bitmask_ = bitmask; };
   void dump_config() override;
-  void loop() override {}
   float get_setup_priority() const override { return setup_priority::DATA; }
 
  protected:
