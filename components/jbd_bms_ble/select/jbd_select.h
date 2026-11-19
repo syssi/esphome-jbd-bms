@@ -1,7 +1,6 @@
 #pragma once
 
 #include <utility>
-#include <map>
 
 #include "../jbd_bms_ble.h"
 #include "esphome/core/component.h"
