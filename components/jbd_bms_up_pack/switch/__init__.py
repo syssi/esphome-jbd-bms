@@ -16,9 +16,7 @@ CODEOWNERS = ["@syssi"]
 ICON_CHARGING = "mdi:battery-charging-50"
 ICON_DISCHARGING = "mdi:battery-charging-50"
 
-JbdBmsUpSwitch = jbd_bms_up_pack_ns.class_(
-    "JbdBmsUpSwitch", switch.Switch, cg.Component
-)
+JbdBmsUpSwitch = jbd_bms_up_pack_ns.class_("JbdBmsUpSwitch", switch.Switch)
 
 # bit position in the MOSFET status word (byte offset 32-33 in pack status frame)
 SWITCHES = {
@@ -43,7 +41,6 @@ async def to_code(config):
     for key, bit in SWITCHES.items():
         if key in config:
             var = await switch.new_switch(config[key])
-            await cg.register_component(var, config[key])
             cg.add(getattr(hub, f"set_{key}_switch")(var))
             cg.add(var.set_parent(hub))
             cg.add(var.set_bit(bit))
