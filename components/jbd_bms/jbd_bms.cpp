@@ -1,5 +1,4 @@
 #include "jbd_bms.h"
-#include <array>
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 
