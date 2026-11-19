@@ -18,7 +18,6 @@ class JbdButton : public button::Button, public Component {
     this->length_ = 2;
   };
   void dump_config() override;
-  void loop() override {}
   float get_setup_priority() const override { return setup_priority::DATA; }
 
  protected:
