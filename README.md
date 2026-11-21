@@ -43,7 +43,7 @@ ESPHome component to monitor and control a JBD-BMS via UART-TTL or BLE
 * LIONTRON LiFePO4 LX 12.8V 55Ah (LISMART1255LX, reported by [@jassi0001](https://github.com/syssi/esphome-jbd-bms/issues/81))
 * LIONTRON LiFePO4 LX 12.8V 150Ah (reported by [@takbo3000](https://github.com/syssi/esphome-jbd-bms/discussions/17#discussioncomment-13575553))
 * Vatrer Power 51.2V 100Ah LiFePo4 battery bank (SP16S020L16S100A, reported by [@ThomasCr](https://github.com/syssi/esphome-jbd-bms/issues/101))
-* ECO-WORTHY 100Ah 48v rack batteries (JDB-UP16S020, JBD48100000 using `jk_bms_up`, reported by [@deltamelter](https://github.com/syssi/esphome-jbd-bms/discussions/222))
+* ECO-WORTHY 100Ah 48v rack batteries (JDB-UP16S020, JBD48100000 using `jbd_bms_up`, reported by [@deltamelter](https://github.com/syssi/esphome-jbd-bms/discussions/222))
 
 ## Untested devices
 
